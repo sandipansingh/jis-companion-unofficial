@@ -205,6 +205,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { useFeesStore } = await import("./feesStore");
       useFeesStore.getState().clearFeeData();
 
+      const { useVirtualLabsStore } = await import("./virtualLabsStore");
+      useVirtualLabsStore.getState().clearVirtualLabsData();
+
+      const { useLibraryStore } = await import("./libraryStore");
+      useLibraryStore.getState().clearBooks();
+
       set({
         isLoggedIn: false,
         studentId: null,

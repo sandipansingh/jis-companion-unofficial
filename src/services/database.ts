@@ -6,11 +6,15 @@ import {
 } from "../api/academics";
 import { LoginResponse, UserProfileData } from "../api/auth";
 import { FeeLedgerEntry } from "../api/fees";
+import { LibraryBook } from "../api/library";
+import { VirtualLabCourse, VirtualLabExperiment } from "../api/virtualLabs";
 
 export interface AttendancePercentageData extends AttendanceData {
   studentId: string;
   lastUpdated: string;
 }
+
+const GLOBAL_DATA_KEY = "__global__";
 
 let db: SQLite.SQLiteDatabase | null = null;
 
@@ -67,11 +71,44 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       last_updated TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS virtual_labs_courses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id TEXT NOT NULL,
+      courses_data TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS virtual_labs_experiments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id TEXT NOT NULL,
+      course TEXT NOT NULL,
+      stream TEXT NOT NULL,
+      semester TEXT NOT NULL,
+      experiments_data TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      UNIQUE(student_id, course, stream, semester)
+    );
+
+    CREATE TABLE IF NOT EXISTS library_books (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      student_id TEXT NOT NULL,
+      filter_type TEXT NOT NULL,
+      books_data TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL,
+      UNIQUE(student_id, filter_type)
+    );
+
     CREATE INDEX IF NOT EXISTS idx_login_student_id ON login_data(student_id);
     CREATE INDEX IF NOT EXISTS idx_user_student_id ON user_data(student_id);
     CREATE INDEX IF NOT EXISTS idx_attendance_student_month ON attendance_data(student_id, month_key);
     CREATE INDEX IF NOT EXISTS idx_fees_student_id ON fees_data(student_id);
     CREATE INDEX IF NOT EXISTS idx_attendance_percentage_student_id ON attendance_percentage(student_id);
+    CREATE INDEX IF NOT EXISTS idx_virtual_labs_courses_student_id ON virtual_labs_courses(student_id);
+    CREATE INDEX IF NOT EXISTS idx_virtual_labs_experiments_student_course ON virtual_labs_experiments(student_id, course, stream, semester);
+    CREATE INDEX IF NOT EXISTS idx_library_books_student_filter ON library_books(student_id, filter_type);
   `);
 
   console.log("Database initialized successfully");
@@ -461,6 +498,127 @@ export async function deleteAttendancePercentage(
   });
 }
 
+export async function saveVirtualLabCourses(
+  courses: VirtualLabCourse[]
+): Promise<void> {
+  await saveData({
+    table: "virtual_labs_courses",
+    studentId: GLOBAL_DATA_KEY,
+    columns: ["courses_data"],
+    values: [JSON.stringify(courses)],
+    logMessage: `Virtual lab courses saved (${courses.length} courses)`,
+  });
+}
+
+export async function getVirtualLabCourses(): Promise<
+  VirtualLabCourse[] | null
+> {
+  const result = await getData<{ courses_data: string }>({
+    table: "virtual_labs_courses",
+    studentId: GLOBAL_DATA_KEY,
+    columns: ["courses_data"],
+  });
+
+  if (result) {
+    return JSON.parse(result.courses_data) as VirtualLabCourse[];
+  }
+
+  return null;
+}
+
+export async function deleteVirtualLabCourses(): Promise<void> {
+  await deleteData({
+    table: "virtual_labs_courses",
+    studentId: GLOBAL_DATA_KEY,
+    logMessage: "Virtual lab courses deleted",
+  });
+}
+
+export async function saveVirtualLabExperiments(
+  course: string,
+  stream: string,
+  semester: string,
+  experiments: VirtualLabExperiment[]
+): Promise<void> {
+  await saveData({
+    table: "virtual_labs_experiments",
+    studentId: GLOBAL_DATA_KEY,
+    additionalKeys: { course, stream, semester },
+    columns: ["experiments_data"],
+    values: [JSON.stringify(experiments)],
+    logMessage: `Virtual lab experiments saved for ${course}/${stream}/${semester} (${experiments.length} experiments)`,
+  });
+}
+
+export async function getVirtualLabExperiments(
+  course: string,
+  stream: string,
+  semester: string
+): Promise<VirtualLabExperiment[] | null> {
+  const result = await getData<{ experiments_data: string }>({
+    table: "virtual_labs_experiments",
+    studentId: GLOBAL_DATA_KEY,
+    additionalKeys: { course, stream, semester },
+    columns: ["experiments_data"],
+  });
+
+  if (result) {
+    return JSON.parse(result.experiments_data) as VirtualLabExperiment[];
+  }
+
+  return null;
+}
+
+export async function deleteVirtualLabExperiments(): Promise<void> {
+  const database = await getDatabase();
+  await database.runAsync(
+    "DELETE FROM virtual_labs_experiments WHERE student_id = ?",
+    GLOBAL_DATA_KEY
+  );
+  console.log("Virtual lab experiments deleted");
+}
+
+export async function saveLibraryBooks(
+  studentId: string,
+  filterType: string,
+  books: LibraryBook[]
+): Promise<void> {
+  await saveData({
+    table: "library_books",
+    studentId,
+    additionalKeys: { filter_type: filterType },
+    columns: ["books_data"],
+    values: [JSON.stringify(books)],
+    logMessage: `Library books saved for student: ${studentId}, filter: ${filterType} (${books.length} books)`,
+  });
+}
+
+export async function getLibraryBooks(
+  studentId: string,
+  filterType: string
+): Promise<LibraryBook[] | null> {
+  const result = await getData<{ books_data: string }>({
+    table: "library_books",
+    studentId,
+    additionalKeys: { filter_type: filterType },
+    columns: ["books_data"],
+  });
+
+  if (result) {
+    return JSON.parse(result.books_data) as LibraryBook[];
+  }
+
+  return null;
+}
+
+export async function deleteLibraryBooks(studentId: string): Promise<void> {
+  await deleteData({
+    table: "library_books",
+    studentId,
+    logMessage: `Library books deleted for student: ${studentId}`,
+  });
+}
+
 export async function deleteAllUserData(studentId: string): Promise<void> {
   const database = await getDatabase();
 
@@ -485,6 +643,10 @@ export async function deleteAllUserData(studentId: string): Promise<void> {
       "DELETE FROM attendance_percentage WHERE student_id = ?",
       studentId
     );
+    await database.runAsync(
+      "DELETE FROM library_books WHERE student_id = ?",
+      studentId
+    );
   });
 
   console.log(`All data deleted for student: ${studentId}`);
@@ -499,6 +661,9 @@ export async function clearDatabase(): Promise<void> {
     DELETE FROM attendance_data;
     DELETE FROM fees_data;
     DELETE FROM attendance_percentage;
+    DELETE FROM virtual_labs_courses;
+    DELETE FROM virtual_labs_experiments;
+    DELETE FROM library_books;
   `);
 
   console.log("Database cleared");

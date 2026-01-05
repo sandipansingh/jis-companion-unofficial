@@ -4,6 +4,7 @@ import {
   SubjectWiseAttendance,
 } from "@/src/api/academics";
 import { LoginResponse, UserProfileData } from "@/src/api/auth";
+import { LibraryBook } from "@/src/api/library";
 
 /**
  * Demo data helpers used when the app is running in "demo account" mode.
@@ -116,8 +117,8 @@ export function getDemoLoginData(): LoginResponse {
     to_date: semesterDates.to_date,
     academic_year: semesterDates.academic_year,
     sem_type: semesterDates.sem_type,
-    course_code: "BTECH",
-    stream_code: "CSE",
+    course_code: "C001",
+    stream_code: "C009",
     college_id: 2,
     college_name: "Narula Institute of Technology",
     college_sht_name: "NIT",
@@ -282,4 +283,72 @@ export function getDemoDateAttendance(): DateWiseAttendance[] {
     rtCount: 3 + (idx % 3),
     rtPresent: 3 + (idx % 3) - (idx % 2),
   }));
+}
+
+/**
+ * Create mock library books data for demo mode.
+ *
+ * @returns {LibraryBook[]} Library book records including both returned and pending books.
+ */
+export function getDemoLibraryBooks(): LibraryBook[] {
+  return [
+    {
+      acc_type_id: 100,
+      acc_type: "Book Bank",
+      reader_id: 999999,
+      reader_code: "google_tester",
+      reader_name: "Demo Student",
+      reader_dept: "CSE AI & ML [2025-2029]",
+      reader_acc_id: 10001,
+      reader_acc_no: "BB00001",
+      reader_acc_name: "Let Us C",
+      issue_date: "14/10/2025",
+      return_date: "31/12/2025",
+      return_id: 0,
+    },
+    {
+      acc_type_id: 100,
+      acc_type: "Book Bank",
+      reader_id: 999999,
+      reader_code: "google_tester",
+      reader_name: "Demo Student",
+      reader_dept: "CSE AI & ML [2025-2029]",
+      reader_acc_id: 10002,
+      reader_acc_no: "BB00002",
+      reader_acc_name: "Basic Environmental Engineering and Elementary Biology",
+      issue_date: "14/10/2025",
+      return_date: "31/12/2025",
+      return_id: 0,
+    },
+    {
+      acc_type_id: 100,
+      acc_type: "Book Bank",
+      reader_id: 999999,
+      reader_code: "google_tester",
+      reader_name: "Demo Student",
+      reader_dept: "CSE AI & ML [2025-2029]",
+      reader_acc_id: 10003,
+      reader_acc_no: "BB00003",
+      reader_acc_name:
+        "Engineering Mathematics Volume - I: For 1st Year 1st Semester Courses of All the Streams",
+      issue_date: "14/10/2025",
+      return_date: "31/12/2025",
+      return_id: 0,
+    },
+    {
+      acc_type_id: 100,
+      acc_type: "Book Bank",
+      reader_id: 999999,
+      reader_code: "google_tester",
+      reader_name: "Demo Student",
+      reader_dept: "CSE AI & ML [2025-2029]",
+      reader_acc_id: 10004,
+      reader_acc_no: "BB00004",
+      reader_acc_name:
+        "Modern Engineering Physics: For the Students of B.E. / B. Tech. of All Technical Universities of India",
+      issue_date: "14/10/2025",
+      return_date: "31/12/2025",
+      return_id: 0,
+    },
+  ];
 }

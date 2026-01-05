@@ -1,10 +1,9 @@
 import { create } from "zustand";
+import { VirtualLabCourse, VirtualLabExperiment } from "../api/virtualLabs";
 import {
-  VirtualLabCourse,
-  VirtualLabExperiment,
-  fetchVirtualLabCourses,
-  fetchVirtualLabExperiments,
-} from "../api/virtualLabs";
+  syncVirtualLabCourses,
+  syncVirtualLabExperiments,
+} from "../services/sync";
 
 interface VirtualLabsState {
   courses: VirtualLabCourse[];
@@ -12,7 +11,9 @@ interface VirtualLabsState {
   selectedCourse: VirtualLabCourse | null;
   loading: boolean;
   error: string | null;
-  
+  isOnline: boolean;
+  fromCache: boolean;
+
   fetchCourses: () => Promise<void>;
   fetchExperiments: (
     course: string,
@@ -21,6 +22,7 @@ interface VirtualLabsState {
   ) => Promise<void>;
   setSelectedCourse: (course: VirtualLabCourse | null) => void;
   clearError: () => void;
+  clearVirtualLabsData: () => void;
 }
 
 export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
@@ -29,12 +31,19 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
   selectedCourse: null,
   loading: false,
   error: null,
+  isOnline: true,
+  fromCache: false,
 
   fetchCourses: async () => {
     set({ loading: true, error: null });
     try {
-      const courses = await fetchVirtualLabCourses();
-      set({ courses, loading: false });
+      const result = await syncVirtualLabCourses();
+      set({
+        courses: result.courses,
+        loading: false,
+        isOnline: result.isOnline,
+        fromCache: result.fromCache,
+      });
     } catch (error: any) {
       set({
         error: error.message || "Failed to fetch courses",
@@ -50,12 +59,13 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
   ) => {
     set({ loading: true, error: null });
     try {
-      const experiments = await fetchVirtualLabExperiments(
-        course,
-        stream,
-        semester
-      );
-      set({ experiments, loading: false });
+      const result = await syncVirtualLabExperiments(course, stream, semester);
+      set({
+        experiments: result.experiments,
+        loading: false,
+        isOnline: result.isOnline,
+        fromCache: result.fromCache,
+      });
     } catch (error: any) {
       set({
         error: error.message || "Failed to fetch experiments",
@@ -70,5 +80,32 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
 
   clearError: () => {
     set({ error: null });
+  },
+
+  clearVirtualLabsData: async () => {
+    try {
+      const { deleteVirtualLabCourses, deleteVirtualLabExperiments } =
+        await import("../services/database");
+      await deleteVirtualLabCourses();
+      await deleteVirtualLabExperiments();
+      set({
+        courses: [],
+        experiments: [],
+        selectedCourse: null,
+        loading: false,
+        error: null,
+        fromCache: false,
+      });
+    } catch (error) {
+      console.error("Error clearing virtual labs data:", error);
+      set({
+        courses: [],
+        experiments: [],
+        selectedCourse: null,
+        loading: false,
+        error: null,
+        fromCache: false,
+      });
+    }
   },
 }));

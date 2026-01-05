@@ -15,7 +15,7 @@ import {
 } from "@/src/utils/dateHelpers";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { FlaskConical, User } from "lucide-react-native";
+import { FlaskConical, Library, User } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -33,68 +33,59 @@ const MENU_ITEMS = [
     icon: FlaskConical,
     color: "#3B82F6",
   },
+  // { id: "events", title: "Events", icon: Calendar, color: "#F59E0B" },
+  // {
+  //   id: "utility_tools",
+  //   title: "Utility & Tools",
+  //   icon: Wrench,
+  //   color: "#10B981",
+  // },
+  // {
+  //   id: "notifications",
+  //   title: "Notifications",
+  //   icon: Bell,
+  //   color: "#8B5CF6",
+  // },
+  {
+    id: "library_status",
+    title: "Library Status",
+    icon: Library,
+    color: "#22C55E",
+  },
+  // {
+  //   id: "online_payment",
+  //   title: "Online Payment",
+  //   icon: CreditCard,
+  //   color: "#6366F1",
+  // },
+  // {
+  //   id: "library_search",
+  //   title: "Library Search",
+  //   icon: Book,
+  //   color: "#059669",
+  // },
+  // { id: "placement", title: "Placement", icon: Briefcase, color: "#0EA5E9" },
+  // {
+  //   id: "record_video",
+  //   title: "Record Video",
+  //   icon: Video,
+  //   color: "#DC2626",
+  // },
+  // {
+  //   id: "profile_video",
+  //   title: "Profile Video",
+  //   icon: UserCircle,
+  //   color: "#2563EB",
+  // },
+  // {
+  //   id: "video_lecture",
+  //   title: "Video Lecture",
+  //   icon: Play,
+  //   color: "#16A34A",
+  // },
+  // { id: "handbook", title: "Handbook", icon: FileText, color: "#84CC16" },
+  // { id: "feedback", title: "Feedback", icon: MessageCircle, color: "#F87171" },
 ];
-
-// const MENU_ITEMS = [
-//   {
-//     id: "virtual_labs",
-//     title: "Virtual Labs",
-//     icon: FlaskConical,
-//     color: "#3B82F6",
-//   },
-//   { id: "events", title: "Events", icon: Calendar, color: "#F59E0B" },
-//   {
-//     id: "utility_tools",
-//     title: "Utility & Tools",
-//     icon: Wrench,
-//     color: "#10B981",
-//   },
-//   {
-//     id: "notifications",
-//     title: "Notifications",
-//     icon: Bell,
-//     color: "#8B5CF6",
-//   },
-//   {
-//     id: "library_status",
-//     title: "Library Status",
-//     icon: Bookmark,
-//     color: "#22C55E",
-//   },
-//   {
-//     id: "online_payment",
-//     title: "Online Payment",
-//     icon: CreditCard,
-//     color: "#6366F1",
-//   },
-//   {
-//     id: "library_search",
-//     title: "Library Search",
-//     icon: Book,
-//     color: "#059669",
-//   },
-//   { id: "placement", title: "Placement", icon: Briefcase, color: "#0EA5E9" },
-//   {
-//     id: "record_video",
-//     title: "Record Video",
-//     icon: Video,
-//     color: "#DC2626",
-//   },
-//   {
-//     id: "profile_video",
-//     title: "Profile Video",
-//     icon: UserCircle,
-//     color: "#2563EB",
-//   },
-//   {
-//     id: "video_lecture",
-//     title: "Video Lecture",
-//     icon: Play,
-//     color: "#16A34A",
-//   },
-//   { id: "handbook", title: "Handbook", icon: FileText, color: "#84CC16" },
-//   { id: "feedback", title: "Feedback", icon: MessageCircle, color: "#F87171" },
-// ];
 
 export default function HomeScreen() {
   const { studentId, loginData, userData, isLoggedIn } = useAuthStore();
@@ -237,6 +228,8 @@ export default function HomeScreen() {
   const handleMenuItemPress = (itemId: string) => {
     if (itemId === "virtual_labs") {
       router.push("/virtual-labs");
+    } else if (itemId === "library_status") {
+      router.push("/library");
     } else {
       showAlert({
         title:
@@ -569,7 +562,9 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    gap: 15,
+    // Use `justifyContent: "space-between"` instead of `gap`
+    // when the number of menu items grows, to evenly distribute items per row
     backgroundColor: "transparent",
   },
   menuItem: {

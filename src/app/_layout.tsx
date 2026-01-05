@@ -140,6 +140,7 @@ function RootLayoutNav() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="class-details" options={{ headerShown: false }} />
           <Stack.Screen name="virtual-labs" options={{ headerShown: false }} />
+          <Stack.Screen name="library" options={{ headerShown: false }} />
         </Stack>
       ) : (
         <Stack

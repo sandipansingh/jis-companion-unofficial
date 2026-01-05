@@ -16,6 +16,17 @@ import {
 } from "../api/auth";
 import { FeeLedgerEntry, fetchStudentFeeLedger } from "../api/fees";
 import {
+  fetchLibraryBooks,
+  LibraryBook,
+  LibraryFilterType,
+} from "../api/library";
+import {
+  fetchVirtualLabCourses,
+  fetchVirtualLabExperiments,
+  VirtualLabCourse,
+  VirtualLabExperiment,
+} from "../api/virtualLabs";
+import {
   getCurrentMonthToDate,
   getMonthEndDate,
   getMonthStartDate,
@@ -461,4 +472,184 @@ export async function cleanupUserData(studentId: string): Promise<void> {
   await deleteAllUserData(studentId);
   await clearSecureStoreData();
   console.log(`Cleanup completed for student: ${studentId}`);
+}
+
+export async function syncVirtualLabCourses(): Promise<{
+  courses: VirtualLabCourse[];
+  fromCache: boolean;
+  isOnline: boolean;
+}> {
+  const isOnline = await hasInternetConnection();
+
+  const { getVirtualLabCourses } = await import("./database");
+  const cachedCourses = await getVirtualLabCourses();
+
+  if (isOnline) {
+    try {
+      console.log("Online mode: Fetching virtual lab courses");
+
+      const courses = await fetchVirtualLabCourses();
+
+      const { saveVirtualLabCourses } = await import("./database");
+      await saveVirtualLabCourses(courses);
+
+      return {
+        courses,
+        fromCache: false,
+        isOnline: true,
+      };
+    } catch (error) {
+      console.error("Error fetching virtual lab courses:", error);
+
+      if (cachedCourses) {
+        console.log("API failed, using cached virtual lab courses");
+        return {
+          courses: cachedCourses,
+          fromCache: true,
+          isOnline: true,
+        };
+      }
+
+      throw error;
+    }
+  } else {
+    console.log("Offline mode: Using cached virtual lab courses");
+
+    if (!cachedCourses) {
+      throw new Error("No cached virtual lab courses available");
+    }
+
+    return {
+      courses: cachedCourses,
+      fromCache: true,
+      isOnline: false,
+    };
+  }
+}
+
+export async function syncVirtualLabExperiments(
+  course: string,
+  stream: string,
+  semester: string
+): Promise<{
+  experiments: VirtualLabExperiment[];
+  fromCache: boolean;
+  isOnline: boolean;
+}> {
+  const isOnline = await hasInternetConnection();
+
+  const { getVirtualLabExperiments } = await import("./database");
+  const cachedExperiments = await getVirtualLabExperiments(
+    course,
+    stream,
+    semester
+  );
+
+  if (isOnline) {
+    try {
+      console.log(
+        `Online mode: Fetching virtual lab experiments for ${course}/${stream}/${semester}`
+      );
+
+      const experiments = await fetchVirtualLabExperiments(
+        course,
+        stream,
+        semester
+      );
+
+      const { saveVirtualLabExperiments } = await import("./database");
+      await saveVirtualLabExperiments(course, stream, semester, experiments);
+
+      return {
+        experiments,
+        fromCache: false,
+        isOnline: true,
+      };
+    } catch (error) {
+      console.error("Error fetching virtual lab experiments:", error);
+
+      if (cachedExperiments) {
+        console.log("API failed, using cached virtual lab experiments");
+        return {
+          experiments: cachedExperiments,
+          fromCache: true,
+          isOnline: true,
+        };
+      }
+
+      throw error;
+    }
+  } else {
+    console.log("Offline mode: Using cached virtual lab experiments");
+
+    if (!cachedExperiments) {
+      throw new Error(
+        `No cached virtual lab experiments available for ${course}/${stream}/${semester}`
+      );
+    }
+
+    return {
+      experiments: cachedExperiments,
+      fromCache: true,
+      isOnline: false,
+    };
+  }
+}
+
+export async function syncLibraryBooks(
+  studentId: string,
+  filterType: LibraryFilterType
+): Promise<{
+  books: LibraryBook[];
+  fromCache: boolean;
+  isOnline: boolean;
+}> {
+  const isOnline = await hasInternetConnection();
+
+  const { getLibraryBooks } = await import("./database");
+  const cachedBooks = await getLibraryBooks(studentId, filterType);
+
+  if (isOnline) {
+    try {
+      console.log(
+        `Online mode: Fetching library books for ${studentId} (filter: ${filterType})`
+      );
+
+      const books = await fetchLibraryBooks(studentId, filterType);
+
+      const { saveLibraryBooks } = await import("./database");
+      await saveLibraryBooks(studentId, filterType, books);
+
+      return {
+        books,
+        fromCache: false,
+        isOnline: true,
+      };
+    } catch (error) {
+      console.error("Error fetching library books:", error);
+
+      if (cachedBooks) {
+        console.log("API failed, using cached library books");
+        return {
+          books: cachedBooks,
+          fromCache: true,
+          isOnline: true,
+        };
+      }
+
+      throw error;
+    }
+  } else {
+    console.log("Offline mode: Using cached library books");
+
+    if (!cachedBooks) {
+      throw new Error("No cached library books available");
+    }
+
+    return {
+      books: cachedBooks,
+      fromCache: true,
+      isOnline: false,
+    };
+  }
 }
