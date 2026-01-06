@@ -85,6 +85,13 @@
         "projectId": "61d36270-f994-42ad-9a57-8e408be456a4"
       }
     },
-    "owner": "sandipansingh"
+    "owner": "sandipansingh",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "enabled": false,
+      "url": "https://u.expo.dev/61d36270-f994-42ad-9a57-8e408be456a4"
+    }
   }
 }
