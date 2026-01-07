@@ -1,6 +1,8 @@
 import AlertProvider from "@/src/components/AlertProvider";
+import { UpdateModal } from "@/src/components/UpdateModal";
 import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
+import { dismissUpdate, useUpdateCheck } from "@/src/hooks/useUpdateCheck";
 import { initDatabase } from "@/src/services/database";
 import { useAlertStore } from "@/src/store/alertStore";
 import { useAuthStore } from "@/src/store/authStore";
@@ -9,7 +11,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
@@ -46,6 +48,9 @@ function RootLayoutNav() {
   const { isOnline } = useNetworkStatus();
   const wasOfflineRef = useRef(false);
   const { showAlert } = useAlertStore();
+  const { updateAvailable, updateType, appInfo, currentVersion } =
+    useUpdateCheck();
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -108,6 +113,19 @@ function RootLayoutNav() {
     wasOfflineRef.current = !isOnline;
   }, [isOnline]);
 
+  useEffect(() => {
+    if (updateAvailable && appInfo && isReady) {
+      setShowUpdateModal(true);
+    }
+  }, [updateAvailable, appInfo, isReady]);
+
+  const handleDismissUpdate = async () => {
+    if (appInfo && updateType !== "major") {
+      await dismissUpdate(appInfo.version);
+      setShowUpdateModal(false);
+    }
+  };
+
   const inAuthGroup = segments[0] === "(tabs)";
 
   useEffect(() => {
@@ -153,6 +171,15 @@ function RootLayoutNav() {
         </Stack>
       )}
       <AlertProvider />
+      {appInfo && Platform.OS === "android" && (
+        <UpdateModal
+          visible={showUpdateModal}
+          updateType={updateType}
+          currentVersion={currentVersion}
+          appInfo={appInfo}
+          onDismiss={handleDismissUpdate}
+        />
+      )}
     </ThemeProvider>
   );
 }
