@@ -35,12 +35,22 @@ import {
 import {
   deleteAllUserData,
   getAttendanceData,
+  getAttendancePercentage,
+  getFeeData,
+  getLibraryBooks,
   getLoginData,
   getUserData,
+  getVirtualLabCourses,
+  getVirtualLabExperiments,
   hasLoginData,
   saveAttendanceData,
+  saveAttendancePercentage,
+  saveFeeData,
+  saveLibraryBooks,
   saveLoginData,
   saveUserData,
+  saveVirtualLabCourses,
+  saveVirtualLabExperiments,
 } from "./database";
 import { hasInternetConnection } from "./network";
 
@@ -344,7 +354,6 @@ export async function syncAttendancePercentage(
 }> {
   const isOnline = await hasInternetConnection();
 
-  const { getAttendancePercentage } = await import("./database");
   const cachedData = await getAttendancePercentage(studentId);
 
   if (isOnline) {
@@ -356,6 +365,12 @@ export async function syncAttendancePercentage(
         collegeId,
         branchId
       );
+
+      await saveAttendancePercentage(studentId, {
+        studentId,
+        ...data,
+        lastUpdated: new Date().toISOString(),
+      });
 
       return { data, isOnline: true, fromCache: false };
     } catch (error) {
@@ -389,7 +404,6 @@ export async function syncFeeData(
 }> {
   const isOnline = await hasInternetConnection();
 
-  const { getFeeData } = await import("./database");
   const cachedData = await getFeeData(studentId);
 
   if (isOnline) {
@@ -398,7 +412,6 @@ export async function syncFeeData(
 
       const feeData = await fetchStudentFeeLedger(studentId, branchId);
 
-      const { saveFeeData } = await import("./database");
       await saveFeeData(studentId, feeData);
 
       return {
@@ -481,7 +494,6 @@ export async function syncVirtualLabCourses(): Promise<{
 }> {
   const isOnline = await hasInternetConnection();
 
-  const { getVirtualLabCourses } = await import("./database");
   const cachedCourses = await getVirtualLabCourses();
 
   if (isOnline) {
@@ -490,7 +502,6 @@ export async function syncVirtualLabCourses(): Promise<{
 
       const courses = await fetchVirtualLabCourses();
 
-      const { saveVirtualLabCourses } = await import("./database");
       await saveVirtualLabCourses(courses);
 
       return {
@@ -538,7 +549,6 @@ export async function syncVirtualLabExperiments(
 }> {
   const isOnline = await hasInternetConnection();
 
-  const { getVirtualLabExperiments } = await import("./database");
   const cachedExperiments = await getVirtualLabExperiments(
     course,
     stream,
@@ -557,7 +567,6 @@ export async function syncVirtualLabExperiments(
         semester
       );
 
-      const { saveVirtualLabExperiments } = await import("./database");
       await saveVirtualLabExperiments(course, stream, semester, experiments);
 
       return {
@@ -606,7 +615,6 @@ export async function syncLibraryBooks(
 }> {
   const isOnline = await hasInternetConnection();
 
-  const { getLibraryBooks } = await import("./database");
   const cachedBooks = await getLibraryBooks(studentId, filterType);
 
   if (isOnline) {
@@ -617,7 +625,6 @@ export async function syncLibraryBooks(
 
       const books = await fetchLibraryBooks(studentId, filterType);
 
-      const { saveLibraryBooks } = await import("./database");
       await saveLibraryBooks(studentId, filterType, books);
 
       return {

@@ -1,10 +1,10 @@
-import * as SecureStore from "../utils/secureStore";
 import { getCurrentDateComponents } from "../utils/dateHelpers";
 import {
   DEMO_ATTENDANCE_DATA,
   getDemoDateAttendance,
   getDemoSubjectAttendance,
 } from "../utils/demoData";
+import * as SecureStore from "../utils/secureStore";
 import apiClient, { StandardApiResponse } from "./client";
 
 export interface AttendanceData {
@@ -96,13 +96,6 @@ export async function fetchAttendancePercentage(
     if (!parsedData || parsedData.length === 0) {
       throw new Error("No attendance data found");
     }
-
-    const { saveAttendancePercentage } = await import("../services/database");
-    await saveAttendancePercentage(studentId, {
-      studentId,
-      ...parsedData[0],
-      lastUpdated: new Date().toISOString(),
-    });
 
     return parsedData[0];
   } catch (error: any) {
