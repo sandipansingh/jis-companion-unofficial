@@ -4,7 +4,7 @@ import {
   SubjectWiseAttendance,
 } from "@/src/api/academics";
 import { LoginResponse, UserProfileData } from "@/src/api/auth";
-import { LibraryBook } from "@/src/api/library";
+import { LibraryBook, LibrarySearchResult } from "@/src/api/library";
 
 /**
  * Demo data helpers used when the app is running in "demo account" mode.
@@ -349,6 +349,120 @@ export function getDemoLibraryBooks(): LibraryBook[] {
       issue_date: "14/10/2025",
       return_date: "31/12/2025",
       return_id: 0,
+    },
+  ];
+}
+
+/**
+ * Create mock library search results for demo mode.
+ *
+ * @returns {LibrarySearchResult[]} Library search result records.
+ */
+export function getDemoLibrarySearchResults(): LibrarySearchResult[] {
+  return [
+    {
+      sl_no: 22,
+      acc_title: "Head first Java",
+      acc_edition: "",
+      acc_author: "Sierra, Kathy",
+      acc_subject: "",
+      tot_copy: 1,
+      tot_shelf: 1,
+      tot_issued: 0,
+      tot_ref_book: 1,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 26,
+      acc_title: "Java 2: the complete reference",
+      acc_edition: "",
+      acc_author: "Schildt, Herbert",
+      acc_subject: "",
+      tot_copy: 116,
+      tot_shelf: 87,
+      tot_issued: 29,
+      tot_ref_book: 0,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 33,
+      acc_title: "Java examples in a nutshell",
+      acc_edition: "3rd ed",
+      acc_author: "Flanagan, David",
+      acc_subject: "",
+      tot_copy: 3,
+      tot_shelf: 3,
+      tot_issued: 0,
+      tot_ref_book: 2,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 39,
+      acc_title: "Java script: the definitive guide",
+      acc_edition: "",
+      acc_author: "Flanagan, David",
+      acc_subject: "",
+      tot_copy: 10,
+      tot_shelf: 10,
+      tot_issued: 0,
+      tot_ref_book: 2,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 45,
+      acc_title: "Java threads",
+      acc_edition: "2nd ed",
+      acc_author: "Oaks, Scott",
+      acc_subject: "",
+      tot_copy: 10,
+      tot_shelf: 10,
+      tot_issued: 0,
+      tot_ref_book: 2,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 54,
+      acc_title: "Murach's JavaScript and dom scripting",
+      acc_edition: "",
+      acc_author: "Harris, Ray",
+      acc_subject: "",
+      tot_copy: 5,
+      tot_shelf: 4,
+      tot_issued: 1,
+      tot_ref_book: 2,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 64,
+      acc_title: "Operating system concepts with JAVA",
+      acc_edition: "6th",
+      acc_author: "Silberschatz, Abraham",
+      acc_subject: "",
+      tot_copy: 110,
+      tot_shelf: 104,
+      tot_issued: 6,
+      tot_ref_book: 0,
+      m_sel: "Sel",
+      m_book: "Book",
+    },
+    {
+      sl_no: 77,
+      acc_title: "Sams Teach Yourself HTML, CSS, and JavaScript All in One",
+      acc_edition: "3rd ed",
+      acc_author: "Jennifer Kyrnin, Julie Meloni",
+      acc_subject: "",
+      tot_copy: 20,
+      tot_shelf: 20,
+      tot_issued: 0,
+      tot_ref_book: 0,
+      m_sel: "Sel",
+      m_book: "Book",
     },
   ];
 }

@@ -47,8 +47,8 @@ const MENU_ITEMS = [
   //   color: "#8B5CF6",
   // },
   {
-    id: "library_status",
-    title: "Library Status",
+    id: "library",
+    title: "Library",
     icon: Library,
     color: "#22C55E",
   },
@@ -228,7 +228,7 @@ export default function HomeScreen() {
   const handleMenuItemPress = (itemId: string) => {
     if (itemId === "virtual_labs") {
       router.push("/virtual-labs");
-    } else if (itemId === "library_status") {
+    } else if (itemId === "library") {
       router.push("/library");
     } else {
       showAlert({
