@@ -26,12 +26,7 @@ import {
   VirtualLabCourse,
   VirtualLabExperiment,
 } from "../api/virtualLabs";
-import {
-  getCurrentMonthToDate,
-  getMonthEndDate,
-  getMonthStartDate,
-  isCurrentMonth,
-} from "../utils/dateHelpers";
+import { getMonthEndDate, getMonthStartDate } from "../utils/dateHelpers";
 import {
   deleteAllUserData,
   getAttendanceData,
@@ -278,9 +273,7 @@ export async function syncAttendanceData(
       console.log(`Online mode: Fetching attendance for ${monthKey}`);
 
       const fromDate = getMonthStartDate(year, month);
-      const toDate = isCurrentMonth(year, month)
-        ? getCurrentMonthToDate(year, month)
-        : getMonthEndDate(year, month);
+      const toDate = getMonthEndDate(year, month);
 
       const [subjectWiseData, dateWiseData] = await Promise.all([
         fetchSubjectWiseAttendance(
