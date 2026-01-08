@@ -2,14 +2,14 @@
   "expo": {
     "name": "JIS Companion (Unofficial)",
     "slug": "jis-companion-unofficial",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "jiscompanionunofficial",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "buildNumber": "1000004",
+      "buildNumber": "1001000",
       "supportsTablet": true,
       "bundleIdentifier": "com.sandipansingh.jiscompanionunofficial",
       "infoPlist": {
@@ -25,7 +25,7 @@
       }
     },
     "android": {
-      "versionCode": 1000004,
+      "versionCode": 1001000,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
