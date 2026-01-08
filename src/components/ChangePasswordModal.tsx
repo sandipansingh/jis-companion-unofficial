@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -104,10 +103,7 @@ export default function ChangePasswordModal({
             <View
               style={[styles.modalContent, { backgroundColor: colors.surface }]}
             >
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
-              >
+              <View>
                 {/* Header */}
                 <View style={styles.header}>
                   <Text style={[styles.title, { color: colors.text }]}>
@@ -246,7 +242,7 @@ export default function ChangePasswordModal({
                     Cancel
                   </Text>
                 </TouchableOpacity>
-              </ScrollView>
+              </View>
             </View>
           </TouchableOpacity>
         </KeyboardAvoidingView>
