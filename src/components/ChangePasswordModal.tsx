@@ -87,18 +87,19 @@ export default function ChangePasswordModal({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <TouchableOpacity
-        style={styles.modalOverlay}
-        activeOpacity={1}
-        onPress={handleClose}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardView}
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={handleClose}
         >
           <TouchableOpacity
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
+            style={styles.keyboardView}
           >
             <View
               style={[styles.modalContent, { backgroundColor: colors.surface }]}
@@ -245,8 +246,8 @@ export default function ChangePasswordModal({
               </View>
             </View>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

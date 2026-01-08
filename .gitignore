@@ -45,3 +45,6 @@ yarn-error.*
 
 # build outputs
 /builds
+
+# Work in progress / experimental features
+.wip/
