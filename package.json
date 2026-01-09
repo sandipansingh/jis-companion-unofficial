@@ -8,6 +8,7 @@
     "web": "npx expo start --web",
     "build:android:cloud": "eas build -p android --profile production",
     "build:android:local": "shx mkdir -p builds && eas build -p android --profile production --local && shx mv -f *.aab builds",
+    "submit:android": "node scripts/submit-android.mjs",
     "build:web:cloud": "rimraf dist && expo export -p web && node scripts/generate-sw.mjs",
     "build:web:local": "rimraf dist && expo export -p web && node scripts/generate-sw.mjs && (cd dist && zip -rq $(node -p \"require('../package.json').version\").zip .)",
     "version:patch": "node scripts/bump-version.mjs patch",
