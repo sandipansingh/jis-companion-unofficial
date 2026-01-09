@@ -39,8 +39,11 @@ export default function ProfileScreen() {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const { showAlert } = useAlertStore();
 
-  const handleChangePassword = async (newPassword: string) => {
-    await changePassword(newPassword);
+  const handleChangePassword = async (
+    newPassword: string,
+    currentPassword?: string
+  ) => {
+    await changePassword(newPassword, currentPassword);
     showAlert({ title: "Success", message: "Password changed successfully" });
   };
 

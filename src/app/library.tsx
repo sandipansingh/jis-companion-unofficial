@@ -3,6 +3,7 @@ import {
   LibrarySearchField,
   LibrarySearchResult,
 } from "@/src/api/library";
+import { TextInput } from "@/src/components/TextInput";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import { useAuthStore } from "@/src/store/authStore";
@@ -21,14 +22,13 @@ import {
   Search,
   Sparkles,
 } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -63,9 +63,7 @@ export default function LibraryScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>("my-books");
   const [searchField, setSearchField] =
     useState<LibrarySearchField>("acc_title");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const filterClickRef = useRef(false);
 
   useEffect(() => {
     if (studentId && viewMode === "my-books") {
@@ -464,64 +462,47 @@ export default function LibraryScreen() {
           >
             <View style={styles.searchContent}>
               {/* Search Info Card */}
-              {!isSearchFocused && (
+              <View
+                style={[
+                  styles.searchInfoCard,
+                  { backgroundColor: colors.surface },
+                ]}
+              >
                 <View
                   style={[
-                    styles.searchInfoCard,
-                    { backgroundColor: colors.surface },
+                    styles.searchIconCircle,
+                    { backgroundColor: colors.primary + "20" },
                   ]}
                 >
-                  <View
-                    style={[
-                      styles.searchIconCircle,
-                      { backgroundColor: colors.primary + "20" },
-                    ]}
-                  >
-                    <Search size={32} color={colors.primary} />
-                  </View>
-                  <Text
-                    style={[styles.searchInfoTitle, { color: colors.text }]}
-                  >
-                    Library Search
-                  </Text>
-                  <Text
-                    style={[
-                      styles.searchInfoDescription,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Search for books by title, author, call number, or ISBN and
-                    reserve them instantly.
-                  </Text>
+                  <Search size={32} color={colors.primary} />
                 </View>
-              )}
+                <Text style={[styles.searchInfoTitle, { color: colors.text }]}>
+                  Library Search
+                </Text>
+                <Text
+                  style={[
+                    styles.searchInfoDescription,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Search for books by title, author, call number, or ISBN and
+                  reserve them instantly.
+                </Text>
+              </View>
 
               {/* Search Input Section */}
               <View style={styles.searchInputSection}>
-                <View
-                  style={[
-                    styles.searchInputWrapper,
-                    { backgroundColor: colors.surface },
-                  ]}
-                >
-                  <Search size={20} color={colors.textMuted} />
-                  <TextInput
-                    placeholder="Search for books..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    onSubmitEditing={handleSearch}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        if (!filterClickRef.current) {
-                          setIsSearchFocused(false);
-                        }
-                        filterClickRef.current = false;
-                      }, 100);
-                    }}
-                    returnKeyType="search"
-                    style={styles.searchInput}
-                  />
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <View style={{ flex: 1 }}>
+                    <TextInput
+                      icon={Search}
+                      placeholder="Search for books..."
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                      onSubmitEditing={handleSearch}
+                      returnKeyType="search"
+                    />
+                  </View>
                   <TouchableOpacity
                     style={[
                       styles.filterIconButton,
@@ -885,29 +866,12 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     zIndex: 100,
   },
-  searchInputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 4,
-    gap: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    paddingVertical: 10,
-    color: "#000",
-    backgroundColor: "transparent",
-  },
   filterIconButton: {
-    padding: 8,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 10,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   filterDropdown: {
     position: "absolute",

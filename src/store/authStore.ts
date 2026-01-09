@@ -26,7 +26,10 @@ interface AuthState {
   login: (studentId: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   loadUserProfile: () => Promise<void>;
-  changePassword: (newPassword: string) => Promise<void>;
+  changePassword: (
+    newPassword: string,
+    currentPassword?: string
+  ) => Promise<void>;
   syncDataInBackground: () => Promise<void>;
 }
 
@@ -225,19 +228,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  changePassword: async (newPassword: string) => {
+  changePassword: async (newPassword: string, currentPassword?: string) => {
     try {
       const { studentId } = get();
       if (!studentId) {
         throw new Error("User not logged in");
       }
 
-      const credentials = await getStoredCredentials();
-      if (!credentials) {
-        throw new Error("Unable to retrieve current credentials");
+      let oldPassword = currentPassword;
+
+      if (!oldPassword) {
+        const credentials = await getStoredCredentials();
+        if (!credentials) {
+          throw new Error(
+            "Current password not provided and unable to retrieve stored credentials."
+          );
+        }
+        oldPassword = credentials.password;
       }
 
-      await apiChangePassword(studentId, credentials.password, newPassword);
+      await apiChangePassword(studentId, oldPassword, newPassword);
     } catch (error) {
       console.error("Error changing password:", error);
       throw error;

@@ -1,6 +1,7 @@
+import { TextInput } from "@/src/components/TextInput";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
-import { Eye, EyeOff, Lock } from "lucide-react-native";
+import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -9,7 +10,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,7 +17,7 @@ import {
 interface ChangePasswordModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (newPassword: string) => Promise<void>;
+  onSubmit: (newPassword: string, currentPassword?: string) => Promise<void>;
 }
 
 export default function ChangePasswordModal({
@@ -26,18 +26,28 @@ export default function ChangePasswordModal({
   onSubmit,
 }: ChangePasswordModalProps) {
   const { colors } = useTheme();
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{
+    currentPassword?: string;
     newPassword?: string;
     confirmPassword?: string;
   }>({});
   const { showAlert } = useAlertStore();
+  const isWeb = Platform.OS === "web";
 
   const validatePasswords = (): boolean => {
-    const newErrors: { newPassword?: string; confirmPassword?: string } = {};
+    const newErrors: {
+      currentPassword?: string;
+      newPassword?: string;
+      confirmPassword?: string;
+    } = {};
+
+    if (isWeb && !currentPassword.trim()) {
+      newErrors.currentPassword = "Current password is required";
+    }
 
     if (newPassword.length < 8) {
       newErrors.newPassword = "Password must be at least 8 characters";
@@ -58,7 +68,8 @@ export default function ChangePasswordModal({
 
     setIsLoading(true);
     try {
-      await onSubmit(newPassword);
+      await onSubmit(newPassword, isWeb ? currentPassword : undefined);
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
       setErrors({});
@@ -74,6 +85,7 @@ export default function ChangePasswordModal({
   };
 
   const handleClose = () => {
+    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
     setErrors({});
@@ -112,41 +124,53 @@ export default function ChangePasswordModal({
                   </Text>
                 </View>
 
+                {/* Current Password Input - Web Only */}
+                {isWeb && (
+                  <View style={styles.inputContainer}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
+                      Current Password
+                    </Text>
+                    <TextInput
+                      icon={Lock}
+                      placeholder="Enter current password"
+                      value={currentPassword}
+                      onChangeText={(text) => {
+                        setCurrentPassword(text);
+                        setErrors({ ...errors, currentPassword: undefined });
+                      }}
+                      isPassword
+                      autoCapitalize="none"
+                      editable={!isLoading}
+                      bgColor={colors.background}
+                    />
+                    {errors.currentPassword && (
+                      <Text style={[styles.errorText, { color: colors.error }]}>
+                        {errors.currentPassword}
+                      </Text>
+                    )}
+                  </View>
+                )}
+
                 {/* New Password Input */}
                 <View style={styles.inputContainer}>
                   <Text style={[styles.label, { color: colors.textSecondary }]}>
                     New Password
                   </Text>
-                  <View
-                    style={[
-                      styles.passwordInputWrapper,
-                      {
-                        backgroundColor: colors.background,
-                        borderColor: errors.newPassword
-                          ? colors.error
-                          : colors.border,
-                      },
-                    ]}
-                  >
-                    <Lock
-                      size={20}
-                      color={colors.textSecondary}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={[styles.passwordInput, { color: colors.text }]}
-                      value={newPassword}
-                      onChangeText={(text) => {
-                        setNewPassword(text);
-                        setErrors({ ...errors, newPassword: undefined });
-                      }}
-                      placeholder="Enter new password"
-                      placeholderTextColor={colors.textSecondary}
-                      secureTextEntry={true}
-                      autoCapitalize="none"
-                      editable={!isLoading}
-                    />
-                  </View>
+                  <TextInput
+                    icon={Lock}
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChangeText={(text) => {
+                      setNewPassword(text);
+                      setErrors({ ...errors, newPassword: undefined });
+                    }}
+                    isPassword={false}
+                    autoCapitalize="none"
+                    editable={!isLoading}
+                    bgColor={colors.background}
+                  />
                   {errors.newPassword && (
                     <Text style={[styles.errorText, { color: colors.error }]}>
                       {errors.newPassword}
@@ -159,48 +183,19 @@ export default function ChangePasswordModal({
                   <Text style={[styles.label, { color: colors.textSecondary }]}>
                     Confirm New Password
                   </Text>
-                  <View
-                    style={[
-                      styles.passwordInputWrapper,
-                      {
-                        backgroundColor: colors.background,
-                        borderColor: errors.confirmPassword
-                          ? colors.error
-                          : colors.border,
-                      },
-                    ]}
-                  >
-                    <Lock
-                      size={20}
-                      color={colors.textSecondary}
-                      style={styles.inputIcon}
-                    />
-                    <TextInput
-                      style={[styles.passwordInput, { color: colors.text }]}
-                      value={confirmPassword}
-                      onChangeText={(text) => {
-                        setConfirmPassword(text);
-                        setErrors({ ...errors, confirmPassword: undefined });
-                      }}
-                      placeholder="Confirm new password"
-                      placeholderTextColor={colors.textSecondary}
-                      secureTextEntry={!showConfirmPassword}
-                      autoCapitalize="none"
-                      editable={!isLoading}
-                    />
-                    <TouchableOpacity
-                      onPress={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      style={styles.eyeIcon}
-                    >
-                      {showConfirmPassword ? (
-                        <Eye size={20} color={colors.textSecondary} />
-                      ) : (
-                        <EyeOff size={20} color={colors.textSecondary} />
-                      )}
-                    </TouchableOpacity>
-                  </View>
+                  <TextInput
+                    icon={Lock}
+                    placeholder="Confirm new password"
+                    value={confirmPassword}
+                    onChangeText={(text) => {
+                      setConfirmPassword(text);
+                      setErrors({ ...errors, confirmPassword: undefined });
+                    }}
+                    isPassword
+                    autoCapitalize="none"
+                    editable={!isLoading}
+                    bgColor={colors.background}
+                  />
                   {errors.confirmPassword && (
                     <Text style={[styles.errorText, { color: colors.error }]}>
                       {errors.confirmPassword}
@@ -295,25 +290,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 8,
-  },
-  passwordInputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 48,
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  passwordInput: {
-    flex: 1,
-    fontSize: 16,
-    height: "100%",
-  },
-  eyeIcon: {
-    padding: 4,
   },
   errorText: {
     fontSize: 12,

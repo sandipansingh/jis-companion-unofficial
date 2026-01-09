@@ -13,11 +13,13 @@ import {
 interface CustomTextInputProps extends TextInputProps {
   icon?: LucideIcon;
   isPassword?: boolean;
+  bgColor?: string;
 }
 
 export function TextInput({
   icon,
   isPassword,
+  bgColor,
   style,
   ...props
 }: CustomTextInputProps) {
@@ -56,7 +58,7 @@ export function TextInput({
       style={[
         styles.container,
         {
-          backgroundColor: colors.inputBackground,
+          backgroundColor: bgColor || colors.inputBackground,
           borderColor: animatedBorderColor,
         },
       ]}
