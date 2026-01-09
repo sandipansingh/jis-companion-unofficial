@@ -13,12 +13,14 @@ import {
 interface CustomTextInputProps extends TextInputProps {
   icon?: LucideIcon;
   isPassword?: boolean;
+  showPasswordToggle?: boolean;
   bgColor?: string;
 }
 
 export function TextInput({
   icon,
   isPassword,
+  showPasswordToggle = true,
   bgColor,
   style,
   ...props
@@ -83,7 +85,7 @@ export function TextInput({
         onBlur={handleBlur}
         {...props}
       />
-      {isPassword && (
+      {isPassword && showPasswordToggle && (
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
           style={styles.eyeButton}

@@ -166,7 +166,8 @@ export default function ChangePasswordModal({
                       setNewPassword(text);
                       setErrors({ ...errors, newPassword: undefined });
                     }}
-                    isPassword={false}
+                    isPassword
+                    showPasswordToggle={false}
                     autoCapitalize="none"
                     editable={!isLoading}
                     bgColor={colors.background}
