@@ -64,6 +64,7 @@ export default function LibraryScreen() {
   const [searchField, setSearchField] =
     useState<LibrarySearchField>("acc_title");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     if (studentId && viewMode === "my-books") {
@@ -102,8 +103,10 @@ export default function LibraryScreen() {
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       clearSearchResults();
+      setHasSearched(false);
       return;
     }
+    setHasSearched(true);
     searchBooks(searchField, searchQuery);
   };
 
@@ -608,7 +611,7 @@ export default function LibraryScreen() {
                     </View>
                   ))}
                 </>
-              ) : searchQuery ? (
+              ) : hasSearched ? (
                 <View style={styles.noResultsContainer}>
                   <View
                     style={[
