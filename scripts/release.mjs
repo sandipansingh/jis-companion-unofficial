@@ -68,6 +68,9 @@ try {
     console.log("ℹ️ No staged changes to commit.");
   }
 
+  run("git push origin HEAD");
+  console.log(`✅ Pushed commit for v${version}`);
+
   if (!tagExists(tag)) {
     run(`git tag ${tag}`);
     run(`git push origin ${tag}`);
@@ -76,7 +79,6 @@ try {
     console.log(`⚠️ Tag ${tag} already exists — skipping tag creation.`);
   }
 
-  run("git push origin HEAD");
   console.log(`\n✅ Released v${version} successfully`);
 } catch (err) {
   console.error("\n❌ Release failed:", err.message || err);
