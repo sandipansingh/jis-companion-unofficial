@@ -1,11 +1,10 @@
-import AlertProvider from "@/src/components/AlertProvider";
-import { UpdateModal } from "@/src/components/UpdateModal";
+import { AlertProvider, UpdateModal } from "@/src/components";
 import { ThemeProvider } from "@/src/contexts/ThemeContext";
+import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 import { dismissUpdate, useUpdateCheck } from "@/src/hooks/useUpdateCheck";
 import { initDatabase } from "@/src/services/database";
 import { useAlertStore } from "@/src/store/alertStore";
-import { useAuthStore } from "@/src/store/authStore";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -32,10 +31,10 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <ThemeProvider>
       <StatusBar style="auto" />
       <RootLayoutNav />
-    </>
+    </ThemeProvider>
   );
 }
 
@@ -147,18 +146,16 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider>
+    <>
       {isLoggedIn ? (
         <Stack
           screenOptions={{
             animation: "slide_from_right",
             title: "JIS Companion (Unofficial)",
+            headerShown: false,
           }}
         >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="class-details" options={{ headerShown: false }} />
-          <Stack.Screen name="virtual-labs" options={{ headerShown: false }} />
-          <Stack.Screen name="library" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" />
         </Stack>
       ) : (
         <Stack
@@ -180,6 +177,6 @@ function RootLayoutNav() {
           onDismiss={handleDismissUpdate}
         />
       )}
-    </ThemeProvider>
+    </>
   );
 }

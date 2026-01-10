@@ -1,4 +1,3 @@
-import { Text } from "@/src/components/Themed";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import React from "react";
 import {
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
+import { Text } from "./Themed";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;

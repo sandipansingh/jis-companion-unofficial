@@ -2,9 +2,12 @@ import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/api/academics";
-import { LoginResponse, UserProfileData } from "@/src/api/auth";
-import { LibraryBook, LibrarySearchResult } from "@/src/api/library";
+} from "@/src/features/academics/api/academics";
+import { LoginResponse, UserProfileData } from "@/src/features/auth/api/auth";
+import {
+  LibraryBook,
+  LibrarySearchResult,
+} from "@/src/features/library/api/library";
 
 /**
  * Demo data helpers used when the app is running in "demo account" mode.

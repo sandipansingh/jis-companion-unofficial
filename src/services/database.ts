@@ -1,13 +1,16 @@
-import * as SQLite from "expo-sqlite";
 import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "../api/academics";
-import { LoginResponse, UserProfileData } from "../api/auth";
-import { FeeLedgerEntry } from "../api/fees";
-import { LibraryBook } from "../api/library";
-import { VirtualLabCourse, VirtualLabExperiment } from "../api/virtualLabs";
+} from "@/src/features/academics/api/academics";
+import { LoginResponse, UserProfileData } from "@/src/features/auth/api/auth";
+import { FeeLedgerEntry } from "@/src/features/fees/api/fees";
+import { LibraryBook } from "@/src/features/library/api/library";
+import {
+  VirtualLabCourse,
+  VirtualLabExperiment,
+} from "@/src/features/virtual-labs/api/virtualLabs";
+import * as SQLite from "expo-sqlite";
 
 export interface AttendancePercentageData extends AttendanceData {
   studentId: string;

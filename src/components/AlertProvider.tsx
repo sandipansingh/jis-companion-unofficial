@@ -3,7 +3,7 @@ import { useAlertStore } from "@/src/store/alertStore";
 import React from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function AlertProvider() {
+export function AlertProvider() {
   const { colors } = useTheme();
   const {
     visible,

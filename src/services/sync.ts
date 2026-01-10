@@ -5,7 +5,7 @@ import {
   fetchDateWiseAttendance,
   fetchSubjectWiseAttendance,
   SubjectWiseAttendance,
-} from "../api/academics";
+} from "@/src/features/academics/api/academics";
 import {
   login as apiLogin,
   clearUserData as clearSecureStoreData,
@@ -13,19 +13,22 @@ import {
   getStoredCredentials,
   LoginResponse,
   UserProfileData,
-} from "../api/auth";
-import { FeeLedgerEntry, fetchStudentFeeLedger } from "../api/fees";
+} from "@/src/features/auth/api/auth";
+import {
+  FeeLedgerEntry,
+  fetchStudentFeeLedger,
+} from "@/src/features/fees/api/fees";
 import {
   fetchLibraryBooks,
   LibraryBook,
   LibraryFilterType,
-} from "../api/library";
+} from "@/src/features/library/api/library";
 import {
   fetchVirtualLabCourses,
   fetchVirtualLabExperiments,
   VirtualLabCourse,
   VirtualLabExperiment,
-} from "../api/virtualLabs";
+} from "@/src/features/virtual-labs/api/virtualLabs";
 import { getMonthEndDate, getMonthStartDate } from "../utils/dateHelpers";
 import {
   deleteAllUserData,

@@ -1,0 +1,1 @@
+export { useAcademicsData } from "./useAcademicsData";

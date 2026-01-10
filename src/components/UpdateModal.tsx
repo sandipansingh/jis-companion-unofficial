@@ -1,12 +1,12 @@
 import { AppInfo } from "@/src/api/appInfo";
-import { Button } from "@/src/components/Button";
-import { Text } from "@/src/components/Themed";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import { UpdateType } from "@/src/utils/versionHelpers";
 import { ArrowRight, Bug, Rocket, Sparkles } from "lucide-react-native";
 import React from "react";
 import { Linking, Modal, ScrollView, StyleSheet, View } from "react-native";
+import { Button } from "./Button";
+import { Text } from "./Themed";
 
 interface UpdateModalProps {
   visible: boolean;

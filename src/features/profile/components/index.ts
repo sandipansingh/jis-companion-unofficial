@@ -1,0 +1,11 @@
+export { AcademicCard } from "./AcademicCard";
+export { AcademicTabContent } from "./AcademicTabContent";
+export { BankTabContent } from "./BankTabContent";
+export { default as ChangePasswordModal } from "./ChangePasswordModal";
+export { GuardianTabContent } from "./GuardianTabContent";
+export { PersonalTabContent } from "./PersonalTabContent";
+export { ProfileInfo } from "./ProfileInfo";
+export { ProfileTabs } from "./ProfileTabs";
+export { RegistrationRollInfo } from "./RegistrationRollInfo";
+export { SemesterRow } from "./SemesterRow";
+export { SubjectRow } from "./SubjectRow";

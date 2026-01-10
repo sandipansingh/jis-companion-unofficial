@@ -24,7 +24,7 @@ interface PdfPreviewModalProps {
   onClose: () => void;
 }
 
-export default function PdfPreviewModal({
+export function PdfPreviewModal({
   visible,
   url,
   filename,
