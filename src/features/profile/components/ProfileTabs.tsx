@@ -13,7 +13,12 @@ export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.tabContainer, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.tabContainer,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <TabButton
         label="PERSONAL"
         isActive={activeTab === "personal"}
@@ -43,11 +48,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 4,
     borderRadius: 12,
-    marginBottom: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
     elevation: 1,
   },
 });

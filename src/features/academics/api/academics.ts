@@ -1,4 +1,5 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
+import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import { getCurrentDateComponents } from "@/src/utils/dateHelpers";
 import {
   DEMO_ATTENDANCE_DATA,
@@ -90,24 +91,18 @@ export async function fetchAttendancePercentage(
       throw new Error(response.data.message || "Failed to fetch attendance");
     }
 
-    const dataString = response.data.data.data;
-    const parsedData = JSON.parse(dataString) as AttendanceData[];
+    const parsedData = parseApiResponse<AttendanceData[]>(
+      response.data.data.data,
+      []
+    );
 
     if (!parsedData || parsedData.length === 0) {
       throw new Error("No attendance data found");
     }
 
     return parsedData[0];
-  } catch (error: any) {
-    console.error("Fetch attendance error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Failed to fetch attendance");
-    }
+  } catch (error) {
+    handleApiError(error, "Fetch attendance percentage");
   }
 }
 
@@ -159,18 +154,9 @@ export async function fetchDateWiseAttendance(
       return [];
     }
 
-    const parsedData = JSON.parse(dataString) as DateWiseAttendance[];
-    return parsedData;
-  } catch (error: any) {
-    console.error("Fetch date-wise attendance error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Failed to fetch date-wise attendance");
-    }
+    return parseApiResponse<DateWiseAttendance[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch date-wise attendance");
   }
 }
 
@@ -228,19 +214,8 @@ export async function fetchSubjectWiseAttendance(
       return [];
     }
 
-    const parsedData = JSON.parse(dataString) as SubjectWiseAttendance[];
-    return parsedData;
-  } catch (error: any) {
-    console.error("Fetch subject-wise attendance error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(
-        error.message || "Failed to fetch subject-wise attendance"
-      );
-    }
+    return parseApiResponse<SubjectWiseAttendance[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch subject-wise attendance");
   }
 }

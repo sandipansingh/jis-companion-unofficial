@@ -1,7 +1,8 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, Text, View } from "react-native";
+import { Button } from "./Button";
 
 export function AlertProvider() {
   const { colors } = useTheme();
@@ -35,7 +36,11 @@ export function AlertProvider() {
         <View
           style={[
             styles.modalContent,
-            { backgroundColor: colors.surface, borderColor: colors.border },
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              shadowColor: colors.shadow,
+            },
           ]}
         >
           <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
@@ -45,35 +50,46 @@ export function AlertProvider() {
 
           <View style={styles.buttonContainer}>
             {showCancel && (
-              <TouchableOpacity
-                style={[styles.button, styles.cancelButton]}
-                onPress={() => {
-                  onCancel?.();
-                  hideAlert();
-                }}
-              >
-                <Text style={[styles.buttonText, { color: colors.text }]}>
-                  {cancelText}
-                </Text>
-              </TouchableOpacity>
+              <View style={{ flex: 1 }}>
+                <Button
+                  title={cancelText || "Cancel"}
+                  variant="secondary"
+                  onPress={() => {
+                    onCancel?.();
+                    hideAlert();
+                  }}
+                  style={{
+                    height: 44,
+                    borderRadius: 8,
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: colors.border,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                    color: colors.text,
+                  }}
+                />
+              </View>
             )}
 
-            <TouchableOpacity
-              style={[
-                styles.button,
-                isDestructive
-                  ? { backgroundColor: colors.error }
-                  : { backgroundColor: colors.primary },
-              ]}
-              onPress={() => {
-                onConfirm?.();
-                hideAlert();
-              }}
-            >
-              <Text style={[styles.buttonText, { color: "#fff" }]}>
-                {confirmText}
-              </Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <Button
+                title={confirmText || "OK"}
+                variant={isDestructive ? "danger" : "primary"}
+                onPress={() => {
+                  onConfirm?.();
+                  hideAlert();
+                }}
+                style={{
+                  height: 44,
+                  borderRadius: 8,
+                }}
+                textStyle={{
+                  fontSize: 14,
+                }}
+              />
+            </View>
           </View>
         </View>
       </View>
@@ -95,7 +111,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
@@ -116,21 +131,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     gap: 12,
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelButton: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: "600",
   },
 });

@@ -6,9 +6,11 @@ import {
   DatePickerModal,
 } from "@/src/features/academics/components";
 import { useAcademicsData } from "@/src/features/academics/hooks";
+import { useAttendanceStore } from "@/src/features/academics/store/attendanceStore";
+import { createClassId } from "@/src/features/academics/utils/classId";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
 import { commonStyles } from "@/src/styles/commonStyles";
-import { getWeekDates, isClassInFuture } from "@/src/utils/dateHelpers";
+import { getWeekDates } from "@/src/utils/dateHelpers";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
@@ -17,6 +19,7 @@ export default function Academics() {
   const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
   const router = useRouter();
+  const { setSelectedClass } = useAttendanceStore();
   const {
     currentWeekStart,
     selectedDate,
@@ -63,32 +66,15 @@ export default function Academics() {
   const isFallbackData = (routine[0] as any)?._isFallback;
 
   const handleClassPress = (classItem: any) => {
-    const hasActualData =
-      !isClassInFuture(classItem.date1, classItem.Period_name) &&
-      !(classItem as any)._isFallback;
+    setSelectedClass(classItem);
 
-    const statValue = hasActualData
-      ? classItem.stat || (classItem.present1 === 1 ? "Present" : "Absent")
-      : undefined;
+    const classId = createClassId(
+      classItem.date1,
+      classItem.emp_code,
+      classItem.Period_name
+    );
 
-    router.push({
-      pathname: "/academics/class-details",
-      params: {
-        date1: classItem.date1,
-        subject_name: classItem.subject_name,
-        faculty: classItem.faculty,
-        emp_code: classItem.emp_code,
-        Period_name: classItem.Period_name,
-        ...(statValue && { stat: statValue }),
-        ...(hasActualData && {
-          upload1: classItem.upload1 || "",
-          upload2: classItem.upload2 || "",
-          upload3: classItem.upload3 || "",
-          upload4: classItem.upload4 || "",
-          upload5: classItem.upload5 || "",
-        }),
-      },
-    });
+    router.push(`/academics/class/${classId}`);
   };
 
   return (

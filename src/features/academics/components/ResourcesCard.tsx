@@ -22,7 +22,12 @@ export function ResourcesCard({
   if (resources.length === 0) return null;
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <View style={styles.header}>
         <Text style={[styles.label, { color: colors.textSecondary }]}>
           Resources
@@ -32,11 +37,11 @@ export function ResourcesCard({
         {resources.map((resource, index) => (
           <TouchableOpacity
             key={index}
-            style={styles.item}
+            style={[styles.item, { backgroundColor: colors.gray100 }]}
             onPress={() => onResourcePress(resource.url)}
           >
-            <View style={styles.icon}>
-              <FileText size={20} color="#EF4444" />
+            <View style={[styles.icon, { backgroundColor: colors.errorLight }]}>
+              <FileText size={20} color={colors.error} />
             </View>
             <Text
               style={[styles.filename, { color: colors.text }]}
@@ -56,7 +61,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -82,13 +86,11 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 16,
     borderRadius: 12,
-    backgroundColor: "#F3F4F6",
   },
   icon: {
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: "#FEE2E2",
     justifyContent: "center",
     alignItems: "center",
   },

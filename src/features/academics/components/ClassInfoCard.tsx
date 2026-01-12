@@ -24,7 +24,12 @@ export function ClassInfoCard({
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       {/* Badge Row */}
       <View style={styles.badgeRow}>
         <TimeBadge timeRange={timeRange} />
@@ -38,7 +43,7 @@ export function ClassInfoCard({
 
       {/* Location */}
       <View style={styles.locationRow}>
-        <MapPin size={16} color="#6B7280" />
+        <MapPin size={16} color={colors.gray500} />
         <Text style={[styles.locationText, { color: colors.textSecondary }]}>
           {location}
         </Text>
@@ -55,7 +60,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

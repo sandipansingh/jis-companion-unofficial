@@ -6,21 +6,48 @@ export function AttendanceLegend() {
   const { colors } = useTheme();
 
   return (
-    <View style={styles.legend}>
+    <View style={[styles.legend, { borderTopColor: colors.gray200 }]}>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, styles.presentCircle]} />
+        <View
+          style={[
+            styles.legendDot,
+            {
+              backgroundColor: colors.success + "20",
+              borderWidth: 2,
+              borderColor: colors.success,
+            },
+          ]}
+        />
         <Text style={[styles.legendText, { color: colors.textSecondary }]}>
           Present
         </Text>
       </View>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, styles.partialCircle]} />
+        <View
+          style={[
+            styles.legendDot,
+            {
+              backgroundColor: colors.warning + "20",
+              borderWidth: 2,
+              borderColor: colors.warning,
+            },
+          ]}
+        />
         <Text style={[styles.legendText, { color: colors.textSecondary }]}>
           Partial
         </Text>
       </View>
       <View style={styles.legendItem}>
-        <View style={[styles.legendDot, styles.absentCircle]} />
+        <View
+          style={[
+            styles.legendDot,
+            {
+              backgroundColor: colors.error + "20",
+              borderWidth: 2,
+              borderColor: colors.error,
+            },
+          ]}
+        />
         <Text style={[styles.legendText, { color: colors.textSecondary }]}>
           Absent
         </Text>
@@ -36,7 +63,6 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
     backgroundColor: "transparent",
   },
   legendItem: {
@@ -49,21 +75,6 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-  },
-  presentCircle: {
-    backgroundColor: "#10B98120",
-    borderWidth: 2,
-    borderColor: "#10B981",
-  },
-  absentCircle: {
-    backgroundColor: "#EF444420",
-    borderWidth: 2,
-    borderColor: "#EF4444",
-  },
-  partialCircle: {
-    backgroundColor: "#F59E0B20",
-    borderWidth: 2,
-    borderColor: "#F59E0B",
   },
   legendText: {
     fontSize: 11,

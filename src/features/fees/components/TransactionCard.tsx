@@ -18,6 +18,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         {
           backgroundColor: colors.surface,
           borderColor: colors.border,
+          shadowColor: colors.shadow,
         },
       ]}
     >
@@ -56,7 +57,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
           <Text style={[styles.amountLabel, { color: colors.textSecondary }]}>
             Billed Amount
           </Text>
-          <Text style={[styles.amountValue, { color: "#F97316" }]}>
+          <Text style={[styles.amountValue, { color: colors.orange }]}>
             ₹
             {transaction.bill_amt > 0
               ? transaction.bill_amt.toLocaleString("en-IN")
@@ -78,7 +79,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
             style={[
               styles.amountValue,
               styles.amountValueRight,
-              { color: "#10B981" },
+              { color: colors.success },
             ]}
           >
             ₹
@@ -100,7 +101,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
           style={[
             styles.balanceValue,
             {
-              color: transaction.bal_amt > 0 ? "#EF4444" : "#10B981",
+              color: transaction.bal_amt > 0 ? colors.error : colors.success,
             },
           ]}
         >
@@ -116,7 +117,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,

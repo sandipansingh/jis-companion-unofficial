@@ -43,7 +43,12 @@ export function NextClassCard({
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.nextClassCard, { backgroundColor: colors.surface }]}>
+      <View
+        style={[
+          styles.nextClassCard,
+          { backgroundColor: colors.surface, shadowColor: colors.shadow },
+        ]}
+      >
         <View
           style={[styles.timeBox, { backgroundColor: colors.primary + "20" }]}
         >
@@ -100,7 +105,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

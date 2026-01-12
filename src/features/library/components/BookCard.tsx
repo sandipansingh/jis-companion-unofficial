@@ -11,7 +11,12 @@ export function BookCard({ book }: BookCardProps) {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.bookCard, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.bookCard,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <View
         style={[
           styles.bookCover,
@@ -40,9 +45,16 @@ export function BookCard({ book }: BookCardProps) {
             </Text>
           </View>
           {book.return_id === 0 && (
-            <View style={[styles.dueIndicator, { backgroundColor: "#FEF3C7" }]}>
-              <Clock size={12} color="#F59E0B" />
-              <Text style={styles.dueText}>Due</Text>
+            <View
+              style={[
+                styles.dueIndicator,
+                { backgroundColor: colors.warningLight },
+              ]}
+            >
+              <Clock size={12} color={colors.warning} />
+              <Text style={[styles.dueText, { color: colors.warning }]}>
+                Due
+              </Text>
             </View>
           )}
         </View>
@@ -76,7 +88,7 @@ export function BookCard({ book }: BookCardProps) {
               style={[
                 styles.returnDate,
                 {
-                  color: book.return_id === 0 ? "#F59E0B" : "#10B981",
+                  color: book.return_id === 0 ? colors.warning : colors.success,
                 },
               ]}
             >
@@ -98,7 +110,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     flexDirection: "row",
     gap: 14,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -148,7 +159,6 @@ const styles = StyleSheet.create({
   dueText: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#F59E0B",
   },
   bookTitle: {
     fontSize: 15,

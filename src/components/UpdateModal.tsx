@@ -93,7 +93,12 @@ export function UpdateModal({
       onRequestClose={canDismiss ? onDismiss : undefined}
     >
       <View style={styles.overlay}>
-        <View style={[styles.container, { backgroundColor: colors.surface }]}>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: colors.surface, shadowColor: colors.shadow },
+          ]}
+        >
           <ScrollView
             contentContainerStyle={styles.content}
             showsVerticalScrollIndicator={false}
@@ -220,7 +225,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     maxHeight: "85%",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.2,
     shadowRadius: 20,

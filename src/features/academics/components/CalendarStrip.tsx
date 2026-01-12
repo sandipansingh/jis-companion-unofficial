@@ -49,22 +49,37 @@ export function CalendarStrip({
             <View
               style={[
                 styles.dateCircle,
-                status === "present" && styles.presentCircle,
-                status === "absent" && styles.absentCircle,
-                status === "partial" && styles.partialCircle,
+                status === "present" && {
+                  backgroundColor: colors.success + "20",
+                  borderWidth: 2,
+                  borderColor: colors.success,
+                },
+                status === "absent" && {
+                  backgroundColor: colors.error + "20",
+                  borderWidth: 2,
+                  borderColor: colors.error,
+                },
+                status === "partial" && {
+                  backgroundColor: colors.warning + "20",
+                  borderWidth: 2,
+                  borderColor: colors.warning,
+                },
                 status === "holiday" && styles.holidayCircle,
-                isSelected && styles.selectedCircle,
+                isSelected && { borderWidth: 2, borderColor: colors.primary },
                 isToday && styles.todayCircle,
               ]}
             >
               <Text
                 style={[
                   styles.dateText,
-                  status === "present" && styles.presentText,
-                  status === "absent" && styles.absentText,
-                  status === "partial" && styles.partialText,
+                  status === "present" && { color: colors.success },
+                  status === "absent" && { color: colors.error },
+                  status === "partial" && { color: colors.warning },
                   status === "holiday" && { color: colors.textSecondary },
-                  isSelected && styles.selectedText,
+                  isSelected && {
+                    color: colors.primary,
+                    fontWeight: "bold",
+                  },
                 ]}
               >
                 {date.getDate()}
@@ -117,50 +132,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  presentCircle: {
-    backgroundColor: "#10B98120",
-    borderWidth: 2,
-    borderColor: "#10B981",
-  },
-  absentCircle: {
-    backgroundColor: "#EF444420",
-    borderWidth: 2,
-    borderColor: "#EF4444",
-  },
-  partialCircle: {
-    backgroundColor: "#F59E0B20",
-    borderWidth: 2,
-    borderColor: "#F59E0B",
-  },
   holidayCircle: {
-    backgroundColor: "#F1F5F9",
-  },
-  selectedCircle: {
-    borderWidth: 2,
-    borderColor: "#007AFF",
+    backgroundColor: "#E2E8F0",
   },
   todayCircle: {
-    shadowColor: "#007AFF",
     shadowOffset: { width: 0, height: 2 },
+    shadowColor: "#007AFF",
     shadowOpacity: 0.3,
     shadowRadius: 4,
   },
   dateText: {
     fontSize: 14,
     fontWeight: "600",
-  },
-  presentText: {
-    color: "#10B981",
-  },
-  absentText: {
-    color: "#EF4444",
-  },
-  partialText: {
-    color: "#F59E0B",
-  },
-  selectedText: {
-    color: "#007AFF",
-    fontWeight: "bold",
   },
   classCount: {
     fontSize: 10,

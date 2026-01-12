@@ -84,7 +84,7 @@ export const commonStyles = StyleSheet.create({
     borderRadius: 12,
   },
   retryButtonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 14,
     fontWeight: "600" as const,
   },

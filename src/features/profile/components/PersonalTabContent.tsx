@@ -1,4 +1,4 @@
-import { InfoRow, View } from "@/src/components";
+import { Button, InfoRow, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import {
   Calendar,
@@ -8,7 +8,7 @@ import {
   MapPin,
   Phone,
 } from "lucide-react-native";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet } from "react-native";
 
 interface PersonalTabContentProps {
   email?: string;
@@ -65,16 +65,19 @@ export function PersonalTabContent({
         isLast
       />
 
-      <TouchableOpacity
-        style={[
-          styles.changePasswordButton,
-          { backgroundColor: colors.primary },
-        ]}
+      <Button
+        title="Change Password"
         onPress={onChangePassword}
-      >
-        <Lock size={16} color="#fff" style={styles.buttonIcon} />
-        <Text style={styles.changePasswordButtonText}>Change Password</Text>
-      </TouchableOpacity>
+        icon={<Lock size={16} color={colors.white} />}
+        iconPosition="left"
+        style={{
+          marginTop: 24,
+          height: 50,
+        }}
+        textStyle={{
+          fontSize: 14,
+        }}
+      />
     </View>
   );
 }
@@ -82,26 +85,5 @@ export function PersonalTabContent({
 const styles = StyleSheet.create({
   tabContentInner: {
     backgroundColor: "transparent",
-  },
-  changePasswordButton: {
-    marginTop: 24,
-    paddingVertical: 14,
-    borderRadius: 12,
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  buttonIcon: {
-    marginRight: 8,
-  },
-  changePasswordButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
   },
 });

@@ -60,7 +60,6 @@ export default function SearchReserve() {
 
       <ScrollView
         style={commonStyles.scrollView}
-        showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.searchContent}>

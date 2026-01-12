@@ -222,6 +222,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       );
       useLibraryStore.getState().clearBooks();
 
+      const { useFeedbackStore } = await import(
+        "@/src/features/feedback/store/feedbackStore"
+      );
+      useFeedbackStore.getState().clearFeedbackData();
+
       set({
         isLoggedIn: false,
         studentId: null,

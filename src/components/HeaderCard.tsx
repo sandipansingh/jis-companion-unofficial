@@ -1,24 +1,43 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { Book } from "lucide-react-native";
+import { LucideIcon } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
 
-interface LibraryHeaderCardProps {
+interface HeaderCardProps {
   title: string;
   description: string;
+  icon: LucideIcon;
+  iconSize?: number;
+  iconCircleSize?: number;
 }
 
-export function LibraryHeaderCard({
+export function HeaderCard({
   title,
   description,
-}: LibraryHeaderCardProps) {
+  icon: Icon,
+  iconSize = 48,
+  iconCircleSize = 96,
+}: HeaderCardProps) {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.headerCard, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.headerCard,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <View
-        style={[styles.iconCircle, { backgroundColor: colors.primary + "20" }]}
+        style={[
+          styles.iconCircle,
+          {
+            backgroundColor: colors.primary + "20",
+            width: iconCircleSize,
+            height: iconCircleSize,
+            borderRadius: iconCircleSize / 2,
+          },
+        ]}
       >
-        <Book size={48} color={colors.primary} />
+        <Icon size={iconSize} color={colors.primary} />
       </View>
       <Text style={[styles.headerTitle, { color: colors.text }]}>{title}</Text>
       <Text style={[styles.headerDescription, { color: colors.textSecondary }]}>
@@ -34,7 +53,6 @@ const styles = StyleSheet.create({
     padding: 32,
     marginBottom: 24,
     alignItems: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -43,9 +61,6 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.05)",
   },
   iconCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,

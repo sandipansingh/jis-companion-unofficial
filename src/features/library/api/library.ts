@@ -1,4 +1,5 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
+import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import {
   getDemoLibraryBooks,
   getDemoLibrarySearchResults,
@@ -82,13 +83,9 @@ export const fetchLibraryBooks = async (
       return [];
     }
 
-    const books = JSON.parse(dataString) as LibraryBook[];
-    return books;
-  } catch (error: any) {
-    console.error("Error fetching library books:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch library books"
-    );
+    return parseApiResponse<LibraryBook[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch library books");
   }
 };
 
@@ -128,13 +125,9 @@ export const searchLibraryBooks = async (
       return [];
     }
 
-    const results = JSON.parse(dataString) as LibrarySearchResult[];
-    return results;
-  } catch (error: any) {
-    console.error("Error searching library books:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to search library books"
-    );
+    return parseApiResponse<LibrarySearchResult[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Search library books");
   }
 };
 
@@ -167,12 +160,10 @@ export const reserveLibraryBook = async (
       throw new Error("Empty response from server");
     }
 
-    const result = JSON.parse(dataString)[0];
+    const parsed = parseApiResponse<any[]>(dataString, []);
+    const result = parsed[0];
     return { message: result.err_mesg, error: result.err_no };
-  } catch (error: any) {
-    console.error("Error reserving library book:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to reserve library book"
-    );
+  } catch (error) {
+    handleApiError(error, "Reserve library book");
   }
 };

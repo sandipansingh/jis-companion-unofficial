@@ -20,9 +20,11 @@ export function FacultyInfo({ facultyName }: FacultyInfoProps) {
 
   return (
     <View style={styles.section}>
-      <View style={styles.box}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{getInitials(facultyName)}</Text>
+      <View style={[styles.box, { backgroundColor: colors.gray100 }]}>
+        <View style={[styles.avatar, { backgroundColor: colors.indigoLight }]}>
+          <Text style={[styles.avatarText, { color: colors.indigo }]}>
+            {getInitials(facultyName)}
+          </Text>
         </View>
         <View style={styles.textContainer}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
@@ -48,20 +50,17 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: "#F3F4F6",
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#C7D2FE",
     justifyContent: "center",
     alignItems: "center",
   },
   avatarText: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#4F46E5",
   },
   textContainer: {
     flex: 1,

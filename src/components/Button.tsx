@@ -6,6 +6,7 @@ import {
   TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
+  View,
 } from "react-native";
 import { Text } from "./Themed";
 
@@ -15,6 +16,8 @@ interface ButtonProps extends TouchableOpacityProps {
   loading?: boolean;
   fullWidth?: boolean;
   textStyle?: TextStyle;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
 }
 
 export function Button({
@@ -25,6 +28,8 @@ export function Button({
   disabled,
   style,
   textStyle,
+  icon,
+  iconPosition = "left",
   ...props
 }: ButtonProps) {
   const { colors } = useTheme();
@@ -58,9 +63,17 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={colors.buttonText} />
       ) : (
-        <Text style={[styles.text, { color: colors.buttonText }, textStyle]}>
-          {title}
-        </Text>
+        <View style={styles.content}>
+          {icon && iconPosition === "left" && (
+            <View style={styles.iconLeft}>{icon}</View>
+          )}
+          <Text style={[styles.text, { color: colors.buttonText }, textStyle]}>
+            {title}
+          </Text>
+          {icon && iconPosition === "right" && (
+            <View style={styles.iconRight}>{icon}</View>
+          )}
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -77,8 +90,19 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: 0.6,
   },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   text: {
     fontSize: 18,
     fontWeight: "600",
+  },
+  iconLeft: {
+    marginRight: 8,
+  },
+  iconRight: {
+    marginLeft: 8,
   },
 });

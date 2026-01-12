@@ -72,7 +72,6 @@ export default function ExperimentsList() {
               styles.listContainer,
               { paddingBottom: bottomOffset + 20 },
             ]}
-            showsVerticalScrollIndicator={false}
           />
         )}
       </View>

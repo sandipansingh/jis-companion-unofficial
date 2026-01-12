@@ -51,12 +51,16 @@ export function WelcomeCard({
           />
         ) : (
           <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>{getInitials(userName)}</Text>
+            <Text style={[styles.avatarText, { color: colors.surface }]}>
+              {getInitials(userName)}
+            </Text>
           </View>
         )}
         <View style={styles.welcomeTextContainer}>
           <Text style={styles.welcomeSubtext}>Welcome back,</Text>
-          <Text style={styles.welcomeName}>{userName}</Text>
+          <Text style={[styles.welcomeName, { color: colors.surface }]}>
+            {userName}
+          </Text>
           <Text style={styles.welcomeCourse}>
             {courseName} • {collegeName}
           </Text>
@@ -67,17 +71,19 @@ export function WelcomeCard({
         <View style={styles.statCard}>
           <Text style={styles.statLabel}>Attendance</Text>
           {loadingAttendance ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Text style={styles.statValue}>{attendancePercentage}%</Text>
+            <Text style={[styles.statValue, { color: colors.surface }]}>
+              {attendancePercentage}%
+            </Text>
           )}
         </View>
         <View style={styles.statCard}>
           <Text style={styles.statLabel}>Days</Text>
           {loadingAttendance ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Text style={styles.statValue}>
+            <Text style={[styles.statValue, { color: colors.surface }]}>
               {attendedDays}/{totalDays}
             </Text>
           )}
@@ -115,7 +121,6 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
   },
   welcomeTextContainer: {
     flex: 1,
@@ -128,7 +133,6 @@ const styles = StyleSheet.create({
   welcomeName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
     marginTop: 4,
   },
   welcomeCourse: {
@@ -157,6 +161,5 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
   },
 });

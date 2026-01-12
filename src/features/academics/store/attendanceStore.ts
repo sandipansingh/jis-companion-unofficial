@@ -19,6 +19,7 @@ interface AttendanceStore {
   error: string | null;
   isOnline: boolean;
   fromCache: boolean;
+  selectedClass: SubjectWiseAttendance | null;
   fetchMonthAttendance: (year: number, month: number) => Promise<void>;
   getMonthData: (year: number, month: number) => MonthAttendanceData | null;
   getSubjectWiseData: (
@@ -26,6 +27,12 @@ interface AttendanceStore {
     month: number
   ) => SubjectWiseAttendance[] | null;
   getDateWiseData: (year: number, month: number) => DateWiseAttendance[] | null;
+  getClassByIdentifier: (
+    date: string,
+    empCode: string,
+    periodName: string
+  ) => SubjectWiseAttendance | null;
+  setSelectedClass: (classData: SubjectWiseAttendance | null) => void;
   clearAttendanceData: () => void;
 }
 
@@ -35,6 +42,7 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
   error: null,
   isOnline: true,
   fromCache: false,
+  selectedClass: null,
 
   fetchMonthAttendance: async (year: number, month: number) => {
     const monthKey = getMonthKeyHelper(year, month);
@@ -96,6 +104,36 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
   getDateWiseData: (year: number, month: number) => {
     const monthKey = getMonthKeyHelper(year, month);
     return get().monthlyData[monthKey]?.dateWiseAttendance || null;
+  },
+
+  getClassByIdentifier: (date: string, empCode: string, periodName: string) => {
+    // Extract year and month from date
+    const dateObj = new Date(date);
+    const year = dateObj.getFullYear();
+    const month = dateObj.getMonth() + 1;
+
+    const subjectWiseData = get().getSubjectWiseData(year, month);
+    if (!subjectWiseData) return null;
+
+    // Extract period number for comparison
+    const periodNumber = periodName.split(" ")[0];
+
+    // Find matching class
+    return (
+      subjectWiseData.find((classItem) => {
+        const classDate = classItem.date1.split("T")[0];
+        const classPeriod = classItem.Period_name.split(" ")[0];
+        return (
+          classDate === date.split("T")[0] &&
+          classItem.emp_code === empCode &&
+          classPeriod === periodNumber
+        );
+      }) || null
+    );
+  },
+
+  setSelectedClass: (classData: SubjectWiseAttendance | null) => {
+    set({ selectedClass: classData });
   },
 
   clearAttendanceData: async () => {

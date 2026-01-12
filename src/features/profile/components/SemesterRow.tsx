@@ -23,12 +23,27 @@ export function SemesterRow({ semester, sgpa }: SemesterRowProps) {
         Semester {semester}
       </Text>
       {sgpa ? (
-        <View style={[styles.sgpaBadge, styles.sgpaBadgeGreen]}>
-          <Text style={styles.sgpaText}>SGPA: {sgpa}</Text>
+        <View
+          style={[
+            styles.sgpaBadge,
+            {
+              backgroundColor: colors.emeraldLight,
+              borderWidth: 1,
+              borderColor: colors.emeraldDark,
+            },
+          ]}
+        >
+          <Text style={[styles.sgpaText, { color: colors.successDark }]}>
+            SGPA: {sgpa}
+          </Text>
         </View>
       ) : (
-        <View style={[styles.sgpaBadge, styles.sgpaBadgeGray]}>
-          <Text style={styles.sgpaTextGray}>N/A</Text>
+        <View
+          style={[styles.sgpaBadge, { backgroundColor: colors.slateLight }]}
+        >
+          <Text style={[styles.sgpaTextGray, { color: colors.slate }]}>
+            N/A
+          </Text>
         </View>
       )}
     </View>
@@ -54,22 +69,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
   },
-  sgpaBadgeGreen: {
-    backgroundColor: "#d1fae5",
-    borderWidth: 1,
-    borderColor: "#6ee7b7",
-  },
-  sgpaBadgeGray: {
-    backgroundColor: "#e2e8f0",
-  },
   sgpaText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#059669",
   },
   sgpaTextGray: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#64748b",
   },
 });

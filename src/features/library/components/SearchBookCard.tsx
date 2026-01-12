@@ -13,7 +13,12 @@ export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
   const isAvailable = book.tot_shelf - book.tot_issued > 0;
 
   return (
-    <View style={[styles.searchBookCard, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.searchBookCard,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <View style={styles.searchBookHeader}>
         <View
           style={[
@@ -64,7 +69,12 @@ export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
             {book.tot_copy}
           </Text>
         </View>
-        <View style={styles.availabilityDivider} />
+        <View
+          style={[
+            styles.availabilityDivider,
+            { backgroundColor: colors.gray200 },
+          ]}
+        />
         <View style={styles.availabilityItem}>
           <Text style={[styles.availabilityLabel, { color: colors.textMuted }]}>
             On Shelf
@@ -73,12 +83,17 @@ export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
             {book.tot_shelf}
           </Text>
         </View>
-        <View style={styles.availabilityDivider} />
+        <View
+          style={[
+            styles.availabilityDivider,
+            { backgroundColor: colors.gray200 },
+          ]}
+        />
         <View style={styles.availabilityItem}>
           <Text style={[styles.availabilityLabel, { color: colors.textMuted }]}>
             Issued
           </Text>
-          <Text style={[styles.availabilityValue, { color: "#F59E0B" }]}>
+          <Text style={[styles.availabilityValue, { color: colors.warning }]}>
             {book.tot_issued}
           </Text>
         </View>
@@ -90,13 +105,14 @@ export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
           {
             backgroundColor: colors.primary,
             opacity: isAvailable ? 1 : 0.5,
+            shadowColor: colors.shadow,
           },
         ]}
         onPress={() => onReserve(book)}
         disabled={!isAvailable}
       >
-        <BookmarkPlus size={18} color="#fff" />
-        <Text style={styles.reserveButtonText}>
+        <BookmarkPlus size={18} color={colors.surface} />
+        <Text style={[styles.reserveButtonText, { color: colors.surface }]}>
           {isAvailable ? "Reserve Book" : "Not Available"}
         </Text>
       </TouchableOpacity>
@@ -109,7 +125,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -162,7 +177,6 @@ const styles = StyleSheet.create({
   },
   availabilityDivider: {
     width: 1,
-    backgroundColor: "#E5E7EB",
     marginHorizontal: 8,
   },
   availabilityLabel: {
@@ -183,14 +197,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     gap: 8,
-    shadowColor: "#3B82F6",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
   },
   reserveButtonText: {
-    color: "#fff",
     fontWeight: "700",
     fontSize: 14,
   },

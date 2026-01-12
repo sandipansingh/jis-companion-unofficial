@@ -1,4 +1,5 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
+import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import * as SecureStore from "@/src/utils/secureStore";
 
 export interface FeeLedgerEntry {
@@ -47,7 +48,7 @@ export async function fetchStudentFeeLedger(
     const response = await apiClient.post<StandardApiResponse>("", body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch fee ledger");
+      throw new Error(response.data.message || "Failed to load fee ledger");
     }
 
     const dataString = response.data.data.data;
@@ -55,17 +56,8 @@ export async function fetchStudentFeeLedger(
       return [];
     }
 
-    const parsedData = JSON.parse(dataString) as FeeLedgerEntry[];
-    return parsedData;
-  } catch (error: any) {
-    console.error("Fetch fee ledger error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Failed to fetch fee ledger");
-    }
+    return parseApiResponse<FeeLedgerEntry[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch fee ledger");
   }
 }

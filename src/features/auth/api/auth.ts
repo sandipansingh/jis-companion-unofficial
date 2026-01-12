@@ -2,6 +2,7 @@ import apiClient, {
   StandardApiResponse,
   unofficialApiClient,
 } from "@/src/api/client";
+import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import {
   DEMO_USER_PROFILE,
   getDemoLoginData,
@@ -168,8 +169,10 @@ export async function login({
       throw new Error(response.data.message || "Login failed");
     }
 
-    const dataString = response.data.data.data;
-    const parsedData = JSON.parse(dataString) as LoginResponse;
+    const parsedData = parseApiResponse<LoginResponse>(
+      response.data.data.data,
+      {} as LoginResponse
+    );
 
     if (parsedData.is_valid !== 1) {
       throw new Error("Invalid credentials");
@@ -179,16 +182,8 @@ export async function login({
     await SecureStore.setItemAsync("student_password", password);
 
     return parsedData;
-  } catch (error: any) {
-    console.error("Login error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Login failed");
-    }
+  } catch (error) {
+    handleApiError(error, "Login");
   }
 }
 
@@ -254,19 +249,12 @@ export async function fetchUserProfile(
       throw new Error(response.data.message || "Failed to fetch user profile");
     }
 
-    const dataString = response.data.data.data;
-    const parsedData = JSON.parse(dataString) as UserProfileData;
-    return parsedData;
-  } catch (error: any) {
-    console.error("Fetch user profile error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Failed to fetch user profile");
-    }
+    return parseApiResponse<UserProfileData>(
+      response.data.data.data,
+      {} as UserProfileData
+    );
+  } catch (error) {
+    handleApiError(error, "Fetch user profile");
   }
 }
 
@@ -305,16 +293,8 @@ export async function changePassword(
     } else {
       throw new Error(response.data?.message || "Failed to change password");
     }
-  } catch (error: any) {
-    console.error("Change password error:", error);
-
-    if (error.response) {
-      throw new Error(error.response.data?.message || "Server error occurred");
-    } else if (error.request) {
-      throw new Error("Network error. Please check your connection.");
-    } else {
-      throw new Error(error.message || "Failed to change password");
-    }
+  } catch (error) {
+    handleApiError(error, "Change password");
   }
 }
 

@@ -1,4 +1,5 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
+import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 
 export interface VirtualLabCourse {
   course_name: string;
@@ -36,13 +37,9 @@ export const fetchVirtualLabCourses = async (): Promise<VirtualLabCourse[]> => {
       return [];
     }
 
-    const courses = JSON.parse(dataString) as VirtualLabCourse[];
-    return courses;
-  } catch (error: any) {
-    console.error("Error fetching virtual lab courses:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch virtual lab courses"
-    );
+    return parseApiResponse<VirtualLabCourse[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch virtual lab courses");
   }
 };
 
@@ -72,12 +69,8 @@ export const fetchVirtualLabExperiments = async (
     }
 
     const dataString = response.data.data.data;
-    const experiments = JSON.parse(dataString) as VirtualLabExperiment[];
-    return experiments;
-  } catch (error: any) {
-    console.error("Error fetching virtual lab experiments:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch virtual lab experiments"
-    );
+    return parseApiResponse<VirtualLabExperiment[]>(dataString, []);
+  } catch (error) {
+    handleApiError(error, "Fetch virtual lab experiments");
   }
 };

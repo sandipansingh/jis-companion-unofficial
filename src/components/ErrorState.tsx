@@ -1,6 +1,7 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { commonStyles } from "@/src/styles/commonStyles";
-import { TouchableOpacity } from "react-native";
+import React from "react";
+import { Button } from "./Button";
 import { Text, View } from "./Themed";
 
 interface ErrorStateProps {
@@ -22,15 +23,19 @@ export function ErrorState({
         {message}
       </Text>
       {onRetry && (
-        <TouchableOpacity
-          style={[
-            commonStyles.retryButton,
-            { backgroundColor: colors.primary },
-          ]}
+        <Button
+          title={retryText}
           onPress={onRetry}
-        >
-          <Text style={commonStyles.retryButtonText}>{retryText}</Text>
-        </TouchableOpacity>
+          fullWidth={false}
+          style={{
+            paddingHorizontal: 24,
+            paddingVertical: 12,
+            height: "auto",
+          }}
+          textStyle={{
+            fontSize: 14,
+          }}
+        />
       )}
     </View>
   );

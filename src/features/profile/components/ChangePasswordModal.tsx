@@ -1,10 +1,9 @@
-import { TextInput } from "@/src/components";
+import { Button, TextInput } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -205,40 +204,31 @@ export default function ChangePasswordModal({
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity
-                  style={[
-                    styles.submitButton,
-                    { backgroundColor: colors.primary },
-                    isLoading && styles.disabledButton,
-                  ]}
+                <Button
+                  title="Change Password"
                   onPress={handleSubmit}
                   disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.submitButtonText}>Change Password</Text>
-                  )}
-                </TouchableOpacity>
+                  loading={isLoading}
+                  style={{
+                    marginTop: 16,
+                  }}
+                />
 
                 {/* Cancel Button */}
-                <TouchableOpacity
-                  style={[
-                    styles.cancelButton,
-                    { backgroundColor: colors.background },
-                  ]}
+                <Button
+                  title="Cancel"
+                  variant="secondary"
                   onPress={handleClose}
                   disabled={isLoading}
-                >
-                  <Text
-                    style={[
-                      styles.cancelButtonText,
-                      { color: colors.textSecondary },
-                    ]}
-                  >
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
+                  style={{
+                    marginTop: 12,
+                    backgroundColor: colors.background,
+                    height: 50,
+                  }}
+                  textStyle={{
+                    color: colors.textSecondary,
+                  }}
+                />
               </View>
             </View>
           </TouchableOpacity>
@@ -296,34 +286,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     marginLeft: 4,
-  },
-  submitButton: {
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  disabledButton: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  cancelButton: {
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: "center",
-    marginTop: 12,
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

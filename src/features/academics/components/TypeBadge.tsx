@@ -1,3 +1,4 @@
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { StyleSheet, Text, View } from "react-native";
 
 interface TypeBadgeProps {
@@ -5,16 +6,17 @@ interface TypeBadgeProps {
 }
 
 export function TypeBadge({ type }: TypeBadgeProps) {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.badge}>
-      <Text style={styles.text}>{type}</Text>
+    <View style={[styles.badge, { backgroundColor: colors.gray100 }]}>
+      <Text style={[styles.text, { color: colors.gray400 }]}>{type}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   badge: {
-    backgroundColor: "#F3F4F6",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -22,6 +24,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#9CA3AF",
   },
 });

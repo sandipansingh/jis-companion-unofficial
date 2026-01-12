@@ -10,8 +10,18 @@ export function SearchResultsHeader({ count }: SearchResultsHeaderProps) {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.resultsHeader, { backgroundColor: colors.surface }]}>
-      <View style={styles.resultsIconContainer}>
+    <View
+      style={[
+        styles.resultsHeader,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
+      <View
+        style={[
+          styles.resultsIconContainer,
+          { backgroundColor: colors.info + "15" },
+        ]}
+      >
         <Sparkles size={20} color={colors.primary} />
       </View>
       <View style={styles.resultsTextContainer}>
@@ -35,7 +45,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     gap: 12,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -45,7 +54,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#3B82F6" + "15",
     justifyContent: "center",
     alignItems: "center",
   },

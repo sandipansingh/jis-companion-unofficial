@@ -41,6 +41,7 @@ export function CourseDropdown({
             {
               backgroundColor: colors.surface,
               borderColor: colors.border,
+              shadowColor: colors.shadow,
             },
           ]}
           onPress={onOpen}
@@ -73,7 +74,7 @@ export function CourseDropdown({
           <View
             style={[
               styles.dropdownContent,
-              { backgroundColor: colors.surface },
+              { backgroundColor: colors.surface, shadowColor: colors.shadow },
             ]}
           >
             <ScrollView style={styles.dropdownScroll}>
@@ -123,7 +124,6 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     borderWidth: 1,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
     shadowRadius: 2,
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxHeight: "70%",
     borderRadius: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

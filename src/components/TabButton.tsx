@@ -15,15 +15,18 @@ export function TabButton({ label, isActive, onPress }: TabButtonProps) {
     <TouchableOpacity
       style={[
         styles.tab,
-        isActive && [styles.activeTab, { backgroundColor: colors.primary }],
+        isActive && [
+          styles.activeTab,
+          { backgroundColor: colors.primary, shadowColor: colors.shadow },
+        ],
       ]}
       onPress={onPress}
     >
       <Text
         style={[
           styles.tabText,
-          { color: isActive ? "#FFFFFF" : colors.textSecondary },
-          isActive && styles.activeTabText,
+          { color: isActive ? colors.white : colors.textSecondary },
+          isActive && { color: colors.surface },
         ]}
       >
         {label}
@@ -43,7 +46,6 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   activeTab: {
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -54,8 +56,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     textTransform: "uppercase",
-  },
-  activeTabText: {
-    color: "#FFFFFF",
   },
 });

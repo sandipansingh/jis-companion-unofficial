@@ -22,7 +22,7 @@ export default function Fees() {
       style={[commonStyles.container, { backgroundColor: colors.background }]}
     >
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[commonStyles.header, { backgroundColor: colors.surface }]}>
         <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
           Fees & Dues
         </Text>
@@ -55,10 +55,6 @@ export default function Fees() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.header,
-    backgroundColor: "#ffffff",
-  },
   scrollContent: {
     paddingBottom: 16,
   },

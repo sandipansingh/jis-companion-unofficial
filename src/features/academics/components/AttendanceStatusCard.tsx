@@ -12,7 +12,12 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
   const isPresent = status.toLowerCase() === "present";
 
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: colors.surface, shadowColor: colors.shadow },
+      ]}
+    >
       <View style={styles.header}>
         <Text style={[styles.label, { color: colors.textSecondary }]}>
           Attendance Status
@@ -22,7 +27,7 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
         style={[
           styles.container,
           {
-            backgroundColor: isPresent ? "#ECFDF5" : "#FEF2F2",
+            backgroundColor: isPresent ? colors.greenLight : colors.redLight,
           },
         ]}
       >
@@ -31,21 +36,23 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
             style={[
               styles.iconContainer,
               {
-                backgroundColor: isPresent ? "#10B981" : "#EF4444",
+                backgroundColor: isPresent ? colors.success : colors.error,
               },
             ]}
           >
             {isPresent ? (
-              <Check size={22} color="#FFFFFF" />
+              <Check size={22} color={colors.surface} />
             ) : (
-              <X size={22} color="#FFFFFF" />
+              <X size={22} color={colors.surface} />
             )}
           </View>
           <View style={{ backgroundColor: "transparent" }}>
             <Text
               style={[
                 styles.statusText,
-                { color: isPresent ? "#065F46" : "#991B1B" },
+                {
+                  color: isPresent ? colors.successDarker : colors.errorDarker,
+                },
               ]}
             >
               {status}
@@ -53,7 +60,9 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
             <Text
               style={[
                 styles.subtext,
-                { color: isPresent ? "#059669" : "#DC2626" },
+                {
+                  color: isPresent ? colors.successDark : colors.errorDark,
+                },
               ]}
             >
               {isPresent ? "You attended this class" : "You missed this class"}
@@ -61,9 +70,9 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
           </View>
         </View>
         {isPresent ? (
-          <Check size={12} color="#10B981" style={{ opacity: 0.3 }} />
+          <Check size={12} color={colors.success} style={{ opacity: 0.3 }} />
         ) : (
-          <X size={12} color="#EF4444" style={{ opacity: 0.3 }} />
+          <X size={12} color={colors.error} style={{ opacity: 0.3 }} />
         )}
       </View>
     </View>
@@ -75,7 +84,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

@@ -33,22 +33,23 @@ export function DateCard({
       <View
         style={[
           styles.dateCircle,
-          status === "present" && styles.presentCircle,
-          status === "absent" && styles.absentCircle,
-          status === "partial" && styles.partialCircle,
+          status === "present" && { backgroundColor: colors.success },
+          status === "absent" && { backgroundColor: colors.error },
+          status === "partial" && { backgroundColor: colors.warning },
           status === "holiday" && styles.holidayCircle,
-          isSelected && styles.selectedCircle,
-          isToday && styles.todayCircle,
+          isSelected && { borderWidth: 2, borderColor: colors.info },
+          isToday && { borderWidth: 2, borderColor: colors.purple },
         ]}
       >
         <Text
           style={[
             styles.dateText,
-            status === "present" && styles.presentText,
-            status === "absent" && styles.absentText,
-            status === "partial" && styles.partialText,
+            { color: colors.textSecondary },
+            status === "present" && { color: "#ffffff" },
+            status === "absent" && { color: "#ffffff" },
+            status === "partial" && { color: "#ffffff" },
             status === "holiday" && { color: colors.textSecondary },
-            isSelected && styles.selectedText,
+            isSelected && { fontWeight: "700" },
           ]}
         >
           {date}
@@ -82,42 +83,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "transparent",
   },
-  presentCircle: {
-    backgroundColor: "#10B981",
-  },
-  absentCircle: {
-    backgroundColor: "#EF4444",
-  },
-  partialCircle: {
-    backgroundColor: "#F59E0B",
-  },
   holidayCircle: {
     backgroundColor: "#E5E7EB",
-  },
-  selectedCircle: {
-    borderWidth: 2,
-    borderColor: "#3B82F6",
-  },
-  todayCircle: {
-    borderWidth: 2,
-    borderColor: "#8B5CF6",
   },
   dateText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#6B7280",
-  },
-  presentText: {
-    color: "#FFFFFF",
-  },
-  absentText: {
-    color: "#FFFFFF",
-  },
-  partialText: {
-    color: "#FFFFFF",
-  },
-  selectedText: {
-    fontWeight: "700",
   },
   classCount: {
     fontSize: 10,

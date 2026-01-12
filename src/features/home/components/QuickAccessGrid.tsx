@@ -38,7 +38,13 @@ export function QuickAccessGrid({ items, onItemPress }: QuickAccessGridProps) {
             onPress={() => onItemPress(item.id)}
           >
             <View
-              style={[styles.menuIcon, { backgroundColor: item.color + "20" }]}
+              style={[
+                styles.menuIcon,
+                {
+                  backgroundColor: item.color + "20",
+                  shadowColor: colors.shadow,
+                },
+              ]}
             >
               <item.icon size={24} color={item.color} />
             </View>
@@ -75,7 +81,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,

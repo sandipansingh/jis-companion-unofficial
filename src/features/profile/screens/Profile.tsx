@@ -44,7 +44,7 @@ export default function Profile() {
     <View
       style={[commonStyles.container, { backgroundColor: colors.background }]}
     >
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
+      <View style={[commonStyles.header, { backgroundColor: colors.surface }]}>
         <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
           My Profile
         </Text>
@@ -148,17 +148,13 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.header,
-    backgroundColor: "#ffffff",
-  },
   logoutButton: {
     position: "absolute",
     right: 16,
-    top: Platform.select({ web: 20, default: 60 }),
-    bottom: 16,
+    top: Platform.select({ web: 16, default: 60 }),
     justifyContent: "center",
-    padding: 8,
+    alignItems: "center",
+    padding: Platform.select({ web: 12, default: 8 }),
   },
   scrollContent: {
     paddingBottom: 16,

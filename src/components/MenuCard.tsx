@@ -2,28 +2,38 @@ import { useTheme } from "@/src/contexts/ThemeContext";
 import { ChevronRight, LucideIcon } from "lucide-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-interface LibraryMenuCardProps {
+interface MenuCardProps {
   title: string;
   description: string;
   icon: LucideIcon;
   iconColor: string;
   onPress: () => void;
+  disabled?: boolean;
 }
 
-export function LibraryMenuCard({
+export function MenuCard({
   title,
   description,
   icon: Icon,
   iconColor,
   onPress,
-}: LibraryMenuCardProps) {
+  disabled = false,
+}: MenuCardProps) {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity
-      style={[styles.menuCard, { backgroundColor: colors.surface }]}
+      style={[
+        styles.menuCard,
+        {
+          backgroundColor: colors.surface,
+          opacity: disabled ? 0.5 : 1,
+          shadowColor: colors.shadow,
+        },
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
+      disabled={disabled}
     >
       <View style={styles.menuCardLeft}>
         <View
@@ -58,7 +68,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,

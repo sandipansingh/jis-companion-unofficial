@@ -1,4 +1,4 @@
-import { Text, View } from "@/src/components";
+import { Button, Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, Platform, StyleSheet, TouchableOpacity } from "react-native";
@@ -46,7 +46,10 @@ export function DatePickerModal({
         <TouchableOpacity
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
-          style={[styles.content, { backgroundColor: colors.surface }]}
+          style={[
+            styles.content,
+            { backgroundColor: colors.surface, shadowColor: colors.shadow },
+          ]}
         >
           <View style={styles.header}>
             <Text style={[styles.title, { color: colors.text }]}>
@@ -62,20 +65,35 @@ export function DatePickerModal({
             style={{ height: 200 }}
           />
           <View style={styles.buttons}>
-            <TouchableOpacity
-              onPress={onClose}
-              style={[styles.button, styles.cancelButton]}
-            >
-              <Text style={[styles.buttonText, { color: colors.text }]}>
-                Cancel
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onConfirm}
-              style={[styles.button, { backgroundColor: colors.primary }]}
-            >
-              <Text style={[styles.buttonText, { color: "#fff" }]}>Select</Text>
-            </TouchableOpacity>
+            <View style={{ flex: 1, backgroundColor: "transparent" }}>
+              <Button
+                title="Cancel"
+                variant="secondary"
+                onPress={onClose}
+                style={{
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  height: 48,
+                }}
+                textStyle={{
+                  fontSize: 16,
+                  color: colors.text,
+                }}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Button
+                title="Select"
+                onPress={onConfirm}
+                style={{
+                  height: 48,
+                }}
+                textStyle={{
+                  fontSize: 16,
+                }}
+              />
+            </View>
           </View>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -93,7 +111,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -113,18 +130,5 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 16,
     backgroundColor: "transparent",
-  },
-  button: {
-    flex: 1,
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "#E5E7EB",
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

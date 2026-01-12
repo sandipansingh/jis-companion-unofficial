@@ -1,15 +1,15 @@
-import { Button, Text, View } from "@/src/components";
+import { Button, HeaderCard, Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { commonStyles } from "@/src/styles/commonStyles";
 import { useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, FlaskConical } from "lucide-react-native";
 import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { CourseDropdown, CourseInfoCard } from "../components";
+import { CourseDropdown } from "../components";
 import { useCourseSelectionData } from "../hooks/useCourseSelectionData";
 
 export default function CourseSelection() {
@@ -85,7 +85,13 @@ export default function CourseSelection() {
 
       <ScrollView style={commonStyles.scrollView}>
         <View style={styles.content}>
-          <CourseInfoCard />
+          <HeaderCard
+            title="Lab Configuration"
+            description="Select your course details to view available virtual experiments."
+            icon={FlaskConical}
+            iconSize={40}
+            iconCircleSize={80}
+          />
 
           <CourseDropdown
             label="COURSE"
@@ -144,6 +150,6 @@ const styles = StyleSheet.create({
     paddingBottom: 7,
   },
   content: {
-    padding: 24,
+    padding: 20,
   },
 });

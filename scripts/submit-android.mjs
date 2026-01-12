@@ -15,7 +15,7 @@ const run = (cmd, opts = {}) => {
 
 try {
   console.log("🏗️  Building Android AAB locally...\n");
-  run("npm run build:android:local");
+  run("npm run build:android:prod:local");
 
   console.log("\n📦 Finding AAB file...");
   const files = fs

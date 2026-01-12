@@ -27,13 +27,19 @@ export function ProfileInfo({
   return (
     <View style={styles.profileHeader}>
       {profileImageUrl ? (
-        <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+        <Image
+          source={{ uri: profileImageUrl }}
+          style={[styles.profileImage, { borderColor: colors.purpleLight }]}
+        />
       ) : (
         <View
           style={[
             styles.profileImage,
             styles.profilePlaceholder,
-            { backgroundColor: colors.primary + "30" },
+            {
+              backgroundColor: colors.primary + "30",
+              borderColor: colors.purpleLight,
+            },
           ]}
         >
           <Text style={[styles.placeholderText, { color: colors.primary }]}>
@@ -49,8 +55,8 @@ export function ProfileInfo({
         <Text style={[styles.studentIdText, { color: colors.primary }]}>
           {studentId || "N/A"}
         </Text>
-        <View style={styles.dot} />
-        <View style={[styles.semBadge, { backgroundColor: "#DBEAFE" }]}>
+        <View style={[styles.dot, { backgroundColor: colors.slateDark }]} />
+        <View style={[styles.semBadge, { backgroundColor: colors.infoLight }]}>
           <Text style={[styles.semBadgeText, { color: colors.primary }]}>
             SEMESTER {semester || "N/A"}
           </Text>
@@ -74,7 +80,6 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     marginBottom: 12,
     borderWidth: 4,
-    borderColor: "#E0E7FF",
   },
   profilePlaceholder: {
     justifyContent: "center",
@@ -103,7 +108,6 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#cbd5e1",
   },
   semBadge: {
     paddingHorizontal: 8,

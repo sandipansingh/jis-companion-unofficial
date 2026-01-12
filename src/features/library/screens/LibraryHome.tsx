@@ -1,3 +1,5 @@
+import { HeaderCard } from "@/src/components/HeaderCard";
+import { MenuCard } from "@/src/components/MenuCard";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { commonStyles } from "@/src/styles/commonStyles";
 import { useRouter } from "expo-router";
@@ -9,7 +11,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { LibraryHeaderCard, LibraryMenuCard } from "../components";
 
 export default function LibraryHome() {
   const { colors } = useTheme();
@@ -43,24 +44,25 @@ export default function LibraryHome() {
 
       <ScrollView style={commonStyles.scrollView}>
         <View style={styles.content}>
-          <LibraryHeaderCard
+          <HeaderCard
             title="Library Services"
             description="Manage your borrowed books and discover new titles"
+            icon={BookOpen}
           />
 
-          <LibraryMenuCard
+          <MenuCard
             title="My Books"
             description="View and manage your borrowed books"
             icon={BookOpen}
-            iconColor="#3B82F6"
+            iconColor={colors.info}
             onPress={navigateToMyBooks}
           />
 
-          <LibraryMenuCard
+          <MenuCard
             title="Search & Reserve"
             description="Find books and reserve them instantly"
             icon={Search}
-            iconColor="#10B981"
+            iconColor={colors.success}
             onPress={navigateToSearchReserve}
           />
         </View>

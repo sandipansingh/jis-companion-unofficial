@@ -155,7 +155,9 @@ export function PdfPreviewModal({
             style={styles.dragHandleContainer}
             {...panResponder.panHandlers}
           >
-            <View style={styles.dragHandle} />
+            <View
+              style={[styles.dragHandle, { backgroundColor: colors.gray300 }]}
+            />
           </View>
 
           {/* Header */}
@@ -253,7 +255,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#D1D5DB",
   },
   container: {
     flex: 1,
@@ -318,8 +319,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   downloadButtonText: {
-    color: "#FFFFFF",
     fontSize: 16,
+    color: "#FFFFFF",
     fontWeight: "600",
   },
 });

@@ -4,7 +4,7 @@ import { useAlertStore } from "@/src/store/alertStore";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
 import { commonStyles } from "@/src/styles/commonStyles";
 import { router } from "expo-router";
-import { FlaskConical, Library } from "lucide-react-native";
+import { FlaskConical, Library, MessageSquare } from "lucide-react-native";
 import { ScrollView, StyleSheet } from "react-native";
 import {
   MenuItem,
@@ -14,25 +14,31 @@ import {
 } from "../components";
 import { useHomeData } from "../hooks";
 
-const MENU_ITEMS: MenuItem[] = [
-  {
-    id: "virtual_labs",
-    title: "Virtual Labs",
-    icon: FlaskConical,
-    color: "#3B82F6",
-  },
-  {
-    id: "library",
-    title: "Library",
-    icon: Library,
-    color: "#22C55E",
-  },
-];
-
 export default function Home() {
   const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
   const { showAlert } = useAlertStore();
+
+  const MENU_ITEMS: MenuItem[] = [
+    {
+      id: "virtual_labs",
+      title: "Virtual Labs",
+      icon: FlaskConical,
+      color: colors.info,
+    },
+    {
+      id: "library",
+      title: "Library",
+      icon: Library,
+      color: colors.green,
+    },
+    {
+      id: "feedback",
+      title: "Feedback",
+      icon: MessageSquare,
+      color: colors.warning,
+    },
+  ];
 
   const {
     loginData,
@@ -50,6 +56,8 @@ export default function Home() {
       router.push("/virtual-labs");
     } else if (itemId === "library") {
       router.push("/library");
+    } else if (itemId === "feedback") {
+      router.push("/feedback");
     } else {
       showAlert({
         title:
