@@ -171,7 +171,20 @@ export function UpdateModal({
                 <Text
                   style={[styles.releaseNotes, { color: colors.textSecondary }]}
                 >
-                  {appInfo.releaseNotes}
+                  {appInfo.releaseNotes
+                    .replace(/<br\s*\/?>/gi, "\n")
+                    .replace(/<\/p>/gi, "\n\n")
+                    .replace(/<p>/gi, "")
+                    .replace(/<\/?strong>/gi, "")
+                    .replace(/<\/?b>/gi, "")
+                    .replace(/<\/?em>/gi, "")
+                    .replace(/<\/?i>/gi, "")
+                    .replace(/&nbsp;/gi, " ")
+                    .replace(/&amp;/gi, "&")
+                    .replace(/&lt;/gi, "<")
+                    .replace(/&gt;/gi, ">")
+                    .replace(/&quot;/gi, '"')
+                    .trim()}
                 </Text>
               </View>
             )}
