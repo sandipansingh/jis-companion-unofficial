@@ -95,7 +95,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
         style={[styles.balanceFooter, { backgroundColor: colors.background }]}
       >
         <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>
-          Outstanding Balance
+          Amount Due
         </Text>
         <Text
           style={[
