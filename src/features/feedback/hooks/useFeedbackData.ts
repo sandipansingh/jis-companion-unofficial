@@ -39,14 +39,18 @@ export function useFeedbackData() {
 
   const getProgressStats = () => {
     const totalCount = facultyList.length;
-
     const submittedCount = facultyList.filter(
-      (f) => f.totalRating === 100
+      (f) => (f.totalRating ?? 0) > 0
     ).length;
     const notOptedCount = facultyList.filter(
       (f) => f.totalRating === -10
     ).length;
-    const pendingCount = facultyList.filter((f) => f.totalRating === 0).length;
+    const pendingCount = facultyList.filter(
+      (f) =>
+        f.totalRating === 0 ||
+        f.totalRating === null ||
+        f.totalRating === undefined
+    ).length;
 
     const completedCount = submittedCount + notOptedCount;
     const progressPercentage =
