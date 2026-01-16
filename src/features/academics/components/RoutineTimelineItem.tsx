@@ -1,10 +1,10 @@
 import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { isClassInFuture } from "@/src/utils/dateHelpers";
 import { parseSubjectName } from "@/src/utils/stringHelpers";
 import { User } from "lucide-react-native";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { SubjectWiseAttendance } from "../api";
+import { getAttendanceStatus } from "../utils/attendanceHelpers";
 
 interface RoutineTimelineItemProps {
   classItem: SubjectWiseAttendance;
@@ -21,16 +21,9 @@ export function RoutineTimelineItem({
 }: RoutineTimelineItemProps) {
   const { colors } = useTheme();
 
-  const hasActualData =
-    !isClassInFuture(classItem.date1, classItem.Period_name) &&
-    !(classItem as any)._isFallback;
-
-  const statValue = hasActualData
-    ? classItem.stat || (classItem.present1 === 1 ? "Present" : "Absent")
-    : undefined;
-
-  const isPresent =
-    statValue?.toLowerCase() === "present" || classItem.present1 === 1;
+  const statValue = getAttendanceStatus(classItem);
+  const isPresent = statValue?.toLowerCase() === "present";
+  const showBorder = statValue && statValue !== "Not Yet Available";
 
   return (
     <View style={styles.routineItem}>
@@ -49,7 +42,7 @@ export function RoutineTimelineItem({
         style={[
           styles.classCard,
           { backgroundColor: colors.surface, shadowColor: colors.shadow },
-          hasActualData
+          showBorder
             ? isPresent
               ? { borderLeftColor: colors.success }
               : { borderLeftColor: colors.error }

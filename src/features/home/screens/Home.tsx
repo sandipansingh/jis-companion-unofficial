@@ -74,7 +74,7 @@ export default function Home() {
       <WelcomeCard
         userName={loginData?.student_name || "Student"}
         profileImageUrl={userData?.profile_pict_cur_url}
-        courseName={loginData?.batch_name || "CSE"}
+        courseName={loginData?.batch_name || "CSE AI & ML"}
         collegeName={loginData?.college_sht_name || "N/A"}
         attendancePercentage={attendanceData?.pcent || 0}
         attendedClass={attendanceData?.attd || 0}

@@ -8,6 +8,7 @@ import { getFileName, parseSubjectName } from "@/src/utils/stringHelpers";
 import { useEffect, useState } from "react";
 import { SubjectWiseAttendance } from "../api";
 import { useAttendanceStore } from "../store";
+import { getAttendanceStatus } from "../utils/attendanceHelpers";
 import { parseClassId } from "../utils/classId";
 
 interface Resource {
@@ -117,14 +118,7 @@ export function useClassDetails(classId?: string): UseClassDetailsReturn {
 
   const location = `${loginData?.college_sht_name || "College Name"} Campus`;
 
-  const hasActualData =
-    classData &&
-    !isClassInFuture(classData.date1, classData.Period_name) &&
-    !(classData as any)._isFallback;
-
-  const statValue = hasActualData
-    ? classData.stat || (classData.present1 === 1 ? "Present" : "Absent")
-    : undefined;
+  const statValue = classData ? getAttendanceStatus(classData) : undefined;
 
   return {
     classData,

@@ -1,6 +1,6 @@
 import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { Check, X } from "lucide-react-native";
+import { Check, Clock, X } from "lucide-react-native";
 import { StyleSheet } from "react-native";
 
 interface AttendanceStatusCardProps {
@@ -10,6 +10,33 @@ interface AttendanceStatusCardProps {
 export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
   const { colors } = useTheme();
   const isPresent = status.toLowerCase() === "present";
+  const isNotYetAvailable = status.toLowerCase() === "not yet available";
+
+  const backgroundColor = isPresent
+    ? colors.greenLight
+    : isNotYetAvailable
+    ? colors.background
+    : colors.redLight;
+
+  const iconBgColor = isPresent
+    ? colors.success
+    : isNotYetAvailable
+    ? colors.textSecondary
+    : colors.error;
+
+  const textColor = isPresent
+    ? colors.successDarker
+    : isNotYetAvailable
+    ? colors.text
+    : colors.errorDarker;
+
+  const subtextColor = isPresent ? colors.successDark : colors.errorDark;
+
+  const subtextContent = isPresent
+    ? "You attended this class"
+    : isNotYetAvailable
+    ? ""
+    : "You missed this class";
 
   return (
     <View
@@ -27,7 +54,7 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
         style={[
           styles.container,
           {
-            backgroundColor: isPresent ? colors.greenLight : colors.redLight,
+            backgroundColor: backgroundColor,
           },
         ]}
       >
@@ -36,12 +63,14 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
             style={[
               styles.iconContainer,
               {
-                backgroundColor: isPresent ? colors.success : colors.error,
+                backgroundColor: iconBgColor,
               },
             ]}
           >
             {isPresent ? (
               <Check size={22} color={colors.surface} />
+            ) : isNotYetAvailable ? (
+              <Clock size={22} color={colors.surface} />
             ) : (
               <X size={22} color={colors.surface} />
             )}
@@ -51,28 +80,32 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
               style={[
                 styles.statusText,
                 {
-                  color: isPresent ? colors.successDarker : colors.errorDarker,
+                  color: textColor,
                 },
               ]}
             >
               {status}
             </Text>
-            <Text
-              style={[
-                styles.subtext,
-                {
-                  color: isPresent ? colors.successDark : colors.errorDark,
-                },
-              ]}
-            >
-              {isPresent ? "You attended this class" : "You missed this class"}
-            </Text>
+            {subtextContent !== "" && (
+              <Text
+                style={[
+                  styles.subtext,
+                  {
+                    color: subtextColor,
+                  },
+                ]}
+              >
+                {subtextContent}
+              </Text>
+            )}
           </View>
         </View>
         {isPresent ? (
           <Check size={12} color={colors.success} style={{ opacity: 0.3 }} />
+        ) : isNotYetAvailable ? (
+          <Clock size={12} color={iconBgColor} style={{ opacity: 0.3 }} />
         ) : (
-          <X size={12} color={colors.error} style={{ opacity: 0.3 }} />
+          <X size={12} color={iconBgColor} style={{ opacity: 0.3 }} />
         )}
       </View>
     </View>
