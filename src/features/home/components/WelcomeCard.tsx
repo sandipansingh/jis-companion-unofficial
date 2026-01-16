@@ -9,8 +9,8 @@ interface WelcomeCardProps {
   courseName: string;
   collegeName: string;
   attendancePercentage: number;
-  attendedDays: number;
-  totalDays: number;
+  attendedClass: number;
+  totalClass: number;
   loadingAttendance: boolean;
 }
 
@@ -20,8 +20,8 @@ export function WelcomeCard({
   courseName,
   collegeName,
   attendancePercentage,
-  attendedDays,
-  totalDays,
+  attendedClass,
+  totalClass,
   loadingAttendance,
 }: WelcomeCardProps) {
   const { colors } = useTheme();
@@ -79,12 +79,12 @@ export function WelcomeCard({
           )}
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statLabel}>Days</Text>
+          <Text style={styles.statLabel}>Classes</Text>
           {loadingAttendance ? (
             <ActivityIndicator size="small" color={colors.surface} />
           ) : (
             <Text style={[styles.statValue, { color: colors.surface }]}>
-              {attendedDays}/{totalDays}
+              {attendedClass}/{totalClass}
             </Text>
           )}
         </View>

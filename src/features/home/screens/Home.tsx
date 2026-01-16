@@ -77,8 +77,8 @@ export default function Home() {
         courseName={loginData?.batch_name || "CSE"}
         collegeName={loginData?.college_sht_name || "N/A"}
         attendancePercentage={attendanceData?.pcent || 0}
-        attendedDays={attendanceData?.attd || 0}
-        totalDays={attendanceData?.total_class || 0}
+        attendedClass={attendanceData?.attd || 0}
+        totalClass={attendanceData?.total_class || 0}
         loadingAttendance={loadingAttendance}
       />
 
