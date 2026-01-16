@@ -90,7 +90,7 @@
       "policy": "fingerprint"
     },
     "updates": {
-      "enabled": false,
+      "enabled": true,
       "url": "https://u.expo.dev/61d36270-f994-42ad-9a57-8e408be456a4"
     }
   }

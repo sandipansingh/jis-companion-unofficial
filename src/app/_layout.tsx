@@ -2,6 +2,7 @@ import { AlertProvider, UpdateModal } from "@/src/components";
 import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
+import { useSilentOTAUpdate } from "@/src/hooks/useSilentOTAUpdate";
 import { dismissUpdate, useUpdateCheck } from "@/src/hooks/useUpdateCheck";
 import { initDatabase } from "@/src/services/database";
 import { useAlertStore } from "@/src/store/alertStore";
@@ -50,6 +51,8 @@ function RootLayoutNav() {
   const { updateAvailable, updateType, appInfo, currentVersion } =
     useUpdateCheck();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  useSilentOTAUpdate();
 
   useEffect(() => {
     const initializeAuth = async () => {
