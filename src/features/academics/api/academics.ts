@@ -5,8 +5,7 @@ import {
   DEMO_ATTENDANCE_DATA,
   getDemoDateAttendance,
   getDemoSubjectAttendance,
-} from "@/src/utils/demoData";
-import * as SecureStore from "@/src/utils/secureStore";
+} from "@/src/utils/demo";
 
 export interface AttendanceData {
   total_class: number;
@@ -63,11 +62,12 @@ export interface SubjectWiseAttendance {
 export async function fetchAttendancePercentage(
   studentId: string,
   collegeId: number,
-  branchId: number
+  branchId: number,
 ): Promise<AttendanceData> {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
       return DEMO_ATTENDANCE_DATA;
     }
 
@@ -93,7 +93,7 @@ export async function fetchAttendancePercentage(
 
     const parsedData = parseApiResponse<AttendanceData[]>(
       response.data.data.data,
-      []
+      [],
     );
 
     if (!parsedData || parsedData.length === 0) {
@@ -120,11 +120,12 @@ export async function fetchDateWiseAttendance(
   studentId: string,
   branchId: number,
   year?: string,
-  month?: string
+  month?: string,
 ): Promise<DateWiseAttendance[]> {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
       return getDemoDateAttendance();
     }
 
@@ -145,7 +146,7 @@ export async function fetchDateWiseAttendance(
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to fetch date-wise attendance"
+        response.data.message || "Failed to fetch date-wise attendance",
       );
     }
 
@@ -176,11 +177,12 @@ export async function fetchSubjectWiseAttendance(
   collegeId: number,
   branchId: number,
   fromDate: string,
-  toDate: string
+  toDate: string,
 ): Promise<SubjectWiseAttendance[]> {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
       return getDemoSubjectAttendance();
     }
 
@@ -205,7 +207,7 @@ export async function fetchSubjectWiseAttendance(
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to fetch subject-wise attendance"
+        response.data.message || "Failed to fetch subject-wise attendance",
       );
     }
 

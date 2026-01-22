@@ -45,7 +45,6 @@ export default function FacultyRatingScreen() {
         title: "Success",
         message: "Feedback submitted successfully!",
       });
-      router.back();
     },
     onError: (message) => {
       showAlert({
@@ -61,35 +60,19 @@ export default function FacultyRatingScreen() {
   const handleSaveFeedback = async () => {
     if (!faculty) return;
 
-    showAlert({
-      title: "Submit Feedback",
-      message: `Are you sure you want to submit feedback for ${faculty.fac_name}?`,
-      showCancel: true,
-      confirmText: "Submit",
-      onConfirm: async () => {
-        const result = await handleSubmitFeedback();
-        if (!result.success && result.error) {
-          showAlert({
-            title: "Incomplete",
-            message: result.error,
-          });
-        }
-      },
-    });
+    const result = await handleSubmitFeedback();
+    if (!result.success && result.error) {
+      showAlert({
+        title: "Incomplete",
+        message: result.error,
+      });
+    }
   };
 
   const handleNotOpted = async () => {
     if (!faculty) return;
 
-    showAlert({
-      title: "Skip Feedback",
-      message: `Do you want to skip giving feedback for ${faculty.fac_name}?`,
-      showCancel: true,
-      confirmText: "Confirm",
-      onConfirm: async () => {
-        await handleSkipFeedback();
-      },
-    });
+    await handleSkipFeedback();
   };
 
   if (loadingFaculty || !faculty) {

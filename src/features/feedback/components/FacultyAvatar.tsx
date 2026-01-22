@@ -4,13 +4,13 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 interface FacultyAvatarProps {
   imageUrl?: string;
-  name: string;
+  shortName: string;
   size?: number;
 }
 
 export function FacultyAvatar({
   imageUrl,
-  name,
+  shortName,
   size = 48,
 }: FacultyAvatarProps) {
   const { colors } = useTheme();
@@ -46,7 +46,7 @@ export function FacultyAvatar({
               },
             ]}
           >
-            {name.charAt(0).toUpperCase()}
+            {shortName}
           </Text>
         </View>
       )}

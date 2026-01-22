@@ -27,7 +27,7 @@ export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
     >
       <FacultyAvatar
         imageUrl={faculty.fac_image}
-        name={faculty.fac_name}
+        shortName={faculty.fac_sht_name}
         size={48}
       />
 

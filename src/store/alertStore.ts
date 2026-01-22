@@ -8,11 +8,13 @@ interface AlertState {
   cancelText?: string;
   showCancel?: boolean;
   isDestructive?: boolean;
+  linkText?: string;
+  linkUrl?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
 
   showAlert: (
-    config: Partial<Omit<AlertState, "visible" | "showAlert" | "hideAlert">>
+    config: Partial<Omit<AlertState, "visible" | "showAlert" | "hideAlert">>,
   ) => void;
   hideAlert: () => void;
 }
@@ -25,6 +27,8 @@ export const useAlertStore = create<AlertState>((set) => ({
   cancelText: "Cancel",
   showCancel: false,
   isDestructive: false,
+  linkText: undefined,
+  linkUrl: undefined,
 
   showAlert: (config) =>
     set({
@@ -35,6 +39,8 @@ export const useAlertStore = create<AlertState>((set) => ({
       cancelText: config.cancelText ?? "Cancel",
       showCancel: config.showCancel ?? false,
       isDestructive: config.isDestructive ?? false,
+      linkText: config.linkText,
+      linkUrl: config.linkUrl,
       onConfirm: config.onConfirm,
       onCancel: config.onCancel,
     }),
@@ -42,6 +48,8 @@ export const useAlertStore = create<AlertState>((set) => ({
   hideAlert: () =>
     set({
       visible: false,
+      linkText: undefined,
+      linkUrl: undefined,
       onConfirm: undefined,
       onCancel: undefined,
     }),

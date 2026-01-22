@@ -1,4 +1,6 @@
 import { useAlertStore } from "@/src/store/alertStore";
+import { DEMO_CREDENTIALS } from "@/src/utils/demo";
+import { normalizeStudentId } from "@/src/utils/stringHelpers";
 import { useState } from "react";
 import { useAuthStore } from "../store";
 
@@ -20,7 +22,8 @@ export function useLoginData() {
 
     setLoading(true);
     try {
-      const success = await login(studentId.trim(), password.trim());
+      const normalizedStudentId = normalizeStudentId(studentId);
+      const success = await login(normalizedStudentId, password.trim());
       if (!success) {
         showAlert({
           title: "Login Failed",
@@ -41,7 +44,37 @@ export function useLoginData() {
     showAlert({
       title: "Credits",
       message: "Password icons created by Roundicons Premium - Flaticon",
+      linkText: "View Icon",
+      linkUrl: "https://www.flaticon.com/free-icons/password",
     });
+  };
+
+  const handleDemoLogin = async () => {
+    setStudentId(DEMO_CREDENTIALS.username);
+    setPassword(DEMO_CREDENTIALS.password);
+
+    setTimeout(async () => {
+      setLoading(true);
+      try {
+        const success = await login(
+          DEMO_CREDENTIALS.username,
+          DEMO_CREDENTIALS.password,
+        );
+        if (!success) {
+          showAlert({
+            title: "Login Failed",
+            message: "Demo login failed. Please try again.",
+          });
+        }
+      } catch (error: any) {
+        showAlert({
+          title: "Error",
+          message: error.message || "An error occurred during login",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
   };
 
   return {
@@ -52,5 +85,6 @@ export function useLoginData() {
     setPassword,
     handleLogin,
     showCredits,
+    handleDemoLogin,
   };
 }

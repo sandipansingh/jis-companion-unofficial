@@ -1,6 +1,6 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
 import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import * as SecureStore from "@/src/utils/secureStore";
+import { getDemoFeeData } from "@/src/utils/demo";
 
 export interface FeeLedgerEntry {
   vou_date: string;
@@ -24,12 +24,13 @@ export interface FeeLedgerEntry {
  */
 export async function fetchStudentFeeLedger(
   studentId: string,
-  branchId: number
+  branchId: number,
 ): Promise<FeeLedgerEntry[]> {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
-      return [];
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return getDemoFeeData();
     }
 
     if (!studentId || studentId.trim() === "" || !branchId) {

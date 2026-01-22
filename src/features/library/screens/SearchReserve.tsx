@@ -32,6 +32,7 @@ export default function SearchReserve() {
     searchField,
     showFilterDropdown,
     hasSearched,
+    isDemoUser,
     setSearchQuery,
     setSearchField,
     setShowFilterDropdown,
@@ -122,6 +123,7 @@ export default function SearchReserve() {
                   key={`${item.sl_no}-${index}`}
                   book={item}
                   onReserve={handleReserve}
+                  isDemoUser={isDemoUser}
                 />
               ))}
             </>

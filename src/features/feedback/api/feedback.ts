@@ -1,5 +1,6 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
 import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
+import { DEMO_FACULTY_LIST, getDemoFeedbackQuestions } from "@/src/utils/demo";
 
 export interface FeedbackLockStatus {
   locStatus: number; // 0 = unlocked, 1 = locked
@@ -51,9 +52,15 @@ export interface FeedbackSaveResponse {
 export async function getFeedbackLockStatus(
   collegeId: number,
   stdtId: number,
-  branchId: number
+  branchId: number,
 ): Promise<FeedbackLockStatus> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return { locStatus: 0 }; // Unlocked for demo
+    }
+
     const body = {
       parameters: ["@p_college_id", "@p_student_id"],
       values: [collegeId.toString(), stdtId.toString()],
@@ -65,7 +72,7 @@ export async function getFeedbackLockStatus(
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to load feedback status"
+        response.data.message || "Failed to load feedback status",
       );
     }
 
@@ -86,9 +93,15 @@ export async function getFeedbackLockStatus(
 export async function getFacultyList(
   collegeId: number,
   stdtId: number,
-  branchId: number
+  branchId: number,
 ): Promise<FacultyFeedbackItem[]> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return DEMO_FACULTY_LIST;
+    }
+
     const body = {
       parameters: ["@p_college_id", "@p_student_id"],
       values: [collegeId.toString(), stdtId.toString()],
@@ -104,7 +117,7 @@ export async function getFacultyList(
 
     const parsed = parseApiResponse<FacultyFeedbackItem[]>(
       response.data.data.data,
-      []
+      [],
     );
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
@@ -123,9 +136,15 @@ export async function getFeedbackQuestions(
   collegeId: number,
   stdtId: number,
   branchId: number,
-  facultyItem: FacultyFeedbackItem
+  facultyItem: FacultyFeedbackItem,
 ): Promise<FeedbackQuestion[]> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return getDemoFeedbackQuestions();
+    }
+
     const body = {
       parameters: [
         "@p_college_id",
@@ -161,7 +180,7 @@ export async function getFeedbackQuestions(
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to load feedback questions"
+        response.data.message || "Failed to load feedback questions",
       );
     }
 
@@ -184,9 +203,20 @@ export async function saveFeedback(
   stdtId: number,
   branchId: number,
   facultyItem: FacultyFeedbackItem,
-  questions: FeedbackQuestion[]
+  questions: FeedbackQuestion[],
 ): Promise<FeedbackSaveResponse> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return {
+        err_mesg: "Feedback saved successfully (Demo Mode)",
+        err_no: 0,
+        doc_no: "DEMO-FB-001",
+        doc_id: 1,
+      };
+    }
+
     const body = {
       parameters: [
         "@p_college_id",
@@ -226,7 +256,7 @@ export async function saveFeedback(
 
     const parsed = parseApiResponse<FeedbackSaveResponse[]>(
       response.data.data.data,
-      []
+      [],
     );
     return parsed[0];
   } catch (error) {
@@ -245,9 +275,20 @@ export async function markFacultyNotOpted(
   collegeId: number,
   stdtId: number,
   branchId: number,
-  facultyItem: FacultyFeedbackItem
+  facultyItem: FacultyFeedbackItem,
 ): Promise<FeedbackSaveResponse> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return {
+        err_mesg: "Faculty marked as not opted (Demo Mode)",
+        err_no: 0,
+        doc_no: "DEMO-FB-NO-001",
+        doc_id: 1,
+      };
+    }
+
     const body = {
       parameters: [
         "@p_college_id",
@@ -281,13 +322,13 @@ export async function markFacultyNotOpted(
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to skip faculty feedback"
+        response.data.message || "Failed to skip faculty feedback",
       );
     }
 
     const parsed = parseApiResponse<FeedbackSaveResponse[]>(
       response.data.data.data,
-      []
+      [],
     );
     return parsed[0];
   } catch (error) {
@@ -316,9 +357,21 @@ export async function finalSaveFeedback(
   semId: number,
   courseId: number,
   streamId: number,
-  secId: number
+  secId: number,
 ): Promise<FeedbackSaveResponse> {
   try {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
+      return {
+        err_mesg:
+          "All feedback submitted successfully (Demo Mode - No data saved)",
+        err_no: 0,
+        doc_no: "DEMO-FB-FINAL-001",
+        doc_id: 1,
+      };
+    }
+
     const body = {
       parameters: [
         "@p_college_id",
@@ -352,7 +405,7 @@ export async function finalSaveFeedback(
 
     const parsed = parseApiResponse<FeedbackSaveResponse[]>(
       response.data.data.data,
-      []
+      [],
     );
     return parsed[0];
   } catch (error) {

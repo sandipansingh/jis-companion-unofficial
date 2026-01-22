@@ -1,7 +1,7 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import React from "react";
-import { Modal, StyleSheet, Text, View } from "react-native";
+import { Linking, Modal, StyleSheet, Text, View } from "react-native";
 import { Button } from "./Button";
 
 export function AlertProvider() {
@@ -14,6 +14,8 @@ export function AlertProvider() {
     cancelText,
     showCancel,
     isDestructive,
+    linkText,
+    linkUrl,
     onConfirm,
     onCancel,
     hideAlert,
@@ -68,6 +70,30 @@ export function AlertProvider() {
                   textStyle={{
                     fontSize: 14,
                     color: colors.text,
+                  }}
+                />
+              </View>
+            )}
+
+            {linkText && linkUrl && (
+              <View style={{ flex: 1 }}>
+                <Button
+                  title={linkText}
+                  variant="secondary"
+                  onPress={() => {
+                    Linking.openURL(linkUrl);
+                    hideAlert();
+                  }}
+                  style={{
+                    height: 44,
+                    borderRadius: 8,
+                    backgroundColor: "transparent",
+                    borderWidth: 1,
+                    borderColor: colors.primary,
+                  }}
+                  textStyle={{
+                    fontSize: 14,
+                    color: colors.primary,
                   }}
                 />
               </View>

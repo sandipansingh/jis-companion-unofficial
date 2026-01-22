@@ -1,5 +1,6 @@
 import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
+import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
 import { commonStyles } from "@/src/styles/commonStyles";
 import { LogOut } from "lucide-react-native";
@@ -22,6 +23,7 @@ import { useProfileData } from "../hooks/useProfileData";
 
 export default function Profile() {
   const { colors } = useTheme();
+  const { isDemoAccount } = useAuthStore();
   const { bottomOffset } = useSafeAreaStore();
   const {
     studentId,
@@ -99,6 +101,7 @@ export default function Profile() {
                 permanentCity={userData?.permanemt_city}
                 permanentPin={userData?.permanemt_pin}
                 onChangePassword={() => setShowChangePasswordModal(true)}
+                isDemoAccount={isDemoAccount}
               />
             )}
 

@@ -3,8 +3,7 @@ import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import {
   getDemoLibraryBooks,
   getDemoLibrarySearchResults,
-} from "@/src/utils/demoData";
-import * as SecureStore from "@/src/utils/secureStore";
+} from "@/src/utils/demo";
 
 export interface LibraryBook {
   acc_type_id: number;
@@ -53,11 +52,12 @@ export type LibrarySearchField =
  */
 export const fetchLibraryBooks = async (
   readerCode: string,
-  type: LibraryFilterType
+  type: LibraryFilterType,
 ): Promise<LibraryBook[]> => {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
       const allBooks = getDemoLibraryBooks();
 
       // Filter based on type: "1" for all books, "2" for pending only
@@ -99,11 +99,12 @@ export const fetchLibraryBooks = async (
 export const searchLibraryBooks = async (
   readerCode: string,
   field: LibrarySearchField,
-  query: string
+  query: string,
 ): Promise<LibrarySearchResult[]> => {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const { useAuthStore } =
+      await import("@/src/features/auth/store/authStore");
+    if (useAuthStore.getState().isDemoAccount) {
       return getDemoLibrarySearchResults();
     }
 
@@ -116,7 +117,7 @@ export const searchLibraryBooks = async (
 
     if (response.data.errorCode !== 0) {
       throw new Error(
-        response.data.message || "Failed to search library books"
+        response.data.message || "Failed to search library books",
       );
     }
 
@@ -141,7 +142,7 @@ export const searchLibraryBooks = async (
 export const reserveLibraryBook = async (
   readerCode: string,
   title: string,
-  author: string
+  author: string,
 ): Promise<{ message: string; error: number }> => {
   try {
     const response = await apiClient.post<StandardApiResponse>("", {

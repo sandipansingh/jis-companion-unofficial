@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/src/features/auth";
 import {
   LibrarySearchField,
   LibrarySearchResult,
@@ -8,6 +9,7 @@ import { useLibraryStore } from "../store";
 
 export function useSearchReserveData() {
   const { showAlert } = useAlertStore();
+  const isDemoUser = useAuthStore((state) => state.isDemoAccount);
   const {
     searchResults,
     searchLoading,
@@ -82,6 +84,7 @@ export function useSearchReserveData() {
     searchField,
     showFilterDropdown,
     hasSearched,
+    isDemoUser,
     setSearchQuery,
     setSearchField,
     setShowFilterDropdown,

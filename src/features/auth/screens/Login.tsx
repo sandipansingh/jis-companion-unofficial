@@ -5,8 +5,14 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  View,
 } from "react-native";
-import { CreditsButton, LoginForm, LoginLogo } from "../components";
+import {
+  CreditsButton,
+  DemoLoginButton,
+  LoginForm,
+  LoginLogo,
+} from "../components";
 import { useLoginData } from "../hooks";
 
 export default function Login() {
@@ -19,6 +25,7 @@ export default function Login() {
     setPassword,
     handleLogin,
     showCredits,
+    handleDemoLogin,
   } = useLoginData();
 
   return (
@@ -33,16 +40,20 @@ export default function Login() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <LoginLogo />
+        <View>
+          <LoginLogo />
 
-        <LoginForm
-          studentId={studentId}
-          password={password}
-          loading={loading}
-          onStudentIdChange={setStudentId}
-          onPasswordChange={setPassword}
-          onSubmit={handleLogin}
-        />
+          <LoginForm
+            studentId={studentId}
+            password={password}
+            loading={loading}
+            onStudentIdChange={setStudentId}
+            onPasswordChange={setPassword}
+            onSubmit={handleLogin}
+          />
+
+          <DemoLoginButton onPress={handleDemoLogin} />
+        </View>
 
         <CreditsButton onPress={showCredits} />
       </ScrollView>
@@ -59,6 +70,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.select({ web: 20, default: 40 }),
     paddingHorizontal: 20,
     paddingBottom: 40,
+    justifyContent: "space-between",
   },
   logo: {
     width: 180,

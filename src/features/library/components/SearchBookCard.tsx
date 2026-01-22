@@ -6,9 +6,14 @@ import { LibrarySearchResult } from "../api";
 interface SearchBookCardProps {
   book: LibrarySearchResult;
   onReserve: (book: LibrarySearchResult) => void;
+  isDemoUser?: boolean;
 }
 
-export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
+export function SearchBookCard({
+  book,
+  onReserve,
+  isDemoUser = false,
+}: SearchBookCardProps) {
   const { colors } = useTheme();
   const isAvailable = book.tot_shelf - book.tot_issued > 0;
 
@@ -104,16 +109,20 @@ export function SearchBookCard({ book, onReserve }: SearchBookCardProps) {
           styles.reserveButton,
           {
             backgroundColor: colors.primary,
-            opacity: isAvailable ? 1 : 0.5,
+            opacity: isAvailable && !isDemoUser ? 1 : 0.5,
             shadowColor: colors.shadow,
           },
         ]}
         onPress={() => onReserve(book)}
-        disabled={!isAvailable}
+        disabled={!isAvailable || isDemoUser}
       >
         <BookmarkPlus size={18} color={colors.surface} />
         <Text style={[styles.reserveButtonText, { color: colors.surface }]}>
-          {isAvailable ? "Reserve Book" : "Not Available"}
+          {isDemoUser
+            ? "Demo Mode - View Only"
+            : isAvailable
+              ? "Reserve Book"
+              : "Not Available"}
         </Text>
       </TouchableOpacity>
     </View>

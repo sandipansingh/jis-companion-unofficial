@@ -22,6 +22,7 @@ interface PersonalTabContentProps {
   permanentCity?: string;
   permanentPin?: string;
   onChangePassword: () => void;
+  isDemoAccount?: boolean;
 }
 
 export function PersonalTabContent({
@@ -36,6 +37,7 @@ export function PersonalTabContent({
   permanentCity,
   permanentPin,
   onChangePassword,
+  isDemoAccount = false,
 }: PersonalTabContentProps) {
   const { colors } = useTheme();
 
@@ -68,6 +70,7 @@ export function PersonalTabContent({
       <Button
         title="Change Password"
         onPress={onChangePassword}
+        disabled={isDemoAccount}
         icon={<Lock size={16} color={colors.white} />}
         iconPosition="left"
         style={{

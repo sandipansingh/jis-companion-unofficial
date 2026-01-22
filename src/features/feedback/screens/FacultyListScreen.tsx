@@ -45,7 +45,7 @@ export default function FacultyListScreen() {
     const facultyId = createFacultyId(
       faculty.fac_code,
       faculty.sub_code,
-      faculty.sec_id
+      faculty.sec_id,
     );
     router.push(`/feedback/faculty/${facultyId}` as any);
   };

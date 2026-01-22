@@ -7,7 +7,7 @@ import {
   DEMO_USER_PROFILE,
   getDemoLoginData,
   isDemoAccount,
-} from "@/src/utils/demoData";
+} from "@/src/utils/demo";
 import * as SecureStore from "@/src/utils/secureStore";
 import * as Crypto from "expo-crypto";
 import * as Device from "expo-device";
@@ -171,7 +171,7 @@ export async function login({
 
     const parsedData = parseApiResponse<LoginResponse>(
       response.data.data.data,
-      {} as LoginResponse
+      {} as LoginResponse,
     );
 
     if (parsedData.is_valid !== 1) {
@@ -228,7 +228,7 @@ export async function getStoredCredentials(): Promise<{
  */
 export async function fetchUserProfile(
   branchId: string,
-  stdId: string
+  stdId: string,
 ): Promise<UserProfileData> {
   try {
     const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
@@ -251,7 +251,7 @@ export async function fetchUserProfile(
 
     return parseApiResponse<UserProfileData>(
       response.data.data.data,
-      {} as UserProfileData
+      {} as UserProfileData,
     );
   } catch (error) {
     handleApiError(error, "Fetch user profile");
@@ -273,7 +273,7 @@ export async function fetchUserProfile(
 export async function changePassword(
   studentId: string,
   oldPassword: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<{ success: boolean; message: string }> {
   try {
     const body = {
@@ -284,7 +284,7 @@ export async function changePassword(
 
     const response = await unofficialApiClient.post(
       "/auth/change-password",
-      body
+      body,
     );
 
     if (response.data?.success) {
