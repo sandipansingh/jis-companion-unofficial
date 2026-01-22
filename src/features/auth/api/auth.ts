@@ -4,6 +4,7 @@ import apiClient, {
 } from "@/src/api/client";
 import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import {
+  DEMO_CREDENTIALS,
   DEMO_USER_PROFILE,
   getDemoLoginData,
   isDemoAccount,
@@ -211,6 +212,15 @@ export async function getStoredCredentials(): Promise<{
         isDemoAccount: isDemoFlag === "true",
       };
     }
+
+    if (studentId && isDemoFlag === "true") {
+      return {
+        studentId,
+        password: DEMO_CREDENTIALS.password,
+        isDemoAccount: true,
+      };
+    }
+
     return null;
   } catch (error) {
     console.error("Error getting stored credentials:", error);

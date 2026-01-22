@@ -1,4 +1,4 @@
-import { AlertProvider, UpdateModal } from "@/src/components";
+import { AlertProvider, DemoBanner, UpdateModal } from "@/src/components";
 import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
@@ -79,7 +79,7 @@ function RootLayoutNav() {
 
       if (elapsed < minDisplayTime) {
         await new Promise((resolve) =>
-          setTimeout(resolve, minDisplayTime - elapsed)
+          setTimeout(resolve, minDisplayTime - elapsed),
         );
       }
 
@@ -170,6 +170,7 @@ function RootLayoutNav() {
           <Stack.Screen name="login" options={{ headerShown: false }} />
         </Stack>
       )}
+      <DemoBanner />
       <AlertProvider />
       {appInfo && Platform.OS === "android" && (
         <UpdateModal

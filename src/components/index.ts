@@ -1,5 +1,6 @@
 export { AlertProvider } from "./AlertProvider";
 export { Button } from "./Button";
+export { DemoBanner } from "./DemoBanner";
 export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
 export { HeaderCard } from "./HeaderCard";
