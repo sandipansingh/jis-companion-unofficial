@@ -74,9 +74,10 @@ export default function ChangePasswordModal({
       setErrors({});
       onClose();
     } catch (error: any) {
+      const errorMessage = error.message || "Failed to change password";
       showAlert({
         title: "Error",
-        message: error.message || "Failed to change password",
+        message: `${errorMessage}\n\nPlease try logging out of other phone and web, then try again after 15 minutes.`,
       });
     } finally {
       setIsLoading(false);
