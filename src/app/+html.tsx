@@ -45,7 +45,7 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="apple-touch-icon" sizes="120x120" />
 
         {/* Theme */}
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#F5F5F5" />
 
         {/* Service Worker Registration */}
         <script dangerouslySetInnerHTML={{ __html: sw }} />

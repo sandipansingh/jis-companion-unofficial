@@ -46,8 +46,8 @@
       "name": "JIS Companion (Unofficial)",
       "shortName": "JIS Companion (Unofficial)",
       "display": "standalone",
-      "themeColor": "#ffffff",
-      "backgroundColor": "#ffffff"
+      "themeColor": "#F5F5F5",
+      "backgroundColor": "#F5F5F5"
     },
     "plugins": [
       "expo-router",
