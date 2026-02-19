@@ -1,30 +1,25 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 interface DemoLoginButtonProps {
   onPress: () => void;
 }
 
 export function DemoLoginButton({ onPress }: DemoLoginButtonProps) {
-  const { colors } = useTheme();
-
   return (
-    <Pressable onPress={onPress} style={styles.demoButton}>
-      <Text style={[styles.demoText, { color: colors.textSecondary }]}>
-        Want to test? Try demo login
-      </Text>
+    <Pressable
+      onPress={onPress}
+      className="mt-5 py-3 items-center"
+    >
+      <View className="flex-row items-center gap-2">
+        <View className="h-px w-8 bg-ink-300" />
+        <Text
+          className="text-sm text-ink-500"
+          style={{ fontFamily: "GeneralSans-Regular" }}
+        >
+          or try demo login
+        </Text>
+        <View className="h-px w-8 bg-ink-300" />
+      </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  demoButton: {
-    marginTop: 12,
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-  demoText: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-});

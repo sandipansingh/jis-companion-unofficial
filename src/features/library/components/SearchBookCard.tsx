@@ -1,6 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { Book, BookmarkPlus } from "lucide-react-native";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { LibrarySearchResult } from "../api";
 
 interface SearchBookCardProps {
@@ -9,210 +8,117 @@ interface SearchBookCardProps {
   isDemoUser?: boolean;
 }
 
-export function SearchBookCard({
-  book,
-  onReserve,
-  isDemoUser = false,
-}: SearchBookCardProps) {
-  const { colors } = useTheme();
+export function SearchBookCard({ book, onReserve, isDemoUser = false }: SearchBookCardProps) {
   const isAvailable = book.tot_shelf - book.tot_issued > 0;
 
   return (
     <View
-      style={[
-        styles.searchBookCard,
-        { backgroundColor: colors.surface, shadowColor: colors.shadow },
-      ]}
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-5 mb-4"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
-      <View style={styles.searchBookHeader}>
-        <View
-          style={[
-            styles.searchBookIcon,
-            { backgroundColor: colors.primary + "15" },
-          ]}
-        >
-          <Book size={24} color={colors.primary} />
+      {/* Header */}
+      <View className="flex-row gap-3.5 mb-3">
+        <View className="w-12 h-12 rounded-xl bg-cobalt-50 dark:bg-ink-900 border border-border items-center justify-center">
+          <Book size={22} color="#2B5BDB" />
         </View>
-        <View style={{ flex: 1 }}>
+        <View className="flex-1">
           <Text
-            style={[styles.searchBookTitle, { color: colors.text }]}
+            className="text-base text-ink-900 dark:text-white leading-snug mb-0.5"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
             numberOfLines={2}
           >
             {book.acc_title}
           </Text>
           {book.acc_edition && (
-            <Text style={[styles.edition, { color: colors.textMuted }]}>
+            <Text
+              className="text-xs text-ink-400 dark:text-ink-500 italic"
+              style={{ fontFamily: "GeneralSans-Regular" }}
+            >
               Edition: {book.acc_edition}
             </Text>
           )}
         </View>
       </View>
 
-      <Text style={[styles.authorText, { color: colors.textSecondary }]}>
-        <Text style={{ fontWeight: "600" }}>Author: </Text>
+      {/* Author/Subject */}
+      <Text
+        className="text-sm text-ink-600 dark:text-ink-300 mb-1"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
+        <Text style={{ fontFamily: "GeneralSans-Semibold" }}>Author: </Text>
         {book.acc_author || "N/A"}
       </Text>
-
       {book.acc_subject && (
-        <Text style={[styles.subjectText, { color: colors.textMuted }]}>
-          <Text style={{ fontWeight: "600" }}>Subject: </Text>
+        <Text
+          className="text-sm text-ink-500 dark:text-ink-400 mb-3"
+          style={{ fontFamily: "GeneralSans-Regular" }}
+        >
+          <Text style={{ fontFamily: "GeneralSans-Semibold" }}>Subject: </Text>
           {book.acc_subject}
         </Text>
       )}
 
-      <View
-        style={[
-          styles.availabilitySection,
-          { backgroundColor: colors.background },
-        ]}
-      >
-        <View style={styles.availabilityItem}>
-          <Text style={[styles.availabilityLabel, { color: colors.textMuted }]}>
-            Total Copies
+      {/* Availability grid */}
+      <View className="flex-row bg-ink-100 dark:bg-ink-900 rounded-xl p-3 mb-3 gap-2">
+        <View className="flex-1 items-center">
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
+            Total
           </Text>
-          <Text style={[styles.availabilityValue, { color: colors.text }]}>
+          <Text className="text-xl text-ink-800 dark:text-white" style={{ fontFamily: "ClashDisplay-Bold" }}>
             {book.tot_copy}
           </Text>
         </View>
-        <View
-          style={[
-            styles.availabilityDivider,
-            { backgroundColor: colors.gray200 },
-          ]}
-        />
-        <View style={styles.availabilityItem}>
-          <Text style={[styles.availabilityLabel, { color: colors.textMuted }]}>
+        <View className="w-px bg-ink-300/50 dark:bg-ink-700" />
+        <View className="flex-1 items-center">
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
             On Shelf
           </Text>
-          <Text style={[styles.availabilityValue, { color: colors.success }]}>
+          <Text className="text-xl text-green-700 dark:text-green-500" style={{ fontFamily: "ClashDisplay-Bold" }}>
             {book.tot_shelf}
           </Text>
         </View>
-        <View
-          style={[
-            styles.availabilityDivider,
-            { backgroundColor: colors.gray200 },
-          ]}
-        />
-        <View style={styles.availabilityItem}>
-          <Text style={[styles.availabilityLabel, { color: colors.textMuted }]}>
+        <View className="w-px bg-ink-300/50 dark:bg-ink-700" />
+        <View className="flex-1 items-center">
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
             Issued
           </Text>
-          <Text style={[styles.availabilityValue, { color: colors.warning }]}>
+          <Text className="text-xl text-yellow-700 dark:text-yellow-500" style={{ fontFamily: "ClashDisplay-Bold" }}>
             {book.tot_issued}
           </Text>
         </View>
       </View>
 
+      {/* Reserve button */}
       <TouchableOpacity
-        style={[
-          styles.reserveButton,
-          {
-            backgroundColor: colors.primary,
-            opacity: isAvailable && !isDemoUser ? 1 : 0.5,
-            shadowColor: colors.shadow,
-          },
-        ]}
+        className={`flex-row items-center justify-center gap-2 py-3 rounded-xl ${
+          isAvailable && !isDemoUser ? "bg-cobalt-500" : "bg-ink-200"
+        }`}
+        style={{
+          opacity: isAvailable && !isDemoUser ? 1 : 0.6,
+          shadowColor: isAvailable ? "#2B5BDB" : "transparent",
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: isAvailable && !isDemoUser ? 4 : 0,
+        }}
         onPress={() => onReserve(book)}
         disabled={!isAvailable || isDemoUser}
+        activeOpacity={0.8}
       >
-        <BookmarkPlus size={18} color={colors.surface} />
-        <Text style={[styles.reserveButtonText, { color: colors.surface }]}>
-          {isDemoUser
-            ? "Demo Mode - View Only"
-            : isAvailable
-              ? "Reserve Book"
-              : "Not Available"}
+        <BookmarkPlus size={16} color={isAvailable && !isDemoUser ? "#FFFFFF" : "#94A3B8"} />
+        <Text
+          className={`text-sm ${isAvailable && !isDemoUser ? "text-white" : "text-ink-500"}`}
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          {isDemoUser ? "Demo Mode – View Only" : isAvailable ? "Reserve Book" : "Not Available"}
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  searchBookCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.05)",
-  },
-  searchBookHeader: {
-    flexDirection: "row",
-    gap: 14,
-    marginBottom: 12,
-    backgroundColor: "transparent",
-  },
-  searchBookIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  searchBookTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    lineHeight: 22,
-    marginBottom: 4,
-  },
-  edition: {
-    fontSize: 12,
-    fontStyle: "italic",
-  },
-  authorText: {
-    fontSize: 13,
-    marginBottom: 6,
-    lineHeight: 18,
-  },
-  subjectText: {
-    fontSize: 13,
-    marginBottom: 14,
-    lineHeight: 18,
-  },
-  availabilitySection: {
-    flexDirection: "row",
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 14,
-  },
-  availabilityItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  availabilityDivider: {
-    width: 1,
-    marginHorizontal: 8,
-  },
-  availabilityLabel: {
-    fontSize: 10,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  availabilityValue: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  reserveButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 12,
-    gap: 8,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  reserveButtonText: {
-    fontWeight: "700",
-    fontSize: 14,
-  },
-});

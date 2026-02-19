@@ -1,77 +1,43 @@
-import { Text } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface FacultyInfoProps {
   facultyName: string;
 }
 
+function getInitials(name: string) {
+  return name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
+}
+
 export function FacultyInfo({ facultyName }: FacultyInfoProps) {
-  const { colors } = useTheme();
-
-  const getInitials = (name: string) => {
-    return name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
-  };
-
   return (
-    <View style={styles.section}>
-      <View style={[styles.box, { backgroundColor: colors.gray100 }]}>
-        <View style={[styles.avatar, { backgroundColor: colors.indigoLight }]}>
-          <Text style={[styles.avatarText, { color: colors.indigo }]}>
-            {getInitials(facultyName)}
-          </Text>
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Faculty
-          </Text>
-          <Text style={[styles.name, { color: colors.text }]}>
-            {facultyName}
-          </Text>
-        </View>
+    <View className="mt-2 bg-ink-100 dark:bg-ink-800 rounded-xl flex-row items-center gap-3 p-3">
+      <View className="w-10 h-10 rounded-full bg-cobalt-50 dark:bg-cobalt-900/40 border border-border items-center justify-center">
+        <Text
+          className="text-xs text-cobalt-600 dark:text-cobalt-300"
+          style={{ fontFamily: "ClashDisplay-Semibold" }}
+        >
+          {getInitials(facultyName)}
+        </Text>
+      </View>
+      <View>
+        <Text
+          className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest"
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          Faculty
+        </Text>
+        <Text
+          className="text-sm text-ink-900 dark:text-white"
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          {facultyName}
+        </Text>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginTop: 8,
-    backgroundColor: "transparent",
-  },
-  box: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  textContainer: {
-    flex: 1,
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: "500",
-    marginBottom: 4,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-});

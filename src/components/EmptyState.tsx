@@ -1,6 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { Text, View } from "./Themed";
+import React from "react";
+import { Text, View } from "react-native";
 
 interface EmptyStateProps {
   message: string;
@@ -8,12 +7,17 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ message, icon: Icon }: EmptyStateProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={commonStyles.centerContainer}>
-      {Icon && <Icon size={48} color={colors.textSecondary} />}
-      <Text style={[commonStyles.emptyText, { color: colors.textSecondary }]}>
+    <View className="flex-1 items-center justify-center gap-5 bg-base px-8">
+      {Icon && (
+        <View className="w-20 h-20 rounded-3xl bg-ink-200 items-center justify-center">
+          <Icon size={36} color="#94A3B8" />
+        </View>
+      )}
+      <Text
+        className="text-base text-ink-600 text-center leading-6"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
         {message}
       </Text>
     </View>

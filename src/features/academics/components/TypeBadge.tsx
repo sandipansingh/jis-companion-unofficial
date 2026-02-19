@@ -1,28 +1,27 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface TypeBadgeProps {
   type: "LAB" | "THEORY";
 }
 
 export function TypeBadge({ type }: TypeBadgeProps) {
-  const { colors } = useTheme();
-
+  const isLab = type === "LAB";
   return (
-    <View style={[styles.badge, { backgroundColor: colors.gray100 }]}>
-      <Text style={[styles.text, { color: colors.gray400 }]}>{type}</Text>
+    <View
+      className={`rounded-full px-4 py-2 ${
+        isLab
+          ? "bg-warning-light dark:bg-yellow-900/30 border border-warning dark:border-yellow-700"
+          : "bg-ink-100 dark:bg-ink-800 border border-border"
+      }`}
+    >
+      <Text
+        className={`text-sm ${
+          isLab ? "text-warning dark:text-yellow-400" : "text-ink-500 dark:text-ink-400"
+        }`}
+        style={{ fontFamily: "GeneralSans-Semibold" }}
+      >
+        {type}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-});

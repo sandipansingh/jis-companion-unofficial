@@ -1,6 +1,6 @@
-import { InfoRow, View } from "@/src/components";
+import { InfoRow } from "@/src/components";
 import { CreditCard, FileText, Landmark, MapPin } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { View } from "react-native";
 
 interface BankTabContentProps {
   accountNumber?: string;
@@ -16,7 +16,7 @@ export function BankTabContent({
   ifscCode,
 }: BankTabContentProps) {
   return (
-    <View style={styles.tabContentInner}>
+    <View>
       <InfoRow label="ACCOUNT NUMBER" value={accountNumber} icon={CreditCard} />
       <InfoRow label="BANK NAME" value={bankName} icon={Landmark} />
       <InfoRow label="BRANCH NAME" value={branchName} icon={MapPin} />
@@ -24,9 +24,3 @@ export function BankTabContent({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabContentInner: {
-    backgroundColor: "transparent",
-  },
-});

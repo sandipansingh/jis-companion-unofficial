@@ -1,6 +1,4 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { Image, StyleSheet } from "react-native";
+import { Image, Text, View } from "react-native";
 import { RegistrationRollInfo } from "./RegistrationRollInfo";
 
 interface ProfileInfoProps {
@@ -22,102 +20,80 @@ export function ProfileInfo({
   rollNo,
   getInitials,
 }: ProfileInfoProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.profileHeader}>
+    <View className="items-center pt-6 pb-4">
+      {/* Avatar */}
       {profileImageUrl ? (
         <Image
           source={{ uri: profileImageUrl }}
-          style={[styles.profileImage, { borderColor: colors.purpleLight }]}
+          className="w-28 h-28 rounded-2xl mb-4"
+          style={{
+            borderWidth: 3,
+            borderColor: "#EEF3FF",
+            shadowColor: "#2B5BDB",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.18,
+            shadowRadius: 16,
+          }}
         />
       ) : (
         <View
-          style={[
-            styles.profileImage,
-            styles.profilePlaceholder,
-            {
-              backgroundColor: colors.primary + "30",
-              borderColor: colors.purpleLight,
-            },
-          ]}
+          className="w-28 h-28 rounded-2xl mb-4 bg-cobalt-500 items-center justify-center"
+          style={{
+            borderWidth: 3,
+            borderColor: "#EEF3FF",
+            shadowColor: "#2B5BDB",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.18,
+            shadowRadius: 16,
+          }}
         >
-          <Text style={[styles.placeholderText, { color: colors.primary }]}>
+          <Text
+            className="text-4xl text-white"
+            style={{ fontFamily: "ClashDisplay-Bold" }}
+          >
             {getInitials(name || "Student")}
           </Text>
         </View>
       )}
-      <Text style={[styles.name, { color: colors.text }]}>
+
+      {/* Name */}
+      <Text
+        className="text-2xl text-ink-900 dark:text-ink-100 uppercase tracking-wide mb-2"
+        style={{ fontFamily: "ClashDisplay-Semibold" }}
+      >
         {name || "Student"}
       </Text>
 
-      <View style={styles.idRow}>
-        <Text style={[styles.studentIdText, { color: colors.primary }]}>
-          {studentId || "N/A"}
-        </Text>
-        <View style={[styles.dot, { backgroundColor: colors.slateDark }]} />
-        <View style={[styles.semBadge, { backgroundColor: colors.infoLight }]}>
-          <Text style={[styles.semBadgeText, { color: colors.primary }]}>
-            SEMESTER {semester || "N/A"}
+      {/* ID + Semester row */}
+      <View className="flex-row items-center gap-2">
+        {studentId && (
+          <Text
+            className="text-sm text-cobalt-600 dark:text-cobalt-400"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+          >
+            {studentId}
           </Text>
-        </View>
+        )}
+        {studentId && semester && (
+          <View className="w-1 h-1 rounded-full bg-ink-400" />
+        )}
+        {semester && (
+          <View className="bg-cobalt-50 dark:bg-cobalt-900 border border-border rounded-full px-3 py-1">
+            <Text
+              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-widest"
+              style={{ fontFamily: "GeneralSans-Semibold" }}
+            >
+              Semester {semester}
+            </Text>
+          </View>
+        )}
       </View>
 
-      <RegistrationRollInfo registrationNo={registrationNo} rollNo={rollNo} />
+      <RegistrationRollInfo
+        registrationNo={registrationNo}
+        rollNo={rollNo}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  profileHeader: {
-    alignItems: "center",
-    paddingVertical: 24,
-    backgroundColor: "transparent",
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 12,
-    borderWidth: 4,
-  },
-  profilePlaceholder: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  placeholderText: {
-    fontSize: 40,
-    fontWeight: "bold",
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textTransform: "uppercase",
-  },
-  idRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  studentIdText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-  },
-  semBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  semBadgeText: {
-    fontSize: 10,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-});

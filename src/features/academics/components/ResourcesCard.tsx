@@ -1,7 +1,6 @@
-import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { FileText } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface Resource {
   filename: string;
@@ -13,38 +12,42 @@ interface ResourcesCardProps {
   onResourcePress: (url: string) => void;
 }
 
-export function ResourcesCard({
-  resources,
-  onResourcePress,
-}: ResourcesCardProps) {
-  const { colors } = useTheme();
+export function ResourcesCard({ resources, onResourcePress }: ResourcesCardProps) {
+  const { isDark } = useTheme();
 
   if (resources.length === 0) return null;
 
   return (
     <View
-      style={[
-        styles.card,
-        { backgroundColor: colors.surface, shadowColor: colors.shadow },
-      ]}
+      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 mb-4"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
-      <View style={styles.header}>
-        <Text style={[styles.label, { color: colors.textSecondary }]}>
-          Resources
-        </Text>
-      </View>
-      <View style={styles.list}>
+      <Text
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-3"
+        style={{ fontFamily: "GeneralSans-Semibold" }}
+      >
+        Resources
+      </Text>
+      <View className="gap-3">
         {resources.map((resource, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.item, { backgroundColor: colors.gray100 }]}
+            className="flex-row items-center gap-3 bg-ink-100 dark:bg-ink-800 rounded-xl p-3"
             onPress={() => onResourcePress(resource.url)}
+            activeOpacity={0.7}
           >
-            <View style={[styles.icon, { backgroundColor: colors.errorLight }]}>
-              <FileText size={20} color={colors.error} />
+            <View className="w-10 h-10 rounded-xl bg-danger-light dark:bg-red-900/30 items-center justify-center">
+              <FileText size={18} color={isDark ? "#F87171" : "#DC2626"} />
             </View>
             <Text
-              style={[styles.filename, { color: colors.text }]}
+              className="flex-1 text-sm text-ink-900 dark:text-white"
+              style={{ fontFamily: "GeneralSans-Medium" }}
               numberOfLines={1}
             >
               {resource.filename}
@@ -55,48 +58,3 @@ export function ResourcesCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  header: {
-    marginBottom: 10,
-    backgroundColor: "transparent",
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  list: {
-    gap: 12,
-    backgroundColor: "transparent",
-  },
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  filename: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "500",
-  },
-});

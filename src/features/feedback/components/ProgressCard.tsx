@@ -1,8 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { spacing } from "@/src/styles/commonStyles";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface ProgressCardProps {
   submittedCount: number;
@@ -17,215 +14,110 @@ export function ProgressCard({
   notOptedCount,
   progressPercentage,
 }: ProgressCardProps) {
-  const { colors } = useTheme();
-
   return (
     <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-        },
-      ]}
+      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 overflow-hidden mb-4"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
+      {/* Decorative circles */}
       <View
-        style={[
-          styles.decorativeCircle,
-          styles.topRightCircle,
-          { backgroundColor: colors.primary + "10" },
-        ]}
+        className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-cobalt-500/10"
+        pointerEvents="none"
       />
       <View
-        style={[
-          styles.decorativeCircle,
-          styles.bottomLeftCircle,
-          { backgroundColor: colors.accent + "10" },
-        ]}
+        className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-cobalt-300/10"
+        pointerEvents="none"
       />
 
       {/* Header */}
-      <View style={styles.header}>
+      <View className="flex-row justify-between items-start mb-4">
         <View>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text
+            className="text-lg text-ink-900 dark:text-white"
+            style={{ fontFamily: 'ClashDisplay-Semibold' }}
+          >
             Your Progress
           </Text>
-          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
+          <Text
+            className="text-xs text-ink-500 dark:text-ink-400 mt-0.5"
+            style={{ fontFamily: 'GeneralSans-Regular' }}
+          >
             Complete feedback for all subjects
           </Text>
         </View>
-        <Text style={[styles.percentage, { color: colors.primary }]}>
+        <Text
+          className="text-3xl text-cobalt-600 dark:text-cobalt-300"
+          style={{ fontFamily: 'ClashDisplay-Bold' }}
+        >
           {progressPercentage}%
         </Text>
       </View>
 
-      {/* Stats Grid */}
-      <View style={styles.statsGrid}>
-        <View
-          style={[
-            styles.statCard,
-            {
-              backgroundColor: colors.success + "10",
-              borderColor: colors.success + "20",
-            },
-          ]}
-        >
-          <Text style={[styles.statValue, { color: colors.successDark }]}>
+      {/* Stats grid */}
+      <View className="flex-row gap-2 mb-4">
+        <View className="flex-1 bg-success-light/60 dark:bg-green-900/30 border border-success-light dark:border-green-800 rounded-xl p-3 items-center">
+          <Text
+            className="text-xl text-green-800 dark:text-green-300"
+            style={{ fontFamily: 'ClashDisplay-Bold' }}
+          >
             {submittedCount}
           </Text>
-          <Text style={[styles.statLabel, { color: colors.success }]}>
-            DONE
+          <Text
+            className="text-[9px] text-green-700 dark:text-green-400 uppercase tracking-widest mt-0.5"
+            style={{ fontFamily: 'GeneralSans-Semibold' }}
+          >
+            Done
           </Text>
         </View>
-        <View
-          style={[
-            styles.statCard,
-            {
-              backgroundColor: colors.warning + "10",
-              borderColor: colors.warning + "20",
-            },
-          ]}
-        >
+        <View className="flex-1 bg-warning-light/60 dark:bg-yellow-900/30 border border-warning/20 dark:border-yellow-800 rounded-xl p-3 items-center">
           <Text
-            style={[styles.statValuePending, { color: colors.warningDark }]}
+            className="text-xl text-yellow-800 dark:text-yellow-300"
+            style={{ fontFamily: "ClashDisplay-Bold" }}
           >
             {pendingCount}
           </Text>
-          <Text style={[styles.statLabelPending, { color: colors.warning }]}>
-            PENDING
+          <Text
+            className="text-[9px] text-yellow-700 uppercase tracking-widest mt-0.5"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+          >
+            Pending
           </Text>
         </View>
-        <View
-          style={[
-            styles.statCard,
-            {
-              backgroundColor: colors.backgroundSecondary,
-              borderColor: colors.border,
-            },
-          ]}
-        >
-          <Text style={[styles.statValueNeutral, { color: colors.text }]}>
+        <View className="flex-1 bg-ink-100 dark:bg-ink-800 border border-border rounded-xl p-3 items-center">
+          <Text
+            className="text-xl text-ink-700 dark:text-ink-300"
+            style={{ fontFamily: "ClashDisplay-Bold" }}
+          >
             {notOptedCount}
           </Text>
-          <Text style={[styles.statLabelNeutral, { color: colors.textMuted }]}>
-            SKIPPED
+          <Text
+            className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-0.5"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+          >
+            Skipped
           </Text>
         </View>
       </View>
 
-      {/* Progress Bar */}
-      <View
-        style={[
-          styles.progressBarContainer,
-          { backgroundColor: colors.backgroundSecondary },
-        ]}
-      >
+      {/* Progress bar */}
+      <View className="h-3 bg-ink-200 dark:bg-ink-800 rounded-full overflow-hidden">
         <LinearGradient
-          colors={[colors.primary, colors.accent]}
+          colors={["#2B5BDB", "#60A5FA"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={[styles.progressBarFill, { width: `${progressPercentage}%` }]}
+          style={{
+            height: "100%",
+            width: `${progressPercentage}%`,
+            borderRadius: 6,
+          }}
         />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: spacing.md,
-    overflow: "hidden",
-  },
-  decorativeCircle: {
-    position: "absolute",
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-  },
-  topRightCircle: {
-    top: -40,
-    right: -40,
-  },
-  bottomLeftCircle: {
-    bottom: -40,
-    left: -40,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: spacing.lg,
-    zIndex: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-  percentage: {
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  statsGrid: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: spacing.lg,
-    zIndex: 10,
-  },
-  statCard: {
-    flex: 1,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: "center",
-    borderWidth: 1,
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statValuePending: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statValueNeutral: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  statLabel: {
-    fontSize: 10,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginTop: 2,
-  },
-  statLabelPending: {
-    fontSize: 10,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginTop: 2,
-  },
-  statLabelNeutral: {
-    fontSize: 10,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginTop: 2,
-  },
-  progressBarContainer: {
-    height: 12,
-    width: "100%",
-    borderRadius: 6,
-    overflow: "hidden",
-    zIndex: 10,
-  },
-  progressBarFill: {
-    height: "100%",
-    borderRadius: 6,
-  },
-});

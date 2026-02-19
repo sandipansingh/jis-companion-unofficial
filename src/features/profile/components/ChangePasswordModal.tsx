@@ -1,5 +1,4 @@
 import { Button, TextInput } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
@@ -7,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -24,7 +22,6 @@ export default function ChangePasswordModal({
   onClose,
   onSubmit,
 }: ChangePasswordModalProps) {
-  const { colors } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -47,11 +44,9 @@ export default function ChangePasswordModal({
     if (isWeb && !currentPassword.trim()) {
       newErrors.currentPassword = "Current password is required";
     }
-
     if (newPassword.length < 8) {
       newErrors.newPassword = "Password must be at least 8 characters";
     }
-
     if (newPassword !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
@@ -61,9 +56,7 @@ export default function ChangePasswordModal({
   };
 
   const handleSubmit = async () => {
-    if (!validatePasswords()) {
-      return;
-    }
+    if (!validatePasswords()) return;
 
     setIsLoading(true);
     try {
@@ -104,133 +97,144 @@ export default function ChangePasswordModal({
         style={{ flex: 1 }}
       >
         <TouchableOpacity
-          style={styles.modalOverlay}
+          className="flex-1 justify-center items-center px-5"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           activeOpacity={1}
           onPress={handleClose}
         >
           <TouchableOpacity
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
-            style={styles.keyboardView}
+            className="w-full"
+            style={{ maxWidth: 500 }}
           >
             <View
-              style={[styles.modalContent, { backgroundColor: colors.surface }]}
+              className="w-full bg-surface rounded-2xl p-6 mb-5"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 8,
+              }}
             >
-              <View>
-                {/* Header */}
-                <View style={styles.header}>
-                  <Text style={[styles.title, { color: colors.text }]}>
-                    Change Password
-                  </Text>
-                </View>
+              {/* Header */}
+              <Text
+                className="text-xl text-ink-900 mb-6"
+                style={{ fontFamily: "ClashDisplay-Semibold" }}
+              >
+                Change Password
+              </Text>
 
-                {/* Current Password Input - Web Only */}
-                {isWeb && (
-                  <View style={styles.inputContainer}>
+              {/* Current Password — web only */}
+              {isWeb && (
+                <View className="mb-5">
+                  <Text
+                    className="text-sm text-ink-500 mb-2"
+                    style={{ fontFamily: "GeneralSans-Semibold" }}
+                  >
+                    Current Password
+                  </Text>
+                  <TextInput
+                    icon={Lock}
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChangeText={(text) => {
+                      setCurrentPassword(text);
+                      setErrors({ ...errors, currentPassword: undefined });
+                    }}
+                    isPassword
+                    autoCapitalize="none"
+                    editable={!isLoading}
+                  />
+                  {errors.currentPassword && (
                     <Text
-                      style={[styles.label, { color: colors.textSecondary }]}
+                      className="text-xs text-danger mt-1 ml-1"
+                      style={{ fontFamily: "GeneralSans-Regular" }}
                     >
-                      Current Password
+                      {errors.currentPassword}
                     </Text>
-                    <TextInput
-                      icon={Lock}
-                      placeholder="Enter current password"
-                      value={currentPassword}
-                      onChangeText={(text) => {
-                        setCurrentPassword(text);
-                        setErrors({ ...errors, currentPassword: undefined });
-                      }}
-                      isPassword
-                      autoCapitalize="none"
-                      editable={!isLoading}
-                      bgColor={colors.background}
-                    />
-                    {errors.currentPassword && (
-                      <Text style={[styles.errorText, { color: colors.error }]}>
-                        {errors.currentPassword}
-                      </Text>
-                    )}
-                  </View>
+                  )}
+                </View>
+              )}
+
+              {/* New Password */}
+              <View className="mb-5">
+                <Text
+                  className="text-sm text-ink-500 mb-2"
+                  style={{ fontFamily: "GeneralSans-Semibold" }}
+                >
+                  New Password
+                </Text>
+                <TextInput
+                  icon={Lock}
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChangeText={(text) => {
+                    setNewPassword(text);
+                    setErrors({ ...errors, newPassword: undefined });
+                  }}
+                  isPassword
+                  showPasswordToggle={false}
+                  autoCapitalize="none"
+                  editable={!isLoading}
+                />
+                {errors.newPassword && (
+                  <Text
+                    className="text-xs text-danger mt-1 ml-1"
+                    style={{ fontFamily: "GeneralSans-Regular" }}
+                  >
+                    {errors.newPassword}
+                  </Text>
                 )}
-
-                {/* New Password Input */}
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>
-                    New Password
-                  </Text>
-                  <TextInput
-                    icon={Lock}
-                    placeholder="Enter new password"
-                    value={newPassword}
-                    onChangeText={(text) => {
-                      setNewPassword(text);
-                      setErrors({ ...errors, newPassword: undefined });
-                    }}
-                    isPassword
-                    showPasswordToggle={false}
-                    autoCapitalize="none"
-                    editable={!isLoading}
-                    bgColor={colors.background}
-                  />
-                  {errors.newPassword && (
-                    <Text style={[styles.errorText, { color: colors.error }]}>
-                      {errors.newPassword}
-                    </Text>
-                  )}
-                </View>
-
-                {/* Confirm Password Input */}
-                <View style={styles.inputContainer}>
-                  <Text style={[styles.label, { color: colors.textSecondary }]}>
-                    Confirm New Password
-                  </Text>
-                  <TextInput
-                    icon={Lock}
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChangeText={(text) => {
-                      setConfirmPassword(text);
-                      setErrors({ ...errors, confirmPassword: undefined });
-                    }}
-                    isPassword
-                    autoCapitalize="none"
-                    editable={!isLoading}
-                    bgColor={colors.background}
-                  />
-                  {errors.confirmPassword && (
-                    <Text style={[styles.errorText, { color: colors.error }]}>
-                      {errors.confirmPassword}
-                    </Text>
-                  )}
-                </View>
-
-                {/* Submit Button */}
-                <Button
-                  title="Change Password"
-                  onPress={handleSubmit}
-                  disabled={isLoading}
-                  loading={isLoading}
-                  style={{
-                    marginTop: 16,
-                  }}
-                />
-
-                {/* Cancel Button */}
-                <Button
-                  title="Cancel"
-                  variant="secondary"
-                  onPress={handleClose}
-                  disabled={isLoading}
-                  style={{
-                    marginTop: 12,
-                    backgroundColor: colors.background,
-                    height: 50,
-                  }}
-                  textStyle={{
-                    color: colors.textSecondary,
-                  }}
-                />
               </View>
+
+              {/* Confirm Password */}
+              <View className="mb-5">
+                <Text
+                  className="text-sm text-ink-500 mb-2"
+                  style={{ fontFamily: "GeneralSans-Semibold" }}
+                >
+                  Confirm New Password
+                </Text>
+                <TextInput
+                  icon={Lock}
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChangeText={(text) => {
+                    setConfirmPassword(text);
+                    setErrors({ ...errors, confirmPassword: undefined });
+                  }}
+                  isPassword
+                  autoCapitalize="none"
+                  editable={!isLoading}
+                />
+                {errors.confirmPassword && (
+                  <Text
+                    className="text-xs text-danger mt-1 ml-1"
+                    style={{ fontFamily: "GeneralSans-Regular" }}
+                  >
+                    {errors.confirmPassword}
+                  </Text>
+                )}
+              </View>
+
+              {/* Buttons */}
+              <Button
+                title="Change Password"
+                onPress={handleSubmit}
+                disabled={isLoading}
+                loading={isLoading}
+                style={{ marginTop: 4 }}
+              />
+              <Button
+                title="Cancel"
+                variant="secondary"
+                onPress={handleClose}
+                disabled={isLoading}
+                style={{ marginTop: 12, backgroundColor: "#FAFAFA", height: 50 }}
+                textStyle={{ color: "#64748B" }}
+              />
             </View>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -238,54 +242,3 @@ export default function ChangePasswordModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  keyboardView: {
-    width: "100%",
-    maxWidth: 500,
-  },
-  modalContent: {
-    width: "100%",
-    borderRadius: 16,
-    padding: 24,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  closeButton: {
-    padding: 4,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4,
-    marginLeft: 4,
-  },
-});

@@ -1,7 +1,4 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { spacing } from "@/src/styles/commonStyles";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { FacultyFeedbackItem } from "../api";
 import { FacultyAvatar } from "./FacultyAvatar";
 import { FeedbackStatusBadge } from "./FeedbackStatusBadge";
@@ -12,63 +9,40 @@ interface FacultyListItemProps {
 }
 
 export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
-  const { colors } = useTheme();
-
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-        },
-      ]}
+      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 flex-row items-center gap-4"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
       onPress={() => onPress(faculty)}
+      activeOpacity={0.8}
     >
-      <FacultyAvatar
-        imageUrl={faculty.fac_image}
-        shortName={faculty.fac_sht_name}
-        size={48}
-      />
+      <FacultyAvatar imageUrl={faculty.fac_image} shortName={faculty.fac_sht_name} size={48} />
 
-      <View style={styles.info}>
+      <View className="flex-1 gap-0.5">
         <Text
-          style={[
-            styles.name,
-            {
-              color: colors.text,
-            },
-          ]}
+          className="text-base text-ink-900 dark:text-white"
+          style={{ fontFamily: 'GeneralSans-Semibold' }}
           numberOfLines={1}
         >
           {faculty.fac_name}
         </Text>
         <Text
-          style={[
-            styles.subject,
-            {
-              color: colors.textSecondary,
-            },
-          ]}
+          className="text-xs text-ink-500 dark:text-ink-400"
+          style={{ fontFamily: 'GeneralSans-Regular' }}
           numberOfLines={1}
         >
           {faculty.sub_name}
         </Text>
-        <View
-          style={[
-            styles.subCodeBox,
-            {
-              backgroundColor: colors.backgroundSecondary,
-            },
-          ]}
-        >
+        <View className="bg-ink-100 dark:bg-ink-800 rounded-full px-2 py-0.5 self-start mt-1">
           <Text
-            style={[
-              styles.subCode,
-              {
-                color: colors.textMuted,
-              },
-            ]}
+            className="text-[10px] text-ink-500 dark:text-ink-300"
+            style={{ fontFamily: 'GeneralSans-Medium' }}
           >
             {faculty.sub_code}
           </Text>
@@ -79,37 +53,3 @@ export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing.md,
-    borderRadius: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    borderWidth: 1,
-  },
-  info: {
-    flex: 1,
-    gap: 4,
-  },
-  name: {
-    fontSize: 15,
-    fontWeight: "800",
-  },
-  subject: {
-    fontSize: 13,
-    fontWeight: "400",
-  },
-  subCodeBox: {
-    alignSelf: "flex-start",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginTop: 2,
-  },
-  subCode: {
-    fontSize: 11,
-    fontWeight: "500",
-  },
-});

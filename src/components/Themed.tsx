@@ -1,32 +1,20 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
+/**
+ * Minimal Themed wrappers — kept for backwards compatibility.
+ * NativeWind handles all styling via className; these are passthrough wrappers.
+ */
 import { Text as DefaultText, View as DefaultView } from "react-native";
 
 export type TextProps = DefaultText["props"];
 export type ViewProps = DefaultView["props"];
 
 export function Text(props: TextProps) {
-  const { colors } = useTheme();
-  const { style, ...otherProps } = props;
-
-  return (
-    <DefaultText style={[{ color: colors.text }, style]} {...otherProps} />
-  );
+  return <DefaultText {...props} />;
 }
 
 export function View(props: ViewProps) {
-  const { style, ...otherProps } = props;
-
-  return <DefaultView style={style} {...otherProps} />;
+  return <DefaultView {...props} />;
 }
 
 export function ThemedView(props: ViewProps) {
-  const { colors } = useTheme();
-  const { style, ...otherProps } = props;
-
-  return (
-    <DefaultView
-      style={[{ backgroundColor: colors.background }, style]}
-      {...otherProps}
-    />
-  );
+  return <DefaultView className="bg-base" {...props} />;
 }

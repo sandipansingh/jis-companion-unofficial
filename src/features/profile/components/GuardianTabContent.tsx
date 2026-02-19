@@ -1,6 +1,6 @@
-import { InfoRow, View } from "@/src/components";
+import { InfoRow } from "@/src/components";
 import { Mail, MapPin, Phone, User } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { View } from "react-native";
 
 interface GuardianTabContentProps {
   guardianName?: string;
@@ -21,16 +21,16 @@ export function GuardianTabContent({
 }: GuardianTabContentProps) {
   const mobileValue =
     guardianMobile1 && guardianMobile2
-      ? `${guardianMobile1} | ${guardianMobile2}`
+      ? guardianMobile1 + " | " + guardianMobile2
       : guardianMobile1 || guardianMobile2;
 
   const emailValue =
     guardianEmail1 && guardianEmail2
-      ? `${guardianEmail1} | ${guardianEmail2}`
+      ? guardianEmail1 + " | " + guardianEmail2
       : guardianEmail1 || guardianEmail2;
 
   return (
-    <View style={styles.tabContentInner}>
+    <View>
       <InfoRow label="GUARDIAN NAME" value={guardianName} icon={User} />
       <InfoRow label="GUARDIAN MOBILE" value={mobileValue} icon={Phone} />
       <InfoRow label="GUARDIAN EMAIL" value={emailValue} icon={Mail} />
@@ -43,9 +43,3 @@ export function GuardianTabContent({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabContentInner: {
-    backgroundColor: "transparent",
-  },
-});

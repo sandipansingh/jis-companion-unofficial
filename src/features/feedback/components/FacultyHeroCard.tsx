@@ -1,7 +1,4 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { commonStyles, spacing } from "@/src/styles/commonStyles";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { FacultyFeedbackItem } from "../api";
 import { FacultyAvatar } from "./FacultyAvatar";
 
@@ -10,74 +7,36 @@ interface FacultyHeroCardProps {
 }
 
 export function FacultyHeroCard({ faculty }: FacultyHeroCardProps) {
-  const { colors } = useTheme();
-
   return (
     <View
-      style={[
-        commonStyles.card,
-        styles.container,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-        },
-      ]}
+      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-5 items-center mb-4"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
-      <FacultyAvatar
-        imageUrl={faculty.fac_image}
-        name={faculty.fac_name}
-        size={80}
-      />
-
-      <Text style={[styles.name, { color: colors.text }]}>
+      <FacultyAvatar imageUrl={faculty.fac_image} shortName={faculty.fac_sht_name} size={80} />
+      <Text
+        className="text-xl text-ink-900 dark:text-white mt-3 text-center"
+        style={{ fontFamily: 'ClashDisplay-Semibold' }}
+      >
         {faculty.fac_name}
       </Text>
-
       <Text
-        style={[
-          styles.code,
-          {
-            color: colors.textMuted,
-          },
-        ]}
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-1"
+        style={{ fontFamily: 'GeneralSans-Semibold' }}
       >
         {faculty.sub_code}
       </Text>
-
       <Text
-        style={[
-          styles.subject,
-          {
-            color: colors.textSecondary,
-          },
-        ]}
+        className="text-sm text-ink-600 dark:text-ink-300 mt-1 text-center"
+        style={{ fontFamily: 'GeneralSans-Regular' }}
       >
         {faculty.sub_name}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    borderWidth: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: spacing.sm,
-  },
-  code: {
-    fontSize: 10,
-    fontWeight: "600",
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    marginTop: spacing.xs,
-  },
-  subject: {
-    fontSize: 14,
-    marginTop: spacing.xs,
-    textAlign: "center",
-  },
-});

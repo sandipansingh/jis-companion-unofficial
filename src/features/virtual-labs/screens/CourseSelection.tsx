@@ -1,19 +1,11 @@
-import { Button, HeaderCard, Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { commonStyles } from "@/src/styles/commonStyles";
+import { Button, Header, HeaderCard } from "@/src/components";
 import { useRouter } from "expo-router";
-import { ChevronLeft, FlaskConical } from "lucide-react-native";
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { FlaskConical } from "lucide-react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { CourseDropdown } from "../components";
 import { useCourseSelectionData } from "../hooks/useCourseSelectionData";
 
 export default function CourseSelection() {
-  const { colors } = useTheme();
   const router = useRouter();
   const {
     courses,
@@ -38,25 +30,13 @@ export default function CourseSelection() {
 
   if (loading && courses.length === 0) {
     return (
-      <View
-        style={[commonStyles.container, { backgroundColor: colors.background }]}
-      >
-        <View style={[styles.header, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={commonStyles.backButton}
-          >
-            <ChevronLeft size={28} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-            Virtual Labs
-          </Text>
-          <View style={commonStyles.placeholder} />
-        </View>
-        <View style={commonStyles.centerContainer}>
-          <ActivityIndicator size="large" color={colors.primary} />
+      <View className="flex-1 bg-base">
+        <Header title="Virtual Labs" showBackButton />
+        <View className="flex-1 items-center justify-center gap-3">
+          <ActivityIndicator size="large" color="#2B5BDB" />
           <Text
-            style={[commonStyles.loadingText, { color: colors.textSecondary }]}
+            className="text-sm text-ink-500"
+            style={{ fontFamily: "GeneralSans-Regular" }}
           >
             Loading courses...
           </Text>
@@ -66,25 +46,11 @@ export default function CourseSelection() {
   }
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={commonStyles.backButton}
-        >
-          <ChevronLeft size={28} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Virtual Labs
-        </Text>
-        <View style={commonStyles.placeholder} />
-      </View>
+    <View className="flex-1 bg-base">
+      <Header title="Virtual Labs" showBackButton />
 
-      <ScrollView style={commonStyles.scrollView}>
-        <View style={styles.content}>
+      <ScrollView className="flex-1">
+        <View className="p-4 gap-5">
           <HeaderCard
             title="Lab Configuration"
             description="Select your course details to view available virtual experiments."
@@ -132,9 +98,8 @@ export default function CourseSelection() {
 
           {selectedCourse && selectedStream && selectedSemester && (
             <Button
-              title="Proceed to Labs"
+              title="View Experiments"
               onPress={handleProceed}
-              style={{ marginTop: 16 }}
             />
           )}
         </View>
@@ -142,14 +107,3 @@ export default function CourseSelection() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.headerRow,
-    ...commonStyles.header,
-    paddingBottom: 7,
-  },
-  content: {
-    padding: 20,
-  },
-});

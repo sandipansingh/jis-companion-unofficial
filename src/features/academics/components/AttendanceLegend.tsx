@@ -1,82 +1,34 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet } from "react-native";
+import { Text, View } from "react-native";
+
+const ITEMS = [
+  { label: "Present", bg: "#ECFDF5", border: "#059669", text: "#059669" },
+  { label: "Partial", bg: "#FFFBEB", border: "#D97706", text: "#D97706" },
+  { label: "Absent", bg: "#FEF2F2", border: "#DC2626", text: "#DC2626" },
+];
 
 export function AttendanceLegend() {
-  const { colors } = useTheme();
-
   return (
-    <View style={[styles.legend, { borderTopColor: colors.gray200 }]}>
-      <View style={styles.legendItem}>
-        <View
-          style={[
-            styles.legendDot,
-            {
-              backgroundColor: colors.success + "20",
+    <View className="flex-row justify-center gap-4 pt-3 border-t border-border">
+      {ITEMS.map(({ label, bg, border, text }) => (
+        <View key={label} className="flex-row items-center gap-1.5">
+          <View
+            style={{
+              width: 12,
+              height: 12,
+              borderRadius: 6,
+              backgroundColor: bg,
               borderWidth: 2,
-              borderColor: colors.success,
-            },
-          ]}
-        />
-        <Text style={[styles.legendText, { color: colors.textSecondary }]}>
-          Present
-        </Text>
-      </View>
-      <View style={styles.legendItem}>
-        <View
-          style={[
-            styles.legendDot,
-            {
-              backgroundColor: colors.warning + "20",
-              borderWidth: 2,
-              borderColor: colors.warning,
-            },
-          ]}
-        />
-        <Text style={[styles.legendText, { color: colors.textSecondary }]}>
-          Partial
-        </Text>
-      </View>
-      <View style={styles.legendItem}>
-        <View
-          style={[
-            styles.legendDot,
-            {
-              backgroundColor: colors.error + "20",
-              borderWidth: 2,
-              borderColor: colors.error,
-            },
-          ]}
-        />
-        <Text style={[styles.legendText, { color: colors.textSecondary }]}>
-          Absent
-        </Text>
-      </View>
+              borderColor: border,
+            }}
+          />
+          <Text
+            className="text-[11px]"
+            style={{ fontFamily: "GeneralSans-Regular", color: "#64748B" }}
+          >
+            {label}
+          </Text>
+        </View>
+      ))}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  legend: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    backgroundColor: "transparent",
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  legendDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  legendText: {
-    fontSize: 11,
-  },
-});

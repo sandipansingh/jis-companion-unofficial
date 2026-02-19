@@ -1,23 +1,22 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import React from "react";
 import {
   ActivityIndicator,
-  StyleSheet,
+  Text as RNText,
   TextStyle,
   TouchableOpacity,
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { Text } from "./Themed";
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: "primary" | "secondary" | "danger";
+  variant?: "primary" | "secondary" | "ghost" | "danger";
   loading?: boolean;
   fullWidth?: boolean;
   textStyle?: TextStyle;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
+  size?: "sm" | "md" | "lg";
 }
 
 export function Button({
@@ -30,79 +29,63 @@ export function Button({
   textStyle,
   icon,
   iconPosition = "left",
+  size = "md",
   ...props
 }: ButtonProps) {
-  const { colors } = useTheme();
+  const isDisabled = disabled || loading;
 
-  const getBackgroundColor = () => {
-    if (disabled || loading) return colors.buttonDisabled;
-    switch (variant) {
-      case "secondary":
-        return colors.accent;
-      case "danger":
-        return colors.error;
-      default:
-        return colors.primary;
-    }
-  };
+  const containerBase =
+    size === "sm" ? "h-10 rounded-xl px-5" :
+    size === "lg" ? "h-[58px] rounded-2xl px-8" :
+    "h-14 rounded-2xl px-6";
+
+  const widthClass = fullWidth ? "w-full" : "self-start";
+  const opacityClass = isDisabled ? "opacity-40" : "";
+
+  const variantClass =
+    variant === "secondary"
+      ? "bg-cobalt-50 border border-cobalt-200"
+      : variant === "ghost"
+      ? "bg-transparent"
+      : variant === "danger"
+      ? "bg-danger"
+      : "bg-cobalt-500";
+
+  const spinnerColor =
+    variant === "primary" || variant === "danger" ? "#fff" : "#2B5BDB";
+
+  const textClass =
+    size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-base";
+
+  const textColorClass =
+    variant === "secondary"
+      ? "text-cobalt-600"
+      : variant === "ghost"
+      ? "text-cobalt-500"
+      : "text-white";
 
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        {
-          backgroundColor: getBackgroundColor(),
-          width: fullWidth ? "100%" : "auto",
-        },
-        disabled && styles.disabled,
-        style,
-      ]}
-      disabled={disabled || loading}
+      className={`${containerBase} ${widthClass} ${variantClass} ${opacityClass} items-center justify-center`}
+      style={style}
+      disabled={isDisabled}
+      activeOpacity={0.82}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={colors.buttonText} />
+        <ActivityIndicator color={spinnerColor} />
       ) : (
-        <View style={styles.content}>
-          {icon && iconPosition === "left" && (
-            <View style={styles.iconLeft}>{icon}</View>
-          )}
-          <Text style={[styles.text, { color: colors.buttonText }, textStyle]}>
+        <View className="flex-row items-center justify-center gap-2">
+          {icon && iconPosition === "left" && icon}
+          <RNText
+            className={`${textClass} ${textColorClass} font-sans-semi`}
+            style={textStyle}
+          >
             {title}
-          </Text>
-          {icon && iconPosition === "right" && (
-            <View style={styles.iconRight}>{icon}</View>
-          )}
+          </RNText>
+          {icon && iconPosition === "right" && icon}
         </View>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    height: 50,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  disabled: {
-    opacity: 0.6,
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  iconLeft: {
-    marginRight: 8,
-  },
-  iconRight: {
-    marginLeft: 8,
-  },
-});

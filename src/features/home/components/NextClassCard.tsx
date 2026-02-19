@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { User } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface NextClassCardProps {
   className: string;
@@ -20,129 +18,89 @@ export function NextClassCard({
   isFallback,
   onSeeAll,
 }: NextClassCardProps) {
-  const { colors } = useTheme();
-
   return (
-    <>
-      <View style={styles.sectionHeader}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          Up Next
+    <View className="mb-6">
+      {/* Section header */}
+      <View className="flex-row items-center justify-between mb-3">
+        <View className="flex-row items-center gap-2">
+          <Text
+            className="text-base text-ink-900 dark:text-ink-100"
+            style={{ fontFamily: "ClashDisplay-Semibold" }}
+          >
+            Up Next
+          </Text>
           {isFallback && (
-            <Text
-              style={[styles.fallbackText, { color: colors.textSecondary }]}
-            >
-              {" "}
-              (Expected)
-            </Text>
+            <View className="bg-warning-light dark:bg-warning-dark/20 rounded-full px-2 py-0.5">
+              <Text
+                className="text-[10px] text-warning-dark"
+                style={{ fontFamily: "GeneralSans-Medium" }}
+              >
+                Expected
+              </Text>
+            </View>
           )}
-        </Text>
-        <TouchableOpacity onPress={onSeeAll}>
-          <Text style={[styles.seeAll, { color: colors.primary }]}>
-            See All
+        </View>
+        <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
+          <Text
+            className="text-sm text-cobalt-500 dark:text-cobalt-400"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+          >
+            See all →
           </Text>
         </TouchableOpacity>
       </View>
 
+      {/* Card */}
       <View
-        style={[
-          styles.nextClassCard,
-          { backgroundColor: colors.surface, shadowColor: colors.shadow },
-        ]}
+        className="bg-white dark:bg-ink-900 rounded-2xl overflow-hidden flex-row"
+        style={{
+          borderWidth: 1,
+          borderColor: "rgba(203,213,225,0.5)",
+          shadowColor: "#0F172A",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.07,
+          shadowRadius: 12,
+          elevation: 3,
+        }}
       >
-        <View
-          style={[styles.timeBox, { backgroundColor: colors.primary + "20" }]}
-        >
-          <Text style={[styles.timeText, { color: colors.primary }]}>
+        {/* Time column */}
+        <View className="bg-cobalt-500 items-center justify-center px-5 py-5">
+          <Text
+            className="text-white text-2xl leading-none"
+            style={{ fontFamily: "ClashDisplay-Bold" }}
+          >
             {time}
           </Text>
-          <Text style={[styles.timeAmPm, { color: colors.textSecondary }]}>
+          <Text
+            className="text-cobalt-200 text-xs tracking-widest mt-0.5"
+            style={{ fontFamily: "GeneralSans-Medium" }}
+          >
             {period}
           </Text>
         </View>
-        <View style={[styles.classInfo, { borderLeftColor: colors.border }]}>
-          <Text style={[styles.className, { color: colors.text }]}>
+
+        {/* Info column */}
+        <View className="flex-1 px-4 py-5 justify-center gap-1.5">
+          <Text
+            className="text-base text-ink-900 dark:text-ink-100 leading-tight"
+            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            numberOfLines={2}
+          >
             {className}
           </Text>
-
-          <View style={styles.upNextClassFacultyRow}>
-            <User size={12} color={colors.textSecondary} />
+          <View className="flex-row items-center gap-1.5">
+            <User size={12} color="#94A3B8" />
             <Text
-              style={[styles.classDetails, { color: colors.textSecondary }]}
+              className="text-sm text-ink-500 dark:text-ink-400 flex-1"
+              style={{ fontFamily: "GeneralSans-Regular" }}
+              numberOfLines={1}
             >
               {faculty}
             </Text>
           </View>
+
         </View>
       </View>
-    </>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginBottom: 16,
-    backgroundColor: "transparent",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  fallbackText: {
-    fontSize: 12,
-    fontWeight: "normal",
-    fontStyle: "italic",
-  },
-  seeAll: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  nextClassCard: {
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  timeBox: {
-    borderRadius: 12,
-    padding: 12,
-    minWidth: 70,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  timeText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  timeAmPm: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  classInfo: {
-    flex: 1,
-    borderLeftWidth: 1,
-    paddingLeft: 16,
-    backgroundColor: "transparent",
-  },
-  className: {
-    fontSize: 13,
-    fontWeight: "bold",
-  },
-  classDetails: {
-    fontSize: 12,
-  },
-  upNextClassFacultyRow: {
-    marginTop: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-});

@@ -14,10 +14,10 @@ const run = (cmd, opts = {}) => {
 };
 
 try {
-  console.log("🏗️  Building Android AAB locally...\n");
+  console.log("Building Android AAB locally...\n");
   run("npm run build:android:prod:local");
 
-  console.log("\n📦 Finding AAB file...");
+  console.log("\nFinding AAB file...");
   const files = fs
     .readdirSync(buildsDir)
     .filter((f) => f.endsWith(".aab"))
@@ -34,15 +34,15 @@ try {
   }
 
   const aabFile = files[0];
-  console.log(`✅ Found: ${aabFile.name}`);
-  console.log(`📍 Path: ${aabFile.path}\n`);
+  console.log(`Found: ${aabFile.name}`);
+  console.log(`Path: ${aabFile.path}\n`);
 
-  console.log("🚀 Submitting to Google Play...\n");
+  console.log("Submitting to Google Play...\n");
   run(
     `eas submit -p android --profile production --path "${aabFile.path}" --non-interactive`
   );
 
-  console.log("\n✅ Android build submitted successfully!");
+  console.log("\nAndroid build submitted successfully!");
 } catch (err) {
   console.error("\n❌ Submit failed:", err.message || err);
   process.exit(1);

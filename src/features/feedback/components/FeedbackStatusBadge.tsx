@@ -1,34 +1,15 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { spacing } from "@/src/styles/commonStyles";
 import { CheckCircle } from "lucide-react-native";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface FeedbackStatusBadgeProps {
   totalRating: number;
 }
 
 export function FeedbackStatusBadge({ totalRating }: FeedbackStatusBadgeProps) {
-  const { colors } = useTheme();
-
   if (totalRating === -10) {
     return (
-      <View
-        style={[
-          styles.badge,
-          {
-            backgroundColor: colors.backgroundSecondary,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.badgeText,
-            {
-              color: colors.textMuted,
-            },
-          ]}
-        >
+      <View className="bg-ink-100 rounded-full px-2.5 py-1">
+        <Text className="text-[11px] text-ink-500" style={{ fontFamily: "GeneralSans-Semibold" }}>
           Skipped
         </Text>
       </View>
@@ -37,63 +18,20 @@ export function FeedbackStatusBadge({ totalRating }: FeedbackStatusBadgeProps) {
 
   if (totalRating > 0) {
     return (
-      <View
-        style={[
-          styles.badge,
-          {
-            backgroundColor: colors.greenLight,
-            flexDirection: "row",
-            gap: 4,
-          },
-        ]}
-      >
-        <Text
-          style={[
-            styles.badgeText,
-            {
-              color: colors.greenDark,
-            },
-          ]}
-        >
+      <View className="bg-success-light rounded-full flex-row items-center gap-1 px-2.5 py-1">
+        <Text className="text-[11px] text-green-800" style={{ fontFamily: "GeneralSans-Semibold" }}>
           Done
         </Text>
-        <CheckCircle size={12} color={colors.greenDark} />
+        <CheckCircle size={11} color="#065F46" />
       </View>
     );
   }
 
   return (
-    <View
-      style={[
-        styles.badge,
-        {
-          backgroundColor: colors.warningLight,
-        },
-      ]}
-    >
-      <Text
-        style={[
-          styles.badgeText,
-          {
-            color: colors.warning,
-          },
-        ]}
-      >
+    <View className="bg-warning-light rounded-full px-2.5 py-1">
+      <Text className="text-[11px] text-yellow-700" style={{ fontFamily: "GeneralSans-Semibold" }}>
         Pending
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: 6,
-    alignItems: "center",
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-});

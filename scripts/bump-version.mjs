@@ -52,6 +52,6 @@ app.expo.ios.buildNumber = String(buildNumber);
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 fs.writeFileSync(appPath, JSON.stringify(app, null, 2) + "\n");
 
-console.log(`✅ Version: ${newVersion}`);
+console.log(`Version: ${newVersion}`);
 console.log(`Android versionCode: ${buildNumber}`);
 console.log(`iOS buildNumber: ${buildNumber}`);

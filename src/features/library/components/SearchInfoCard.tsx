@@ -1,64 +1,33 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { Search } from "lucide-react-native";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 export function SearchInfoCard() {
-  const { colors } = useTheme();
-
   return (
-    <View style={[styles.searchInfoCard, { backgroundColor: colors.surface }]}>
-      <View
-        style={[
-          styles.searchIconCircle,
-          { backgroundColor: colors.primary + "20" },
-        ]}
-      >
-        <Search size={32} color={colors.primary} />
+    <View
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-7 items-center"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
+    >
+      <View className="w-18 h-18 rounded-full bg-cobalt-50 dark:bg-ink-900 border border-border items-center justify-center mb-4">
+        <Search size={32} color="#2B5BDB" />
       </View>
-      <Text style={[styles.searchInfoTitle, { color: colors.text }]}>
+      <Text
+        className="text-xl text-ink-900 dark:text-white mb-2 text-center"
+        style={{ fontFamily: "ClashDisplay-Semibold" }}
+      >
         Library Search
       </Text>
       <Text
-        style={[styles.searchInfoDescription, { color: colors.textSecondary }]}
+        className="text-sm text-ink-500 text-center leading-relaxed"
+        style={{ fontFamily: "GeneralSans-Regular" }}
       >
-        Search for books by title, author, call number, or ISBN and reserve them
-        instantly.
+        Search for books by title, author, call number, or ISBN and reserve them instantly.
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  searchInfoCard: {
-    borderRadius: 20,
-    padding: 28,
-    marginBottom: 24,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.05)",
-  },
-  searchIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  searchInfoTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  searchInfoDescription: {
-    fontSize: 14,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-});

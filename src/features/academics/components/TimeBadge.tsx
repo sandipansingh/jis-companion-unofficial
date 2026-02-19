@@ -1,33 +1,22 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { Clock } from "lucide-react-native";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface TimeBadgeProps {
   timeRange: string;
 }
 
 export function TimeBadge({ timeRange }: TimeBadgeProps) {
-  const { colors } = useTheme();
-
+  const { isDark } = useTheme();
   return (
-    <View style={[styles.badge, { backgroundColor: colors.infoLighter }]}>
-      <Clock size={16} color={colors.primary} />
-      <Text style={[styles.text, { color: colors.primary }]}>{timeRange}</Text>
+    <View className="flex-row items-center gap-1.5 bg-cobalt-50 dark:bg-ink-800 border border-border rounded-full px-4 py-2">
+      <Clock size={14} color={isDark ? "#7DAAF9" : "#2B5BDB"} />
+      <Text
+        className="text-sm text-cobalt-600 dark:text-cobalt-300"
+        style={{ fontFamily: "GeneralSans-Semibold" }}
+      >
+        {timeRange}
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  text: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});

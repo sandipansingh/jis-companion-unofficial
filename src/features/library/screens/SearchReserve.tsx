@@ -1,13 +1,10 @@
-import { TextInput } from "@/src/components";
+import { Header, TextInput } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { useRouter } from "expo-router";
-import { ChevronLeft, Filter, Search } from "lucide-react-native";
+import { Filter, Search } from "lucide-react-native";
 import {
   ActivityIndicator,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -22,9 +19,8 @@ import {
 import { useSearchReserveData } from "../hooks";
 
 export default function SearchReserve() {
-  const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
-  const router = useRouter();
+  const { isDark } = useTheme();
   const {
     searchResults,
     searchLoading,
@@ -38,79 +34,53 @@ export default function SearchReserve() {
     setShowFilterDropdown,
     handleSearch,
     handleReserve,
-    getSearchFieldLabel,
   } = useSearchReserveData();
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity onPress={handleBack} style={commonStyles.backButton}>
-          <ChevronLeft size={28} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Search & Reserve
-        </Text>
-        <View style={commonStyles.placeholder} />
-      </View>
+    <View className="flex-1 bg-base">
+      <Header title="Search & Reserve" showBackButton />
 
-      <ScrollView
-        style={commonStyles.scrollView}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.searchContent}>
+      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+        <View className="p-4 gap-4">
           <SearchInfoCard />
 
-          {/* Search Input Section */}
-          <View style={styles.searchInputSection}>
-            <View style={{ flexDirection: "row", gap: 8 }}>
-              <View style={{ flex: 1 }}>
-                <TextInput
-                  icon={Search}
-                  placeholder="Search for books..."
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  onSubmitEditing={handleSearch}
-                  returnKeyType="search"
-                />
-              </View>
-              <TouchableOpacity
-                style={[
-                  styles.filterIconButton,
-                  { backgroundColor: colors.primary + "15" },
-                ]}
-                onPress={() => {
-                  setShowFilterDropdown(!showFilterDropdown);
-                }}
-                activeOpacity={0.7}
-              >
-                <Filter size={18} color={colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Filter Dropdown */}
-            {showFilterDropdown && (
-              <FilterDropdown
-                selectedField={searchField}
-                onSelectField={(field) => {
-                  setSearchField(field);
-                  setShowFilterDropdown(false);
-                }}
+          {/* Search input row */}
+          <View className="flex-row items-center gap-2">
+            <View className="flex-1">
+              <TextInput
+                icon={Search}
+                placeholder="Search for books..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={handleSearch}
+                returnKeyType="search"
               />
-            )}
+            </View>
+            <TouchableOpacity
+              className="w-12 h-12 rounded-xl bg-cobalt-50 dark:bg-ink-900 border border-border items-center justify-center"
+              onPress={() => setShowFilterDropdown(!showFilterDropdown)}
+              activeOpacity={0.7}
+            >
+              <Filter size={18} color={isDark ? "#94A3B8" : "#2B5BDB"} />
+            </TouchableOpacity>
           </View>
 
-          {/* Search Results */}
+          {showFilterDropdown && (
+            <FilterDropdown
+              selectedField={searchField}
+              onSelectField={(field) => {
+                setSearchField(field);
+                setShowFilterDropdown(false);
+              }}
+            />
+          )}
+
           {searchLoading ? (
-            <View style={styles.searchLoadingContainer}>
-              <ActivityIndicator size="large" color={colors.primary} />
+            <View className="items-center py-12 gap-3">
+              <ActivityIndicator size="large" color="#2B5BDB" />
               <Text
-                style={[styles.loadingText, { color: colors.textSecondary }]}
+                className="text-sm text-ink-500"
+                style={{ fontFamily: "GeneralSans-Regular" }}
               >
                 Searching library...
               </Text>
@@ -130,41 +100,10 @@ export default function SearchReserve() {
           ) : hasSearched ? (
             <NoResultsView />
           ) : null}
+
+          <View style={{ height: bottomOffset + 20 }} />
         </View>
-        <View style={{ height: bottomOffset + 20 }} />
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.headerRow,
-    ...commonStyles.header,
-    paddingBottom: 7,
-  },
-  loadingText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  searchContent: {
-    padding: 20,
-  },
-  searchInputSection: {
-    marginBottom: 0,
-    zIndex: 100,
-  },
-  filterIconButton: {
-    padding: 12,
-    borderRadius: 10,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  searchLoadingContainer: {
-    paddingVertical: 48,
-    alignItems: "center",
-    gap: 16,
-  },
-});
-gap: 16;

@@ -1,6 +1,4 @@
 import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet } from "react-native";
 
 interface SubjectRowProps {
   subject: string;
@@ -9,34 +7,20 @@ interface SubjectRowProps {
 }
 
 export function SubjectRow({ subject, obtained, full }: SubjectRowProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.subjectRow}>
-      <Text style={[styles.subjectName, { color: colors.text }]}>
+    <View className="flex-row items-center justify-between py-1.5">
+      <Text
+        className="text-sm text-ink-900 dark:text-ink-200"
+        style={{ fontFamily: 'GeneralSans-Medium' }}
+      >
         {subject}
       </Text>
-      <Text style={[styles.subjectScore, { color: colors.primary }]}>
+      <Text
+        className="text-sm text-cobalt-500 dark:text-cobalt-300"
+        style={{ fontFamily: 'GeneralSans-Bold' }}
+      >
         {obtained}/{full}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  subjectRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 6,
-    backgroundColor: "transparent",
-  },
-  subjectName: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  subjectScore: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-});

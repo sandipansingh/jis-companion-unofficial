@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { Calendar } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { FeeLedgerEntry } from "../api";
 
 interface TransactionCardProps {
@@ -9,201 +7,112 @@ interface TransactionCardProps {
 }
 
 export function TransactionCard({ transaction }: TransactionCardProps) {
-  const { colors } = useTheme();
+  const formatCurrency = (amount: number) => {
+    if (amount === 0) return "₹0";
+    return `₹${amount.toLocaleString("en-IN")}`;
+  };
 
   return (
     <View
-      style={[
-        styles.transactionCard,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          shadowColor: colors.shadow,
-        },
-      ]}
+      className="bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-border"
+      style={{
+        shadowColor: "#64748B",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
-      {/* Date and Semester Header */}
-      <View style={styles.cardHeader}>
-        <View style={styles.inlineInfo}>
-          <View
-            style={[
-              styles.semesterBox,
-              { backgroundColor: colors.borderLight },
-            ]}
-          >
+      {/* Header Row: Semester & Date */}
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
+        <View className="flex-row items-center gap-2">
+          <View className="bg-ink-100 dark:bg-ink-800 px-2.5 py-1 rounded-md">
             <Text
-              style={[styles.semesterText, { color: colors.textSecondary }]}
+              className="text-[10px] text-ink-600 dark:text-ink-300 uppercase tracking-wider"
+              style={{ fontFamily: "GeneralSans-Semibold" }}
             >
-              SEMESTER {transaction.sem_name}
+              Sem {transaction.sem_name}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-1.5 ml-1">
+            <Calendar size={12} color="#94A3B8" />
+            <Text
+              className="text-[11px] text-ink-400 dark:text-ink-500"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
+              {transaction.vou_date}
             </Text>
           </View>
         </View>
-        <View style={styles.inlineInfo}>
-          <Calendar size={16} color={colors.textSecondary} />
-          <Text style={[styles.inlineLabel, { color: colors.textSecondary }]}>
-            {transaction.vou_date}
-          </Text>
-        </View>
       </View>
 
-      {/* Transaction Type */}
-      <Text style={[styles.transactionType, { color: colors.text }]}>
-        {transaction.bill_type_name}
-      </Text>
-
-      {/* Amounts Grid */}
-      <View style={styles.amountsGrid}>
-        <View style={styles.amountBox}>
-          <Text style={[styles.amountLabel, { color: colors.textSecondary }]}>
-            Billed Amount
-          </Text>
-          <Text style={[styles.amountValue, { color: colors.orange }]}>
-            ₹
-            {transaction.bill_amt > 0
-              ? transaction.bill_amt.toLocaleString("en-IN")
-              : "0"}
-          </Text>
-        </View>
-
-        <View style={styles.amountBoxRight}>
-          <Text
-            style={[
-              styles.amountLabel,
-              styles.amountLabelRight,
-              { color: colors.textSecondary },
-            ]}
-          >
-            Received Amount
-          </Text>
-          <Text
-            style={[
-              styles.amountValue,
-              styles.amountValueRight,
-              { color: colors.success },
-            ]}
-          >
-            ₹
-            {transaction.recd_amt > 0
-              ? transaction.recd_amt.toLocaleString("en-IN")
-              : "0"}
-          </Text>
-        </View>
-      </View>
-
-      {/* Balance Footer */}
-      <View
-        style={[styles.balanceFooter, { backgroundColor: colors.background }]}
-      >
-        <Text style={[styles.balanceLabel, { color: colors.textSecondary }]}>
-          Amount Due
-        </Text>
+      {/* Main Content */}
+      <View className="p-4">
         <Text
-          style={[
-            styles.balanceValue,
-            {
-              color: transaction.bal_amt > 0 ? colors.error : colors.success,
-            },
-          ]}
+          className="text-[15px] text-ink-900 dark:text-ink-100 mb-5 leading-tight"
+          style={{ fontFamily: "ClashDisplay-Semibold" }}
         >
-          ₹{transaction.bal_amt.toLocaleString("en-IN")}
+          {transaction.bill_type_name}
         </Text>
+
+        {/* Stats Grid */}
+        <View className="flex-row items-center justify-between">
+          {/* Billed Column */}
+          <View>
+            <Text
+              className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500 mb-1"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
+              Billed
+            </Text>
+            <Text
+              className="text-sm text-ink-700 dark:text-ink-300"
+              style={{ fontFamily: "ClashDisplay-Medium" }}
+            >
+              {formatCurrency(transaction.bill_amt)}
+            </Text>
+          </View>
+
+          {/* Divider */}
+          <View className="h-8 w-[1px] bg-ink-100 dark:bg-ink-800" />
+
+          {/* Paid Column */}
+          <View>
+            <Text
+              className="text-[10px] uppercase tracking-wider text-ink-400 dark:text-ink-500 mb-1"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
+              Paid
+            </Text>
+            <Text
+              className="text-sm text-ink-700 dark:text-ink-300"
+              style={{ fontFamily: "ClashDisplay-Medium" }}
+            >
+              {formatCurrency(transaction.recd_amt)}
+            </Text>
+          </View>
+
+          {/* Divider */}
+          <View className="h-8 w-[1px] bg-ink-100 dark:bg-ink-800" />
+
+
+          {/* Balance Column */}
+          <View>
+            <Text
+              className="text-[10px] uppercase tracking-wider text-ink-400 mb-1 text-right"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
+              Balance
+            </Text>
+            <Text
+              className="text-sm text-ink-700"
+              style={{ fontFamily: "ClashDisplay-Medium" }}
+            >
+              {formatCurrency(transaction.bal_amt)}
+            </Text>
+          </View>
+        </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  transactionCard: {
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-    backgroundColor: "transparent",
-  },
-  inlineInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  semesterBox: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-  },
-  semesterText: {
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 0.3,
-  },
-  inlineLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  transactionType: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 16,
-    lineHeight: 22,
-  },
-  amountsGrid: {
-    flexDirection: "row",
-    gap: 12,
-    backgroundColor: "transparent",
-    marginBottom: 12,
-  },
-  amountBox: {
-    flex: 1,
-    backgroundColor: "transparent",
-    gap: 6,
-  },
-  amountBoxRight: {
-    flex: 1,
-    backgroundColor: "transparent",
-    gap: 6,
-    alignItems: "flex-end",
-  },
-  amountLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  amountLabelRight: {
-    textAlign: "right",
-  },
-  amountValue: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  amountValueRight: {
-    textAlign: "right",
-  },
-  balanceFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 4,
-    paddingTop: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  balanceLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  balanceValue: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-});

@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-base: 250 250 250; /* #FAFAFA */
+    --color-surface: 255 255 255; /* #FFFFFF */
+    --color-text: 15 23 42; /* #0F172A */
+    --color-border: 226 232 240; /* ink-300 #E2E8F0 */
+  }
+
+  .dark:root {
+    --color-base: 2 6 23; /* Dark base */
+    --color-surface: 15 23 42; /* Dark surface */
+    --color-text: 248 250 252; /* Light text */
+    --color-border: 51 65 85; /* ink-800 #334155 */
+  }
+}

@@ -1,6 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet } from "react-native";
-import { Text, View } from "./Themed";
+import React from "react";
+import { Text, View } from "react-native";
 
 interface InfoRowProps {
   label: string;
@@ -9,66 +8,26 @@ interface InfoRowProps {
   isLast?: boolean;
 }
 
-export function InfoRow({
-  label,
-  value,
-  icon: Icon,
-  isLast = false,
-}: InfoRowProps) {
-  const { colors } = useTheme();
-
+export function InfoRow({ label, value, icon: Icon, isLast = false }: InfoRowProps) {
   return (
-    <View style={styles.infoRowContainer}>
-      <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>
+    <View className={`py-3 ${!isLast ? "border-b border-border" : ""}`}>
+      <Text
+        className="text-[10px] text-ink-600 dark:text-ink-400 uppercase tracking-widest mb-2"
+        style={{ fontFamily: "GeneralSans-Semibold" }}
+      >
         {label}
       </Text>
-      <View style={styles.infoValueRow}>
-        <Icon size={18} color={colors.primary} />
+      <View className="flex-row items-center gap-3">
+        <Icon size={16} color="#2B5BDB" />
         <Text
-          style={[
-            styles.infoValue,
-            { color: value ? colors.text : colors.textSecondary },
-            !value && styles.italicText,
-          ]}
+          className={`text-sm flex-1 ${
+            value ? "text-ink-900 dark:text-white" : "text-ink-500 dark:text-ink-500 italic"
+          }`}
+          style={{ fontFamily: "GeneralSans-Regular" }}
         >
-          {value || "Not Provided"}
+          {value || "Not provided"}
         </Text>
       </View>
-      {!isLast && (
-        <View style={[styles.divider, { backgroundColor: colors.border + "70" }]} />
-      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  infoRowContainer: {
-    backgroundColor: "transparent",
-    paddingVertical: 7,
-  },
-  infoLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-    marginBottom: 8,
-  },
-  infoValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    backgroundColor: "transparent",
-  },
-  infoValue: {
-    fontSize: 14,
-    fontWeight: "400",
-    flex: 1,
-  },
-  italicText: {
-    fontStyle: "italic",
-  },
-  divider: {
-    height: 1,
-    marginTop: 12,
-  },
-});

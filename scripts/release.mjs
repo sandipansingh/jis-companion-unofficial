@@ -65,21 +65,21 @@ try {
   if (diff) {
     run(`git commit -m "chore(release): v${version}"`);
   } else {
-    console.log("ℹ️ No staged changes to commit.");
+    console.log("ℹNo staged changes to commit.");
   }
 
   run("git push origin HEAD");
-  console.log(`✅ Pushed commit for v${version}`);
+  console.log(`Pushed commit for v${version}`);
 
   if (!tagExists(tag)) {
     run(`git tag ${tag}`);
     run(`git push origin ${tag}`);
-    console.log(`✅ Created and pushed tag ${tag}`);
+    console.log(`Created and pushed tag ${tag}`);
   } else {
-    console.log(`⚠️ Tag ${tag} already exists — skipping tag creation.`);
+    console.log(`Tag ${tag} already exists — skipping tag creation.`);
   }
 
-  console.log(`\n✅ Released v${version} successfully`);
+  console.log(`\nReleased v${version} successfully`);
 } catch (err) {
   console.error("\n❌ Release failed:", err.message || err);
   process.exit(1);

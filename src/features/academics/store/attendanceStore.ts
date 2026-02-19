@@ -52,13 +52,29 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
       return;
     }
 
-    set({ loading: true, error: null });
-
     try {
       const { studentId, loginData } = useAuthStore.getState();
 
       if (!studentId || !loginData) {
         throw new Error("User not authenticated");
+      }
+      
+      const { getAttendanceData } = await import("@/src/services/database");
+      const cached = await getAttendanceData(studentId, monthKey);
+
+      if (cached) {
+        set((state) => ({
+          monthlyData: {
+            ...state.monthlyData,
+            [monthKey]: {
+              subjectWiseAttendance: cached.subjectWiseData,
+              dateWiseAttendance: cached.dateWiseData,
+            },
+          },
+          loading: false,
+        }));
+      } else {
+        set({ loading: true, error: null });
       }
 
       const result = await syncAttendanceData(
@@ -84,9 +100,14 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
       }));
     } catch (error: any) {
       console.error(`Failed to fetch attendance for ${monthKey}:`, error);
-      set({
-        error: error.message || "Failed to fetch attendance data",
-        loading: false,
+      set((state) => {
+        const hasData = !!state.monthlyData[monthKey];
+        return {
+          error: hasData
+            ? null
+            : error.message || "Failed to fetch attendance data",
+          loading: false,
+        };
       });
     }
   },

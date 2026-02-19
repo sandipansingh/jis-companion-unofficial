@@ -1,19 +1,17 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { ActivityIndicator } from "react-native";
-import { Text, View } from "./Themed";
+import { ActivityIndicator, Text, View } from "react-native";
 
 interface LoadingStateProps {
   message?: string;
 }
 
 export function LoadingState({ message = "Loading..." }: LoadingStateProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={commonStyles.centerContainer}>
-      <ActivityIndicator size="large" color={colors.primary} />
-      <Text style={[commonStyles.loadingText, { color: colors.textSecondary }]}>
+    <View className="flex-1 items-center justify-center gap-4 bg-base">
+      <ActivityIndicator size="large" color="#2B5BDB" />
+      <Text
+        className="text-sm text-ink-600 tracking-wide"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
         {message}
       </Text>
     </View>

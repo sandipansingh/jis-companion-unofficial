@@ -3,6 +3,7 @@ export { Button } from "./Button";
 export { DemoBanner } from "./DemoBanner";
 export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
+export { Header } from "./Header";
 export { HeaderCard } from "./HeaderCard";
 export { InfoRow } from "./InfoRow";
 export { LoadingState } from "./LoadingState";

@@ -1,4 +1,4 @@
-import { PdfPreviewModal } from "@/src/components";
+import { Header, PdfPreviewModal } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import {
   AttendanceStatusCard,
@@ -7,21 +7,16 @@ import {
   ResourcesCard,
 } from "@/src/features/academics/components";
 import { useClassDetails } from "@/src/features/academics/hooks";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
 export default function ClassDetails() {
   const { colors } = useTheme();
-  const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
 
   const {
@@ -40,97 +35,43 @@ export default function ClassDetails() {
     closePdfPreview,
   } = useClassDetails(id);
 
-  if (loading) {
-    return (
-      <View
-        style={[
-          commonStyles.container,
-          { backgroundColor: colors.background, justifyContent: "center" },
-        ]}
-      >
-        <View style={[styles.header, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={commonStyles.backButton}
-          >
-            <ChevronLeft size={28} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-            Class Details
-          </Text>
-          <View style={commonStyles.placeholder} />
-        </View>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
-  }
+  return (
+    <View className="flex-1" style={{ backgroundColor: colors.base }}>
+      <Header title="Class Details" showBackButton />
 
-  if (!classData) {
-    return (
-      <View
-        style={[commonStyles.container, { backgroundColor: colors.background }]}
-      >
-        <View style={[styles.header, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={commonStyles.backButton}
-          >
-            <ChevronLeft size={28} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-            Class Details
-          </Text>
-          <View style={commonStyles.placeholder} />
+      {/* Main Content */}
+      {loading ? (
+        <View className="flex-1 justify-center">
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
+      ) : !classData ? (
+        <View className="flex-1 justify-center items-center">
           <Text style={{ color: colors.text }}>Class data not found</Text>
         </View>
-      </View>
-    );
-  }
+      ) : (
+        <ScrollView className="flex-1">
+          <View className="p-4">
+            <ClassInfoCard
+              subjectName={subject.name}
+              timeRange={timeRange}
+              classType={classType}
+              facultyName={classData.faculty || "Unknown"}
+              location={location}
+            />
 
-  return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={commonStyles.backButton}
-        >
-          <ChevronLeft size={28} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Class Details
-        </Text>
-        <View style={commonStyles.placeholder} />
-      </View>
+            <DateInfoCard date={classData.date1 || ""} />
 
-      <ScrollView style={commonStyles.scrollView}>
-        <View style={styles.content}>
-          <ClassInfoCard
-            subjectName={subject.name}
-            timeRange={timeRange}
-            classType={classType}
-            facultyName={classData.faculty || "Unknown"}
-            location={location}
-          />
+            {!isFutureClass && statValue?.trim() && (
+              <AttendanceStatusCard status={statValue} />
+            )}
 
-          <DateInfoCard date={classData.date1 || ""} />
-
-          {!isFutureClass && statValue && statValue.trim() !== "" && (
-            <AttendanceStatusCard status={statValue} />
-          )}
-
-          <ResourcesCard
-            resources={resources}
-            onResourcePress={openPdfPreview}
-          />
-        </View>
-      </ScrollView>
+            <ResourcesCard
+              resources={resources}
+              onResourcePress={openPdfPreview}
+            />
+          </View>
+        </ScrollView>
+      )}
 
       {/* PDF Preview Modal */}
       {selectedPdf && (
@@ -144,14 +85,3 @@ export default function ClassDetails() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.headerRow,
-    ...commonStyles.header,
-    paddingBottom: 7,
-  },
-  content: {
-    padding: 16,
-  },
-});

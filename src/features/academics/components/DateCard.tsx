@@ -1,6 +1,6 @@
 import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 type AttendanceStatus = "present" | "absent" | "partial" | "holiday";
 
@@ -26,72 +26,41 @@ export function DateCard({
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity style={styles.dayColumn} onPress={onPress}>
-      <Text style={[styles.dayLabel, { color: colors.textSecondary }]}>
+    <TouchableOpacity
+      className="flex-1 items-center gap-2"
+      onPress={onPress}
+    >
+      <Text className="text-[11px] font-semibold uppercase text-ink-500 dark:text-ink-400">
         {dayLabel}
       </Text>
       <View
-        style={[
-          styles.dateCircle,
-          status === "present" && { backgroundColor: colors.success },
-          status === "absent" && { backgroundColor: colors.error },
-          status === "partial" && { backgroundColor: colors.warning },
-          status === "holiday" && styles.holidayCircle,
-          isSelected && { borderWidth: 2, borderColor: colors.info },
-          isToday && { borderWidth: 2, borderColor: colors.purple },
-        ]}
+        className={`w-10 h-10 rounded-full items-center justify-center bg-transparent ${
+          status === "present" ? "bg-success" : ""
+        } ${status === "absent" ? "bg-red-500" : ""} ${
+          status === "partial" ? "bg-warning" : ""
+        } ${status === "holiday" ? "bg-gray-200 dark:bg-ink-800" : ""} ${
+          isSelected ? "border-2 border-info" : ""
+        } ${isToday ? "border-2 border-cobalt-500" : ""}`}
       >
         <Text
-          style={[
-            styles.dateText,
-            { color: colors.textSecondary },
-            status === "present" && { color: "#ffffff" },
-            status === "absent" && { color: "#ffffff" },
-            status === "partial" && { color: "#ffffff" },
-            status === "holiday" && { color: colors.textSecondary },
-            isSelected && { fontWeight: "700" },
-          ]}
+          className={`text-base font-semibold text-ink-500 dark:text-ink-400 ${
+            status === "present" ||
+            status === "absent" ||
+            status === "partial"
+              ? "text-white"
+              : ""
+          } ${status === "holiday" ? "text-ink-500 dark:text-ink-400" : ""} ${
+            isSelected ? "font-bold" : ""
+          }`}
         >
           {date}
         </Text>
       </View>
       {classInfo && (
-        <Text style={[styles.classCount, { color: colors.textSecondary }]}>
+        <Text className="text-[10px] font-medium text-ink-500 dark:text-ink-400">
           {classInfo}
         </Text>
       )}
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  dayColumn: {
-    flex: 1,
-    alignItems: "center",
-    gap: 8,
-  },
-  dayLabel: {
-    fontSize: 11,
-    fontWeight: "600",
-    textTransform: "uppercase",
-  },
-  dateCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "transparent",
-  },
-  holidayCircle: {
-    backgroundColor: "#E5E7EB",
-  },
-  dateText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  classCount: {
-    fontSize: 10,
-    fontWeight: "500",
-  },
-});

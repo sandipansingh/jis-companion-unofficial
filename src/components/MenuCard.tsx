@@ -1,6 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { ChevronRight, LucideIcon } from "lucide-react-native";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface MenuCardProps {
   title: string;
@@ -19,85 +18,41 @@ export function MenuCard({
   onPress,
   disabled = false,
 }: MenuCardProps) {
-  const { colors } = useTheme();
-
   return (
     <TouchableOpacity
-      style={[
-        styles.menuCard,
-        {
-          backgroundColor: colors.surface,
-          opacity: disabled ? 0.5 : 1,
-          shadowColor: colors.shadow,
-        },
-      ]}
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.75}
       disabled={disabled}
+      className={`flex-row items-center bg-surface dark:bg-ink-900 rounded-2xl p-5 mb-3 border border-border ${disabled ? "opacity-40" : ""}`}
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
     >
-      <View style={styles.menuCardLeft}>
-        <View
-          style={[
-            styles.menuIconContainer,
-            { backgroundColor: iconColor + "15" },
-          ]}
-        >
-          <Icon size={28} color={iconColor} />
-        </View>
-        <View style={styles.menuTextContainer}>
-          <Text style={[styles.menuTitle, { color: colors.text }]}>
-            {title}
-          </Text>
-          <Text
-            style={[styles.menuDescription, { color: colors.textSecondary }]}
-          >
-            {description}
-          </Text>
-        </View>
+      <View
+        className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
+        style={{ backgroundColor: iconColor + "18" }}
+      >
+        <Icon size={24} color={iconColor} />
       </View>
-      <ChevronRight size={24} color={colors.textSecondary} />
+      <View className="flex-1 gap-0.5">
+        <Text
+          className="text-base text-ink-900 dark:text-white"
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          {title}
+        </Text>
+        <Text
+          className="text-sm text-ink-600 dark:text-ink-400"
+          style={{ fontFamily: "GeneralSans-Regular" }}
+        >
+          {description}
+        </Text>
+      </View>
+      <ChevronRight size={18} color="#94A3B8" />
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  menuCard: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.05)",
-  },
-  menuCardLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    gap: 16,
-  },
-  menuIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuTextContainer: {
-    flex: 1,
-  },
-  menuTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 4,
-  },
-  menuDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-  },
-});

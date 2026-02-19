@@ -1,8 +1,6 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { parseSubjectName } from "@/src/utils/stringHelpers";
 import { User } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SubjectWiseAttendance } from "../api";
 import { getAttendanceStatus } from "../utils/attendanceHelpers";
 
@@ -19,119 +17,96 @@ export function RoutineTimelineItem({
   isLast,
   onPress,
 }: RoutineTimelineItemProps) {
-  const { colors } = useTheme();
-
   const statValue = getAttendanceStatus(classItem);
   const isPresent = statValue?.toLowerCase() === "present";
-  const showBorder = statValue && statValue !== "Not Yet Available";
+  const hasStatus = statValue && statValue !== "Not Yet Available";
+
+  const accentColor = hasStatus
+    ? isPresent
+      ? "#10B981"
+      : "#EF4444"
+    : "#CBD5E1";
 
   return (
-    <View style={styles.routineItem}>
-      {/* Time Column */}
-      <View style={styles.timeColumn}>
-        <Text style={[styles.timeText, { color: colors.text }]}>{time}</Text>
-        {/* Vertical Line */}
-        <View style={styles.timelineContainer}>
-          <View style={styles.timelineDot} />
-          {!isLast && <View style={styles.timelineLine} />}
+    <View className="flex-row mb-3">
+      {/* Time + timeline */}
+      <View className="w-[68px] items-center pt-3 gap-1">
+        <Text
+          className="text-xs text-ink-600 dark:text-ink-400 mb-2"
+          style={{ fontFamily: "GeneralSans-Medium" }}
+        >
+          {time}
+        </Text>
+        <View className="items-center flex-1">
+          <View
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: accentColor,
+            }}
+          />
+          {!isLast && (
+            <View
+              className="w-[1.5px] flex-1 bg-ink-200 dark:bg-ink-800 mt-1 min-h-[20px]"
+            />
+          )}
         </View>
       </View>
 
-      {/* Class Card */}
+      {/* Class card */}
       <TouchableOpacity
-        style={[
-          styles.classCard,
-          { backgroundColor: colors.surface, shadowColor: colors.shadow },
-          showBorder
-            ? isPresent
-              ? { borderLeftColor: colors.success }
-              : { borderLeftColor: colors.error }
-            : { borderLeftColor: "transparent" },
-        ]}
         onPress={onPress}
+        activeOpacity={0.75}
+        className="flex-1 bg-surface dark:bg-ink-900 rounded-2xl overflow-hidden mb-4 border border-border border-l-[3px]"
+        style={{
+          borderLeftColor: accentColor,
+          shadowColor: "#0F172A",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 6,
+          elevation: 2,
+        }}
       >
-        <Text style={[styles.subjectName, { color: colors.text }]}>
-          {parseSubjectName(classItem.subject_name).name}
-        </Text>
-        <View style={styles.classDetails}>
-          <View style={styles.detailRow}>
-            <User size={12} color={colors.textSecondary} />
-            <Text style={[styles.detailText, { color: colors.textSecondary }]}>
+        <View className="px-4 py-3">
+          <Text
+            className="text-sm text-ink-900 dark:text-white leading-tight"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+            numberOfLines={2}
+          >
+            {parseSubjectName(classItem.subject_name).name}
+          </Text>
+          <View className="flex-row items-center gap-1.5 mt-1.5">
+            <User size={11} color="#94A3B8" />
+            <Text
+              className="text-xs text-ink-500 dark:text-ink-400"
+              style={{ fontFamily: "GeneralSans-Regular" }}
+              numberOfLines={1}
+            >
               {classItem.faculty}
             </Text>
           </View>
+          {hasStatus && (
+            <View
+              className={`self-start rounded-full px-2 py-0.5 mt-1.5 ${
+                isPresent
+                  ? "bg-green-100 dark:bg-green-900/30"
+                  : "bg-red-100 dark:bg-red-900/30"
+              }`}
+            >
+              <Text
+                className="text-[10px]"
+                style={{
+                  fontFamily: "GeneralSans-Semibold",
+                  color: isPresent ? "#059669" : "#DC2626",
+                }}
+              >
+                {isPresent ? "Present" : "Absent"}
+              </Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  routineItem: {
-    flexDirection: "row",
-    backgroundColor: "transparent",
-  },
-  timeColumn: {
-    width: 80,
-    alignItems: "flex-start",
-    paddingTop: 4,
-    backgroundColor: "transparent",
-    position: "relative",
-  },
-  timeText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  timelineContainer: {
-    position: "absolute",
-    left: 8,
-    top: 28,
-    bottom: 0,
-    width: 2,
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  timelineDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: -4,
-    backgroundColor: "#D1D5DB",
-  },
-  timelineLine: {
-    width: 2,
-    flex: 1,
-    marginTop: 2,
-    backgroundColor: "#D1D5DB",
-  },
-  classCard: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 16,
-    marginLeft: 12,
-    marginBottom: 16,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-    borderLeftWidth: 4,
-  },
-  subjectName: {
-    fontSize: 13,
-    fontWeight: "600",
-    marginBottom: 8,
-  },
-  classDetails: {
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  detailText: {
-    fontSize: 14,
-  },
-});

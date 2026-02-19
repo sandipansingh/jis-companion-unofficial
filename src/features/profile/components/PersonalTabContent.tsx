@@ -1,5 +1,4 @@
-import { Button, InfoRow, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { Button, InfoRow } from "@/src/components";
 import {
   Calendar,
   Droplet,
@@ -8,7 +7,7 @@ import {
   MapPin,
   Phone,
 } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { View } from "react-native";
 
 interface PersonalTabContentProps {
   email?: string;
@@ -39,10 +38,8 @@ export function PersonalTabContent({
   onChangePassword,
   isDemoAccount = false,
 }: PersonalTabContentProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.tabContentInner}>
+    <View>
       <InfoRow label="EMAIL ADDRESS" value={email} icon={Mail} />
       <InfoRow label="MOBILE NUMBER" value={mobile} icon={Phone} />
       <InfoRow label="DATE OF BIRTH" value={dob} icon={Calendar} />
@@ -71,22 +68,11 @@ export function PersonalTabContent({
         title="Change Password"
         onPress={onChangePassword}
         disabled={isDemoAccount}
-        icon={<Lock size={16} color={colors.white} />}
+        icon={<Lock size={16} color="#FFFFFF" />}
         iconPosition="left"
-        style={{
-          marginTop: 24,
-          height: 50,
-        }}
-        textStyle={{
-          fontSize: 14,
-        }}
+        style={{ marginTop: 24, height: 50 }}
+        textStyle={{ fontSize: 14 }}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabContentInner: {
-    backgroundColor: "transparent",
-  },
-});

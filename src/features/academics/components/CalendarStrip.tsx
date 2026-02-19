@@ -1,7 +1,6 @@
-import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { getDayName, isSameDay } from "@/src/utils/dateHelpers";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 type AttendanceStatus = "present" | "absent" | "partial" | "holiday";
 
@@ -27,74 +26,98 @@ export function CalendarStrip({
   getAttendanceStatus,
   getAttendanceWithFallback,
 }: CalendarStripProps) {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
+
+  const getStatusStyles = (status: AttendanceStatus) => {
+    switch (status) {
+      case "present":
+        return {
+          bg: isDark ? "#064E3B" : "#ECFDF5",
+          border: isDark ? "#059669" : "#059669",
+          text: isDark ? "#A7F3D0" : "#059669",
+        };
+      case "absent":
+        return {
+          bg: isDark ? "#500707" : "#FEF2F2",
+          border: isDark ? "#991B1B" : "#DC2626",
+          text: isDark ? "#FECACA" : "#DC2626",
+        };
+      case "partial":
+        return {
+          bg: isDark ? "#451a03" : "#FFFBEB",
+          border: isDark ? "#D97706" : "#D97706",
+          text: isDark ? "#fbbf24" : "#D97706", // Fixed yellow color syntax
+        };
+      case "holiday":
+      default:
+        return {
+          bg: isDark ? "#1e293b" : "#F1F5F9",
+          border: isDark ? "#334155" : "#CBD5E1",
+          text: isDark ? "#94a3b8" : "#94A3B8",
+        };
+    }
+  };
 
   return (
-    <View style={styles.strip}>
+    <View className="flex-row justify-between mb-4">
       {weekDates.map((date, idx) => {
         const status = getAttendanceStatus(date);
         const isSelected = isSameDay(date, selectedDate);
         const isToday = isSameDay(date, new Date());
         const attendance = getAttendanceWithFallback(date);
+        const s = getStatusStyles(status);
 
         return (
           <TouchableOpacity
             key={idx}
-            style={styles.dayColumn}
+            className="flex-1 items-center gap-1.5"
             onPress={() => onDatePress(date)}
+            activeOpacity={0.7}
           >
-            <Text style={[styles.dayLabel, { color: colors.textSecondary }]}>
+            {/* Day label */}
+            <Text
+              className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400"
+              style={{
+                fontFamily: "GeneralSans-Semibold",
+              }}
+            >
               {getDayName(date)}
             </Text>
+
+            {/* Date circle */}
             <View
-              style={[
-                styles.dateCircle,
-                status === "present" && {
-                  backgroundColor: colors.success + "20",
-                  borderWidth: 2,
-                  borderColor: colors.success,
-                },
-                status === "absent" && {
-                  backgroundColor: colors.error + "20",
-                  borderWidth: 2,
-                  borderColor: colors.error,
-                },
-                status === "partial" && {
-                  backgroundColor: colors.warning + "20",
-                  borderWidth: 2,
-                  borderColor: colors.warning,
-                },
-                status === "holiday" && styles.holidayCircle,
-                isSelected && { borderWidth: 2, borderColor: colors.primary },
-                isToday && styles.todayCircle,
-              ]}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 19,
+                backgroundColor: s.bg,
+                borderWidth: isSelected ? 2.5 : 1.5,
+                borderColor: isSelected ? (isDark ? "#60A5FA" : "#2B5BDB") : s.border,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
               <Text
-                style={[
-                  styles.dateText,
-                  status === "present" && { color: colors.success },
-                  status === "absent" && { color: colors.error },
-                  status === "partial" && { color: colors.warning },
-                  status === "holiday" && { color: colors.textSecondary },
-                  isSelected && {
-                    color: colors.primary,
-                    fontWeight: "bold",
-                  },
-                ]}
+                style={{
+                  fontFamily: isSelected
+                    ? "ClashDisplay-Semibold"
+                    : "GeneralSans-Medium",
+                  fontSize: 14,
+                  color: isSelected ? (isDark ? "#FFFFFF" : "#2B5BDB") : s.text,
+                }}
               >
                 {date.getDate()}
               </Text>
             </View>
+
+            {/* Class count */}
             {attendance && attendance.rtCount > 0 && (
               <Text
-                style={[
-                  styles.classCount,
-                  { color: colors.textSecondary },
-                  (attendance as any)._isFallback && {
-                    opacity: 0.6,
-                    fontStyle: "italic",
-                  },
-                ]}
+                className="text-[9px] text-ink-500 dark:text-ink-500"
+                style={{
+                  fontFamily: "GeneralSans-Regular",
+                  opacity: (attendance as any)._isFallback ? 0.6 : 1,
+                }}
               >
                 {(attendance as any)._isFallback
                   ? `~${attendance.rtCount}`
@@ -107,46 +130,3 @@ export function CalendarStrip({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  strip: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "transparent",
-    marginBottom: 16,
-  },
-  dayColumn: {
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-    flex: 1,
-  },
-  dayLabel: {
-    fontSize: 11,
-    fontWeight: "500",
-  },
-  dateCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  holidayCircle: {
-    backgroundColor: "#E2E8F0",
-  },
-  todayCircle: {
-    shadowOffset: { width: 0, height: 2 },
-    shadowColor: "#007AFF",
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  dateText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  classCount: {
-    fontSize: 10,
-    marginTop: 2,
-  },
-});

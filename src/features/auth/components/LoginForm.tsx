@@ -1,6 +1,6 @@
-import { Button, TextInput, View } from "@/src/components";
+import { Button, TextInput } from "@/src/components";
 import { Lock, User } from "lucide-react-native";
-import { StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 
 interface LoginFormProps {
   studentId: string;
@@ -20,53 +20,44 @@ export function LoginForm({
   onSubmit,
 }: LoginFormProps) {
   return (
-    <View style={styles.formContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          icon={User}
-          placeholder="Student ID"
-          value={studentId}
-          onChangeText={onStudentIdChange}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="next"
-        />
-      </View>
+    <View className="w-full gap-4" accessibilityRole={"form" as any}>
+      <Text
+        className="text-2xl text-ink-950 dark:text-white mb-2"
+        style={{ fontFamily: "ClashDisplay-Semibold" }}
+      >
+        Sign in
+      </Text>
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          icon={Lock}
-          placeholder="Password"
-          value={password}
-          onChangeText={onPasswordChange}
-          isPassword
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="done"
-          onSubmitEditing={onSubmit}
-        />
-      </View>
-
-      <Button
-        title="Login"
-        onPress={onSubmit}
-        loading={loading}
-        style={styles.button}
+      <TextInput
+        icon={User}
+        placeholder="Student ID"
+        value={studentId}
+        onChangeText={onStudentIdChange}
+        autoCapitalize="none"
+        autoCorrect={false}
+        returnKeyType="next"
       />
+
+      <TextInput
+        icon={Lock}
+        placeholder="Password"
+        value={password}
+        onChangeText={onPasswordChange}
+        isPassword
+        autoCapitalize="none"
+        autoCorrect={false}
+        returnKeyType="done"
+        onSubmitEditing={onSubmit}
+      />
+
+      <View className="mt-2">
+        <Button
+          title="Sign in"
+          onPress={onSubmit}
+          loading={loading}
+          size="lg"
+        />
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  formContainer: {
-    width: "100%",
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 20,
-    backgroundColor: "transparent",
-  },
-  button: {
-    marginTop: 10,
-  },
-});

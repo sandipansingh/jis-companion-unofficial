@@ -44,4 +44,4 @@ await generateSW({
   ],
 });
 
-console.log("✅ Service worker generated");
+console.log("Service worker generated");

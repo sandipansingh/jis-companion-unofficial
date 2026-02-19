@@ -1,29 +1,18 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 
 interface CreditsButtonProps {
   onPress: () => void;
 }
 
 export function CreditsButton({ onPress }: CreditsButtonProps) {
-  const { colors } = useTheme();
-
   return (
-    <Pressable onPress={onPress} style={styles.creditsButton}>
-      <Text style={[styles.creditsText, { color: colors.textSecondary }]}>
+    <Pressable onPress={onPress} className="py-3 items-center mt-4">
+      <Text
+        className="text-xs text-ink-400 tracking-widest uppercase"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
         Credits
       </Text>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  creditsButton: {
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-  creditsText: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-});

@@ -2,7 +2,6 @@ import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
 import type { UserProfileData } from "@/src/features/auth/api/auth";
 import { Award, Briefcase, Calculator } from "lucide-react-native";
-import { StyleSheet } from "react-native";
 import { AcademicCard } from "./AcademicCard";
 import { SemesterRow } from "./SemesterRow";
 import { SubjectRow } from "./SubjectRow";
@@ -22,43 +21,36 @@ export function AcademicTabContent({
   hasSubjectMarks,
   getSemesterResults,
 }: AcademicTabContentProps) {
-  const { colors } = useTheme();
-
+  const { isDark } = useTheme();
   return (
-    <View style={styles.tabContentInner}>
-      {/*  Academic History Section */}
+    <View>
+      {/* Academic History Section */}
       {hasAcademicHistoryData() && (
-        <View style={styles.academicSection}>
-          <View style={styles.sectionHeader}>
-            <Briefcase size={16} color={colors.primary} />
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View className="mt-1 mb-4">
+          <View className="flex-row items-center gap-2 mb-2 pb-1">
+            <Briefcase size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
+            <Text
+              className="text-sm text-ink-900 dark:text-white"
+              style={{ fontFamily: "GeneralSans-Bold" }}
+            >
               Academic History
             </Text>
           </View>
-          <View style={styles.academicGrid}>
+          <View className="flex-row flex-wrap gap-3 mb-4">
             {hasValidMarks(userData?.marks_x) && (
               <AcademicCard title="Class X" score={`${userData?.marks_x}%`} />
             )}
             {hasValidMarks(userData?.marks_xii) && (
-              <AcademicCard
-                title="Class XII"
-                score={`${userData?.marks_xii}%`}
-              />
+              <AcademicCard title="Class XII" score={`${userData?.marks_xii}%`} />
             )}
             {hasValidMarks(userData?.marks_dip) && (
               <AcademicCard title="Diploma" score={`${userData?.marks_dip}%`} />
             )}
             {hasValidMarks(userData?.marks_graduate) && (
-              <AcademicCard
-                title="Graduation"
-                score={`${userData?.marks_graduate}%`}
-              />
+              <AcademicCard title="Graduation" score={`${userData?.marks_graduate}%`} />
             )}
             {hasValidMarks(userData?.marks_pg) && (
-              <AcademicCard
-                title="Post Grad"
-                score={`${userData?.marks_pg}%`}
-              />
+              <AcademicCard title="Post Grad" score={`${userData?.marks_pg}%`} />
             )}
           </View>
         </View>
@@ -66,20 +58,18 @@ export function AcademicTabContent({
 
       {/* Subject Marks Section */}
       {hasSubjectMarks() && (
-        <View style={styles.academicSection}>
-          <View style={styles.sectionHeader}>
-            <Calculator size={16} color={colors.primary} />
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        <View className="mt-1 mb-4">
+          <View className="flex-row items-center gap-2 mb-2 pb-1">
+            <Calculator size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
+            <Text
+              className="text-sm text-ink-900 dark:text-white"
+              style={{ fontFamily: "GeneralSans-Bold" }}
+            >
               Class XII Marks
             </Text>
           </View>
           <View
-            style={[
-              styles.subjectContainer,
-              {
-                borderColor: colors.border,
-              },
-            ]}
+            className="rounded-xl p-4 gap-1 mb-4 border border-border"
           >
             {hasValidMarks(userData?.std_student_master_physics_obt_marks) && (
               <SubjectRow
@@ -88,9 +78,7 @@ export function AcademicTabContent({
                 full={userData?.std_student_master_physics_full_marks || 0}
               />
             )}
-            {hasValidMarks(
-              userData?.std_student_master_chemistry_obt_marks
-            ) && (
+            {hasValidMarks(userData?.std_student_master_chemistry_obt_marks) && (
               <SubjectRow
                 subject="Chemistry"
                 obtained={userData?.std_student_master_chemistry_obt_marks || 0}
@@ -116,14 +104,17 @@ export function AcademicTabContent({
       )}
 
       {/* Semester Results Section */}
-      <View style={styles.academicSection}>
-        <View style={styles.sectionHeader}>
-          <Award size={16} color={colors.primary} />
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+      <View className="mt-1">
+        <View className="flex-row items-center gap-2 mb-2 pb-1">
+          <Award size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
+          <Text
+            className="text-sm text-ink-900 dark:text-white"
+            style={{ fontFamily: "GeneralSans-Bold" }}
+          >
             Semester Results
           </Text>
         </View>
-        <View style={styles.semesterList}>
+        <View className="gap-3">
           {getSemesterResults().map((result) => (
             <SemesterRow
               key={result.sem}
@@ -136,44 +127,3 @@ export function AcademicTabContent({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  tabContentInner: {
-    backgroundColor: "transparent",
-  },
-  academicSection: {
-    marginTop: 3,
-    backgroundColor: "transparent",
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 6,
-    paddingBottom: 4,
-    backgroundColor: "transparent",
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  academicGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    backgroundColor: "transparent",
-    marginBottom: 16,
-  },
-  subjectContainer: {
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 16,
-    gap: 4,
-    marginBottom: 16,
-    backgroundColor: "transparent",
-  },
-  semesterList: {
-    gap: 12,
-    backgroundColor: "transparent",
-  },
-});

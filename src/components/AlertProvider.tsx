@@ -1,11 +1,11 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import React from "react";
-import { Linking, Modal, StyleSheet, Text, View } from "react-native";
+import { Linking, Modal, Text, View } from "react-native";
 import { Button } from "./Button";
 
 export function AlertProvider() {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
   const {
     visible,
     title,
@@ -34,25 +34,33 @@ export function AlertProvider() {
       }}
       statusBarTranslucent
     >
-      <View style={styles.modalOverlay}>
+      <View className="flex-1 bg-black/50 justify-center items-center p-5">
         <View
-          style={[
-            styles.modalContent,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              shadowColor: colors.shadow,
-            },
-          ]}
+          className="w-full max-w-[320px] bg-white dark:bg-ink-900 rounded-2xl p-6 border border-border"
+          style={{
+            elevation: 5,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.1,
+            shadowRadius: 12,
+          }}
         >
-          <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-          <Text style={[styles.message, { color: colors.textSecondary }]}>
+          <Text
+            className="text-lg text-center mb-2 text-ink-950 dark:text-white"
+            style={{ fontFamily: "ClashDisplay-Semibold" }}
+          >
+            {title}
+          </Text>
+          <Text
+            className="text-sm text-center mb-6 text-ink-600 dark:text-ink-300 leading-5"
+            style={{ fontFamily: "GeneralSans-Regular" }}
+          >
             {message}
           </Text>
 
-          <View style={styles.buttonContainer}>
+          <View className="flex-row gap-3">
             {showCancel && (
-              <View style={{ flex: 1 }}>
+              <View className="flex-1">
                 <Button
                   title={cancelText || "Cancel"}
                   variant="secondary"
@@ -65,18 +73,19 @@ export function AlertProvider() {
                     borderRadius: 8,
                     backgroundColor: "transparent",
                     borderWidth: 1,
-                    borderColor: colors.border,
+                    borderColor: isDark ? "#334155" : "#E2E8F0",
                   }}
                   textStyle={{
                     fontSize: 14,
-                    color: colors.text,
+                    color: isDark ? "#94A3B8" : "#64748B",
+                    fontFamily: "GeneralSans-Medium",
                   }}
                 />
               </View>
             )}
 
             {linkText && linkUrl && (
-              <View style={{ flex: 1 }}>
+              <View className="flex-1">
                 <Button
                   title={linkText}
                   variant="secondary"
@@ -89,17 +98,18 @@ export function AlertProvider() {
                     borderRadius: 8,
                     backgroundColor: "transparent",
                     borderWidth: 1,
-                    borderColor: colors.primary,
+                    borderColor: "#2B5BDB",
                   }}
                   textStyle={{
                     fontSize: 14,
-                    color: colors.primary,
+                    color: "#2B5BDB",
+                    fontFamily: "GeneralSans-Medium",
                   }}
                 />
               </View>
             )}
 
-            <View style={{ flex: 1 }}>
+            <View className="flex-1">
               <Button
                 title={confirmText || "OK"}
                 variant={isDestructive ? "danger" : "primary"}
@@ -113,6 +123,7 @@ export function AlertProvider() {
                 }}
                 textStyle={{
                   fontSize: 14,
+                  fontFamily: "GeneralSans-Medium",
                 }}
               />
             </View>
@@ -122,40 +133,3 @@ export function AlertProvider() {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalContent: {
-    width: "100%",
-    maxWidth: 320,
-    borderRadius: 16,
-    padding: 24,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 14,
-    marginBottom: 24,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    gap: 12,
-  },
-});

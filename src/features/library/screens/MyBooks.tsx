@@ -1,47 +1,36 @@
-import { EmptyState, LoadingState, TabButton } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { EmptyState, Header, LoadingState, TabButton } from "@/src/components";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { useRouter } from "expo-router";
-import { BookOpen, ChevronLeft } from "lucide-react-native";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { BookOpen } from "lucide-react-native";
+import { FlatList, View } from "react-native";
 import { BookCard } from "../components";
 import { useMyBooksData } from "../hooks";
 
 export default function MyBooks() {
-  const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
-  const router = useRouter();
   const { books, loading, filterType, handleFilterChange } = useMyBooksData();
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const renderBookItem = ({ item }: { item: any }) => <BookCard book={item} />;
+  const renderBookItem = ({ item }: { item: any }) => (
+    <View className="px-4">
+      <BookCard book={item} />
+    </View>
+  );
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity onPress={handleBack} style={commonStyles.backButton}>
-          <ChevronLeft size={28} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          My Books
-        </Text>
-        <View style={commonStyles.placeholder} />
-      </View>
+    <View className="flex-1 bg-base">
+      <Header title="My Books" showBackButton />
 
-      <View style={styles.filterContainer}>
-        <View style={[styles.filterTabs, { backgroundColor: colors.surface }]}>
+      {/* Filter tabs */}
+      <View className="px-4 pt-4 pb-2">
+        <View
+          className="flex-row bg-ink-100 dark:bg-ink-900 rounded-2xl p-1"
+          style={{
+            shadowColor: "#0F172A",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.04,
+            shadowRadius: 4,
+            elevation: 1,
+          }}
+        >
           <TabButton
             label="All Books"
             isActive={filterType === "1"}
@@ -71,38 +60,10 @@ export default function MyBooks() {
           data={books}
           renderItem={renderBookItem}
           keyExtractor={(item, index) => `${item.reader_acc_id}-${index}`}
-          contentContainerStyle={[
-            styles.listContainer,
-            { paddingBottom: bottomOffset + 20 },
-          ]}
+          contentContainerStyle={{ paddingTop: 8, paddingBottom: bottomOffset + 20 }}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.headerRow,
-    ...commonStyles.header,
-    paddingBottom: 7,
-  },
-  filterContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  filterTabs: {
-    flexDirection: "row",
-    padding: 4,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  listContainer: {
-    padding: 16,
-  },
-});

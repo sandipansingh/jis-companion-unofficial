@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { getMonthName, isSameDay } from "@/src/utils/dateHelpers";
-import { StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { RoutineTimelineItem } from "./RoutineTimelineItem";
 
 interface ClassRoutineSectionProps {
@@ -19,28 +17,34 @@ export function ClassRoutineSection({
   getDisplayTime,
   onClassPress,
 }: ClassRoutineSectionProps) {
-  const { colors } = useTheme();
-
   if (routine.length === 0) return null;
 
+  const isToday = isSameDay(selectedDate, new Date());
+  const dateLabel = isToday
+    ? "Today's Classes"
+    : `${selectedDate.getDate()} ${getMonthName(selectedDate.getMonth() + 1)}`;
+
   return (
-    <>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-        {isSameDay(selectedDate, new Date())
-          ? "Today's Routine"
-          : `Class Routine - ${selectedDate.getDate()} ${getMonthName(
-              selectedDate.getMonth() + 1
-            )}`}
+    <View>
+      <View className="flex-row items-center gap-2 mb-4">
+        <Text
+          className="text-base text-ink-950 dark:text-white"
+          style={{ fontFamily: "ClashDisplay-Semibold" }}
+        >
+          {dateLabel}
+        </Text>
         {isFallbackData && (
-          <Text
-            style={[styles.fallbackIndicator, { color: colors.textSecondary }]}
-          >
-            {" "}
-            (Based on previous week)
-          </Text>
+          <View className="bg-ink-100 dark:bg-ink-900 rounded-full px-2.5 py-0.5">
+            <Text
+              className="text-[10px] text-ink-500 dark:text-ink-400"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
+              Based on previous week
+            </Text>
+          </View>
         )}
-      </Text>
-      <View style={styles.routineContainer}>
+      </View>
+      <View className="gap-0">
         {routine.map((classItem, index) => (
           <RoutineTimelineItem
             key={index}
@@ -51,22 +55,6 @@ export function ClassRoutineSection({
           />
         ))}
       </View>
-    </>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  fallbackIndicator: {
-    fontSize: 12,
-    fontWeight: "normal",
-    fontStyle: "italic",
-  },
-  routineContainer: {
-    gap: 0,
-  },
-});

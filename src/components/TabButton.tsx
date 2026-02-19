@@ -1,6 +1,4 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text } from "./Themed";
+import { Text, TouchableOpacity } from "react-native";
 
 interface TabButtonProps {
   label: string;
@@ -9,52 +7,33 @@ interface TabButtonProps {
 }
 
 export function TabButton({ label, isActive, onPress }: TabButtonProps) {
-  const { colors } = useTheme();
-
   return (
     <TouchableOpacity
-      style={[
-        styles.tab,
-        isActive && [
-          styles.activeTab,
-          { backgroundColor: colors.primary, shadowColor: colors.shadow },
-        ],
-      ]}
+      className={`flex-1 items-center justify-center rounded-xl py-2.5 min-h-[40px] ${
+        isActive ? "bg-cobalt-500" : "bg-transparent"
+      }`}
+      style={
+        isActive
+          ? {
+              shadowColor: "#2B5BDB",
+              shadowOffset: { width: 0, height: 3 },
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+              elevation: 4,
+            }
+          : undefined
+      }
       onPress={onPress}
+      activeOpacity={0.8}
     >
       <Text
-        style={[
-          styles.tabText,
-          { color: isActive ? colors.white : colors.textSecondary },
-          isActive && { color: colors.surface },
-        ]}
+        className={`text-[11px] text-center tracking-widest uppercase ${
+          isActive ? "text-white" : "text-ink-500 dark:text-ink-400"
+        }`}
+        style={{ fontFamily: "GeneralSans-Semibold" }}
       >
         {label}
       </Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: 40,
-  },
-  activeTab: {
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  tabText: {
-    fontSize: 12,
-    fontWeight: "600",
-    textAlign: "center",
-    textTransform: "uppercase",
-  },
-});

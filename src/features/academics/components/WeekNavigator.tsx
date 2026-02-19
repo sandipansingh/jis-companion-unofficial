@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface WeekNavigatorProps {
   weekPeriod: string;
@@ -9,44 +7,29 @@ interface WeekNavigatorProps {
   onNext: () => void;
 }
 
-export function WeekNavigator({
-  weekPeriod,
-  onPrevious,
-  onNext,
-}: WeekNavigatorProps) {
-  const { colors } = useTheme();
-
+export function WeekNavigator({ weekPeriod, onPrevious, onNext }: WeekNavigatorProps) {
   return (
-    <View style={styles.weekNavigation}>
-      <TouchableOpacity onPress={onPrevious} style={styles.navButton}>
-        <ChevronLeft size={32} color={colors.text} />
+    <View className="flex-row items-center justify-between py-3 px-1 mb-1">
+      <TouchableOpacity
+        onPress={onPrevious}
+        activeOpacity={0.7}
+        className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-ink-800 items-center justify-center"
+      >
+        <ChevronLeft size={18} color="#94A3B8" />
       </TouchableOpacity>
-
-      <Text style={[styles.weekRange, { color: colors.textSecondary }]}>
+      <Text
+        className="text-sm text-ink-600 dark:text-ink-400"
+        style={{ fontFamily: "GeneralSans-Medium" }}
+      >
         {weekPeriod}
       </Text>
-
-      <TouchableOpacity onPress={onNext} style={styles.navButton}>
-        <ChevronRight size={32} color={colors.text} />
+      <TouchableOpacity
+        onPress={onNext}
+        activeOpacity={0.7}
+        className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-ink-800 items-center justify-center"
+      >
+        <ChevronRight size={18} color="#94A3B8" />
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  weekNavigation: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: "transparent",
-  },
-  navButton: {
-    padding: 4,
-  },
-  weekRange: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-});

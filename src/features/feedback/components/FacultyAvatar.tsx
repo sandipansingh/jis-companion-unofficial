@@ -1,6 +1,4 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 
 interface FacultyAvatarProps {
   imageUrl?: string;
@@ -8,68 +6,39 @@ interface FacultyAvatarProps {
   size?: number;
 }
 
-export function FacultyAvatar({
-  imageUrl,
-  shortName,
-  size = 48,
-}: FacultyAvatarProps) {
-  const { colors } = useTheme();
+export function FacultyAvatar({ imageUrl, shortName, size = 48 }: FacultyAvatarProps) {
+  const borderRadius = size / 2;
 
   return (
     <View
-      style={[
-        styles.container,
-        {
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: colors.backgroundSecondary,
-          borderColor: colors.border,
-        },
-      ]}
+      style={{
+        width: size,
+        height: size,
+        borderRadius,
+        overflow: "hidden",
+        backgroundColor: "#EEF3FF",
+        borderWidth: 1,
+        borderColor: "#CBD5E1",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
     >
       {imageUrl ? (
         <Image
-          source={{
-            uri: `https://jisgroup.net/hr/UploadFile/${imageUrl}`,
-          }}
-          style={styles.image}
+          source={{ uri: `https://jisgroup.net/hr/UploadFile/${imageUrl}` }}
+          style={{ width: "100%", height: "100%" }}
         />
       ) : (
-        <View style={styles.fallback}>
-          <Text
-            style={[
-              styles.fallbackText,
-              {
-                fontSize: size > 60 ? 32 : 18,
-                color: colors.textMuted,
-              },
-            ]}
-          >
-            {shortName}
-          </Text>
-        </View>
+        <Text
+          style={{
+            fontFamily: "ClashDisplay-Semibold",
+            fontSize: size > 60 ? 28 : 14,
+            color: "#2B5BDB",
+          }}
+        >
+          {shortName}
+        </Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    overflow: "hidden",
-    borderWidth: 1,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  fallback: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fallbackText: {
-    fontWeight: "bold",
-  },
-});

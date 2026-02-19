@@ -5,15 +5,14 @@ import * as Sharing from "expo-sharing";
 import { Download } from "lucide-react-native";
 import React, { useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  Animated,
-  Modal,
-  PanResponder,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Animated,
+    Modal,
+    PanResponder,
+    Platform,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { WebView } from "react-native-webview";
 
@@ -137,57 +136,51 @@ export function PdfPreviewModal({
       onRequestClose={handleClose}
       transparent
     >
-      <View style={styles.modalOverlay}>
+      <View className="flex-1 justify-end">
         <TouchableOpacity
-          style={styles.backdrop}
+          className="absolute inset-0 bg-black/50"
           activeOpacity={1}
           onPress={handleClose}
         />
         <Animated.View
-          style={[
-            styles.modalContainer,
-            { backgroundColor: colors.surface },
-            { transform: [{ translateY }] },
-          ]}
+          className="h-[85%] rounded-t-3xl overflow-hidden bg-white"
+          style={[{ transform: [{ translateY }] }]}
         >
           {/* Drag Handle */}
-          <View
-            style={styles.dragHandleContainer}
-            {...panResponder.panHandlers}
-          >
-            <View
-              style={[styles.dragHandle, { backgroundColor: colors.gray300 }]}
-            />
+          <View className="items-center py-3" {...panResponder.panHandlers}>
+            <View className="w-10 h-1 rounded-full bg-ink-300" />
           </View>
 
           {/* Header */}
-          <View style={[styles.header, { backgroundColor: colors.surface }]}>
+          <View className="flex-row items-center justify-between py-4 px-4 bg-white border-b border-border">
             <Text
-              style={[styles.headerTitle, { color: colors.text }]}
+              className="flex-1 text-base font-semibold text-ink-900 mr-4"
               numberOfLines={1}
+              style={{ fontFamily: "ClashDisplay-Medium" }}
             >
               {filename}
             </Text>
             <TouchableOpacity
               onPress={handleDownload}
-              style={styles.downloadButton}
+              className="p-1"
               disabled={downloading}
             >
               {downloading ? (
-                <ActivityIndicator color={colors.primary} />
+                <ActivityIndicator color="#2B5BDB" />
               ) : (
-                <Download size={24} color={colors.primary} />
+                <Download size={24} color="#2B5BDB" />
               )}
             </TouchableOpacity>
           </View>
 
           {/* PDF Viewer */}
-          <View style={styles.content}>
+          <View className="flex-1 relative">
             {loading && (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={colors.primary} />
+              <View className="absolute inset-0 justify-center items-center z-10 bg-white">
+                <ActivityIndicator size="large" color="#2B5BDB" />
                 <Text
-                  style={[styles.loadingText, { color: colors.textSecondary }]}
+                  className="mt-3 text-sm text-ink-500"
+                  style={{ fontFamily: "GeneralSans-Regular" }}
                 >
                   Loading PDF...
                 </Text>
@@ -195,7 +188,7 @@ export function PdfPreviewModal({
             )}
             <WebView
               source={{ uri: pdfViewerUrl }}
-              style={styles.pdf}
+              className="flex-1 bg-transparent"
               onLoadStart={() => setLoading(true)}
               onLoadEnd={() => setLoading(false)}
               onError={() => {
@@ -231,96 +224,3 @@ export function PdfPreviewModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContainer: {
-    height: "85%",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: "hidden",
-  },
-  dragHandleContainer: {
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  dragHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-  },
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-  },
-  closeButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  downloadButton: {
-    padding: 4,
-  },
-  content: {
-    flex: 1,
-    position: "relative",
-  },
-  pdf: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  loadingContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-  },
-  footer: {
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  downloadButtonLarge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    padding: 16,
-    borderRadius: 12,
-  },
-  downloadButtonDisabled: {
-    opacity: 0.6,
-  },
-  downloadButtonText: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-});

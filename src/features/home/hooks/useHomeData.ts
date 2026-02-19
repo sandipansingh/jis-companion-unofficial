@@ -11,15 +11,15 @@ import {
 import { useEffect, useState } from "react";
 
 export function useHomeData() {
-  const { studentId, loginData, userData, isLoggedIn } = useAuthStore();
+  const { studentId, loginData, userData, isLoggedIn, cachedAttendancePercentage } = useAuthStore();
   const { fetchMonthAttendance, getSubjectWiseData } = useAttendanceStore();
 
   const [attendanceData, setAttendanceData] = useState<{
     total_class: number;
     attd: number;
     pcent: number;
-  } | null>(null);
-  const [loadingAttendance, setLoadingAttendance] = useState(true);
+  } | null>(() => cachedAttendancePercentage ?? null);
+  const [loadingAttendance, setLoadingAttendance] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn && studentId && loginData) {
@@ -32,7 +32,7 @@ export function useHomeData() {
     if (!isLoggedIn || !studentId || !loginData) return;
 
     try {
-      setLoadingAttendance(true);
+      if (!attendanceData) setLoadingAttendance(true);
 
       const { syncAttendancePercentage } = await import("@/src/services/sync");
       const result = await syncAttendancePercentage(
@@ -44,14 +44,6 @@ export function useHomeData() {
       setAttendanceData(result.data);
     } catch (error: any) {
       console.error("Failed to load attendance:", error);
-
-      const { getAttendancePercentage } = await import(
-        "@/src/services/database"
-      );
-      const cachedData = await getAttendancePercentage(studentId);
-      if (cachedData) {
-        setAttendanceData(cachedData);
-      }
     } finally {
       setLoadingAttendance(false);
     }

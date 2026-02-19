@@ -1,11 +1,12 @@
-import { View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { useAlertStore } from "@/src/store/alertStore";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
 import { router } from "expo-router";
-import { FlaskConical, Library, MessageSquare } from "lucide-react-native";
-import { ScrollView, StyleSheet } from "react-native";
+import {
+  FlaskConical,
+  Library,
+  MessageSquare
+} from "lucide-react-native";
+import { ScrollView, View } from "react-native";
 import {
   MenuItem,
   NextClassCard,
@@ -15,29 +16,34 @@ import {
 import { useHomeData } from "../hooks";
 
 export default function Home() {
-  const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
   const { showAlert } = useAlertStore();
 
   const MENU_ITEMS: MenuItem[] = [
     {
-      id: "virtual_labs",
+      id: "virtual-labs",
       title: "Virtual Labs",
       icon: FlaskConical,
-      color: colors.info,
+      color: "#3B82F6",
     },
     {
       id: "library",
       title: "Library",
       icon: Library,
-      color: colors.green,
+      color: "#10B981",
     },
     {
       id: "feedback",
       title: "Feedback",
       icon: MessageSquare,
-      color: colors.warning,
+      color: "#F59E0B",
     },
+    // {
+    //   id: "profile-video",
+    //   title: "Profile Video",
+    //   icon: Video,
+    //   color: "#EF4444",
+    // },
   ];
 
   const {
@@ -52,12 +58,14 @@ export default function Home() {
   const nextClass = getNextClass();
 
   const handleMenuItemPress = (itemId: string) => {
-    if (itemId === "virtual_labs") {
+    if (itemId === "virtual-labs") {
       router.push("/virtual-labs");
     } else if (itemId === "library") {
       router.push("/library");
     } else if (itemId === "feedback") {
       router.push("/feedback");
+    } else if (itemId === "profile-video") {
+      router.push("/profile-video");
     } else {
       showAlert({
         title:
@@ -68,9 +76,7 @@ export default function Home() {
   };
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
+    <View className="flex-1 bg-base">
       <WelcomeCard
         userName={loginData?.student_name || "Student"}
         profileImageUrl={userData?.profile_pict_cur_url}
@@ -83,11 +89,11 @@ export default function Home() {
       />
 
       <ScrollView
-        style={styles.scrollContent}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        bounces={true}
+        bounces
       >
-        <View style={styles.content}>
+        <View className="px-6 pt-6">
           {nextClass && (
             <NextClassCard
               className={
@@ -113,14 +119,3 @@ export default function Home() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    flex: 1,
-  },
-  content: {
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    backgroundColor: "transparent",
-  },
-});

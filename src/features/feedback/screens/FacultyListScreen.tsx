@@ -1,16 +1,13 @@
-import { Button } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { Button, Header } from "@/src/components";
 import { useAlertStore } from "@/src/store/alertStore";
-import { commonStyles, spacing } from "@/src/styles/commonStyles";
+import { useSafeAreaStore } from "@/src/store/safeAreaStore";
 import { router } from "expo-router";
-import { AlertCircle, ChevronLeft, Clipboard, Lock } from "lucide-react-native";
-import React, { useState } from "react";
+import { AlertCircle, Clipboard, Lock } from "lucide-react-native";
+import { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { FacultyFeedbackItem } from "../api";
@@ -20,11 +17,11 @@ import { useFeedbackStore } from "../store";
 import { createFacultyId } from "../utils/facultyId";
 
 export default function FacultyListScreen() {
-  const { colors } = useTheme();
   const { showAlert } = useAlertStore();
   const { setSelectedFaculty } = useFeedbackStore();
+  const { bottomOffset } = useSafeAreaStore();
+
   const {
-    lockStatus,
     facultyList,
     loading,
     error,
@@ -37,35 +34,6 @@ export default function FacultyListScreen() {
 
   const [showConfirmLock, setShowConfirmLock] = useState(false);
 
-  const handleRateFaculty = (faculty: FacultyFeedbackItem) => {
-    if (isFeedbackLocked) return;
-
-    setSelectedFaculty(faculty);
-
-    const facultyId = createFacultyId(
-      faculty.fac_code,
-      faculty.sub_code,
-      faculty.sec_id,
-    );
-    router.push(`/feedback/faculty/${facultyId}` as any);
-  };
-
-  const handleSubmitAllFeedback = async () => {
-    const result = await submitAllFeedback();
-    if (result.success) {
-      showAlert({
-        title: "Success",
-        message: "All feedback submitted successfully!",
-      });
-      setShowConfirmLock(false);
-    } else {
-      showAlert({
-        title: "Error",
-        message: result.error || "Failed to finalize feedback",
-      });
-    }
-  };
-
   const {
     totalCount,
     submittedCount,
@@ -74,279 +42,154 @@ export default function FacultyListScreen() {
     progressPercentage,
   } = getProgressStats();
 
-  // Locked State View
-  if (isFeedbackLocked) {
-    return (
-      <View
-        style={[commonStyles.container, { backgroundColor: colors.background }]}
-      >
-        <View style={[styles.header, { backgroundColor: colors.surface }]}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={commonStyles.backButton}
-          >
-            <ChevronLeft size={28} color={colors.text} />
-          </TouchableOpacity>
-          <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-            Faculty Feedback
-          </Text>
-          <View style={commonStyles.placeholder} />
-        </View>
+  const handleRateFaculty = (faculty: FacultyFeedbackItem) => {
+    if (isFeedbackLocked) return;
+    setSelectedFaculty(faculty);
+    const facultyId = createFacultyId(faculty.fac_code, faculty.sub_code, faculty.sec_id);
+    router.push(`/feedback/faculty/${facultyId}` as any);
+  };
 
-        <View
-          style={[
-            commonStyles.centerContainer,
-            { paddingHorizontal: spacing.lg },
-          ]}
-        >
-          <View style={styles.lockedCard}>
-            <View style={styles.lockedIconContainer}>
-              <Lock size={40} color={colors.textMuted} />
-            </View>
-            <Text style={[styles.lockedTitle, { color: colors.text }]}>
-              Feedback Locked
-            </Text>
-            <Text
-              style={[styles.lockedMessage, { color: colors.textSecondary }]}
-            >
-              Your feedback has been submitted successfully.
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
+  const handleSubmitAllFeedback = async () => {
+    const result = await submitAllFeedback();
+    if (result.success) {
+      showAlert({ title: "Success", message: "All feedback submitted successfully!" });
+      setShowConfirmLock(false);
+    } else {
+      showAlert({ title: "Error", message: result.error || "Failed to finalize feedback" });
+    }
+  };
 
-  // Main Faculty List View
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.surface }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={commonStyles.backButton}
+    <View className="flex-1 bg-base">
+      <Header title="Faculty Feedback" showBackButton />
+
+      {/* Locked state */}
+      {isFeedbackLocked ? (
+        <View className="flex-1 items-center justify-center px-8">
+          <View className="w-20 h-20 rounded-full bg-ink-100 dark:bg-ink-800 items-center justify-center mb-4">
+            <Lock size={36} color="#94A3B8" />
+          </View>
+          <Text
+            className="text-xl text-ink-900 mb-2 dark:text-ink-100"
+            style={{ fontFamily: "ClashDisplay-Semibold" }}
+          >
+            Feedback Locked
+          </Text>
+          <Text
+            className="text-sm text-ink-500 text-center leading-relaxed"
+            style={{ fontFamily: "GeneralSans-Regular" }}
+          >
+            Your feedback has been submitted successfully.
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ padding: 16, paddingBottom: bottomOffset + 120 }}
+          showsVerticalScrollIndicator={false}
         >
-          <ChevronLeft size={28} color={colors.text} />
-        </TouchableOpacity>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Faculty Feedback
-        </Text>
-        <View style={commonStyles.placeholder} />
-      </View>
-
-      <ScrollView
-        style={commonStyles.scrollView}
-        contentContainerStyle={{ padding: spacing.md, paddingBottom: 120 }}
-      >
-        {loading ? (
-          <View style={[commonStyles.centerContainer, { paddingVertical: 60 }]}>
-            <ActivityIndicator size="large" color={colors.primary} />
-            <Text
-              style={[
-                commonStyles.loadingText,
-                { color: colors.textSecondary },
-              ]}
-            >
-              Loading...
-            </Text>
-          </View>
-        ) : error ? (
-          <View style={[commonStyles.centerContainer, { paddingVertical: 60 }]}>
-            <AlertCircle size={48} color={colors.error} />
-            <Text
-              style={[
-                commonStyles.errorText,
-                { color: colors.error, marginTop: spacing.md },
-              ]}
-            >
-              {error}
-            </Text>
-            <Button
-              title="Retry"
-              onPress={refreshFeedback}
-              fullWidth={false}
-              style={{
-                paddingHorizontal: 24,
-                paddingVertical: 12,
-                height: "auto",
-              }}
-              textStyle={{
-                fontSize: 14,
-              }}
-            />
-          </View>
-        ) : (
-          <>
-            {/* Progress Card */}
-            {totalCount > 0 && (
-              <ProgressCard
-                submittedCount={submittedCount}
-                pendingCount={pendingCount}
-                notOptedCount={notOptedCount}
-                progressPercentage={progressPercentage}
-              />
-            )}
-
-            {/* Faculty List */}
-            {facultyList.length === 0 ? (
-              <View
-                style={[commonStyles.centerContainer, { paddingVertical: 60 }]}
+          {loading ? (
+            <View className="items-center py-16 gap-3">
+              <ActivityIndicator size="large" color="#2B5BDB" />
+              <Text
+                className="text-sm text-ink-500"
+                style={{ fontFamily: "GeneralSans-Regular" }}
               >
-                <Clipboard size={48} color={colors.textMuted} />
-                <Text
-                  style={[
-                    commonStyles.emptyText,
-                    { color: colors.textSecondary, marginTop: spacing.md },
-                  ]}
-                >
-                  No feedback available
-                </Text>
-              </View>
-            ) : (
-              <View style={{ gap: spacing.sm }}>
-                {facultyList.map((faculty) => (
-                  <FacultyListItem
-                    key={`${faculty.fac_code}-${faculty.sub_id}-${faculty.sec_id}`}
-                    faculty={faculty}
-                    onPress={() => handleRateFaculty(faculty)}
-                  />
-                ))}
-              </View>
-            )}
+                Loading...
+              </Text>
+            </View>
+          ) : error ? (
+            <View className="items-center py-16 gap-4">
+              <AlertCircle size={48} color="#DC2626" />
+              <Text
+                className="text-sm text-danger text-center"
+                style={{ fontFamily: "GeneralSans-Regular" }}
+              >
+                {error}
+              </Text>
+              <Button title="Retry" onPress={refreshFeedback} fullWidth={false} />
+            </View>
+          ) : (
+            <>
+              {totalCount > 0 && (
+                <ProgressCard
+                  submittedCount={submittedCount}
+                  pendingCount={pendingCount}
+                  notOptedCount={notOptedCount}
+                  progressPercentage={progressPercentage}
+                />
+              )}
 
-            {/* Final Submit Section */}
-            {totalCount > 0 && (
-              <View style={{ marginTop: spacing.lg }}>
-                {showConfirmLock ? (
-                  <View
-                    style={{
-                      backgroundColor: colors.backgroundSecondary,
-                      padding: spacing.md,
-                      borderRadius: 16,
-                    }}
+              {facultyList.length === 0 ? (
+                <View className="items-center py-16 gap-4">
+                  <Clipboard size={48} color="#CBD5E1" />
+                  <Text
+                    className="text-sm text-ink-500"
+                    style={{ fontFamily: "GeneralSans-Regular" }}
                   >
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontSize: 14,
-                        fontWeight: "bold",
-                        color: colors.text,
-                        marginBottom: spacing.sm,
-                      }}
-                    >
-                      Finalize & Submit All Feedback?
-                    </Text>
-                    <View style={{ flexDirection: "row", gap: spacing.sm }}>
-                      <View style={{ flex: 1 }}>
-                        <Button
-                          title="Cancel"
-                          variant="secondary"
-                          onPress={() => setShowConfirmLock(false)}
-                          disabled={submittingFinal}
-                        />
-                      </View>
-                      <View style={{ flex: 1 }}>
-                        <Button
-                          title="Confirm"
-                          onPress={handleSubmitAllFeedback}
-                          disabled={submittingFinal}
-                          loading={submittingFinal}
-                        />
+                    No feedback available
+                  </Text>
+                </View>
+              ) : (
+                <View className="gap-3">
+                  {facultyList.map((faculty) => (
+                    <FacultyListItem
+                      key={`${faculty.fac_code}-${faculty.sub_id}-${faculty.sec_id}`}
+                      faculty={faculty}
+                      onPress={() => handleRateFaculty(faculty)}
+                    />
+                  ))}
+                </View>
+              )}
+
+              {totalCount > 0 && (
+                <View className="mt-6 gap-3">
+                  {showConfirmLock ? (
+                    <View className="bg-ink-100 rounded-2xl p-4 gap-4">
+                      <Text
+                        className="text-center text-ink-900"
+                        style={{ fontFamily: "GeneralSans-Semibold" }}
+                      >
+                        Finalize & Submit All Feedback?
+                      </Text>
+                      <View className="flex-row gap-3">
+                        <View className="flex-1">
+                          <Button
+                            title="Cancel"
+                            variant="secondary"
+                            onPress={() => setShowConfirmLock(false)}
+                            disabled={submittingFinal}
+                          />
+                        </View>
+                        <View className="flex-1">
+                          <Button
+                            title="Confirm"
+                            onPress={handleSubmitAllFeedback}
+                            loading={submittingFinal}
+                          />
+                        </View>
                       </View>
                     </View>
-                  </View>
-                ) : (
-                  <Button
-                    title={
-                      progressPercentage < 100
-                        ? "Complete All to Submit"
-                        : "Final Submit"
-                    }
-                    onPress={() => setShowConfirmLock(true)}
-                    disabled={progressPercentage < 100}
-                    icon={
-                      <Lock
-                        size={16}
-                        color={
-                          progressPercentage < 100
-                            ? colors.textMuted
-                            : colors.buttonText
-                        }
-                      />
-                    }
-                    iconPosition="right"
-                    style={{
-                      paddingVertical: spacing.md,
-                      backgroundColor:
-                        progressPercentage < 100
-                          ? colors.backgroundSecondary
-                          : colors.primary,
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: colors.border,
-                      height: "auto",
-                    }}
-                    textStyle={{
-                      color:
-                        progressPercentage < 100
-                          ? colors.textMuted
-                          : colors.buttonText,
-                    }}
-                  />
-                )}
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 10,
-                    color: colors.textMuted,
-                    marginTop: spacing.md,
-                  }}
-                >
-                  Once submitted, feedback cannot be edited.
-                </Text>
-              </View>
-            )}
-          </>
-        )}
-      </ScrollView>
+                  ) : (
+                    <Button
+                      title={progressPercentage < 100 ? "Complete All to Submit" : "Final Submit"}
+                      onPress={() => setShowConfirmLock(true)}
+                      disabled={progressPercentage < 100}
+                    />
+                  )}
+
+                  <Text
+                    className="text-center text-[10px] text-ink-400"
+                    style={{ fontFamily: "GeneralSans-Regular" }}
+                  >
+                    Once submitted, feedback cannot be edited.
+                  </Text>
+                </View>
+              )}
+            </>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.headerRow,
-    ...commonStyles.header,
-    paddingBottom: 7,
-  },
-  lockedCard: {
-    backgroundColor: "transparent",
-    padding: spacing.xl,
-    borderRadius: 24,
-    alignItems: "center",
-    maxWidth: 400,
-    width: "100%",
-  },
-  lockedIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(0, 0, 0, 0.05)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.lg,
-  },
-  lockedTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: spacing.sm,
-  },
-  lockedMessage: {
-    fontSize: 14,
-    textAlign: "center",
-    marginBottom: spacing.lg,
-    lineHeight: 20,
-  },
-});

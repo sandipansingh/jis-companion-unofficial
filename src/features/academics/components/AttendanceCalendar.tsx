@@ -1,6 +1,4 @@
-import { View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { AttendanceLegend } from "./AttendanceLegend";
 import { CalendarStrip } from "./CalendarStrip";
 import { MonthHeader } from "./MonthHeader";
@@ -42,10 +40,17 @@ export function AttendanceCalendar({
   getAttendanceStatus,
   getAttendanceWithFallback,
 }: AttendanceCalendarProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={[styles.card, { backgroundColor: colors.surface }]}>
+    <View
+      className="bg-surface rounded-2xl p-4 mb-6 border border-border"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 3,
+      }}
+    >
       <MonthHeader
         month={currentMonth.getMonth() + 1}
         year={currentMonth.getFullYear()}
@@ -54,7 +59,7 @@ export function AttendanceCalendar({
       />
 
       <WeekNavigator
-        weekPeriod={`${weekDates[0].getDate()} - ${weekDates[6].getDate()} ${weekDates[6].toLocaleString(
+        weekPeriod={`${weekDates[0].getDate()} – ${weekDates[6].getDate()} ${weekDates[6].toLocaleString(
           "default",
           { month: "long" }
         )}`}
@@ -63,8 +68,8 @@ export function AttendanceCalendar({
       />
 
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color={colors.primary} />
+        <View className="h-20 items-center justify-center">
+          <ActivityIndicator size="small" color="#2B5BDB" />
         </View>
       ) : (
         <>
@@ -81,22 +86,3 @@ export function AttendanceCalendar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  loadingContainer: {
-    height: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-});

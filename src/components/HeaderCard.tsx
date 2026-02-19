@@ -1,6 +1,5 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { LucideIcon } from "lucide-react-native";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface HeaderCardProps {
   title: string;
@@ -14,66 +13,38 @@ export function HeaderCard({
   title,
   description,
   icon: Icon,
-  iconSize = 48,
-  iconCircleSize = 96,
+  iconSize = 40,
+  iconCircleSize = 80,
 }: HeaderCardProps) {
-  const { colors } = useTheme();
-
   return (
     <View
-      style={[
-        styles.headerCard,
-        { backgroundColor: colors.surface, shadowColor: colors.shadow },
-      ]}
+      className="bg-surface dark:bg-surface rounded-3xl p-8 mb-6 items-center border border-border"
+      style={{
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+        elevation: 3,
+      }}
     >
       <View
-        style={[
-          styles.iconCircle,
-          {
-            backgroundColor: colors.primary + "20",
-            width: iconCircleSize,
-            height: iconCircleSize,
-            borderRadius: iconCircleSize / 2,
-          },
-        ]}
+        className="rounded-3xl items-center justify-center mb-5 bg-cobalt-50 dark:bg-ink-800"
+        style={{ width: iconCircleSize, height: iconCircleSize }}
       >
-        <Icon size={iconSize} color={colors.primary} />
+        <Icon size={iconSize} color="#2B5BDB" />
       </View>
-      <Text style={[styles.headerTitle, { color: colors.text }]}>{title}</Text>
-      <Text style={[styles.headerDescription, { color: colors.textSecondary }]}>
+      <Text
+        className="text-2xl text-ink-950 dark:text-white mb-2 text-center"
+        style={{ fontFamily: "ClashDisplay-Semibold" }}
+      >
+        {title}
+      </Text>
+      <Text
+        className="text-sm text-ink-600 dark:text-ink-400 text-center leading-5"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
         {description}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  headerCard: {
-    borderRadius: 24,
-    padding: 32,
-    marginBottom: 24,
-    alignItems: "center",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.05)",
-  },
-  iconCircle: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  headerDescription: {
-    fontSize: 14,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-});

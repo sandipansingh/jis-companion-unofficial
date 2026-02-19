@@ -1,10 +1,8 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
 import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   View,
 } from "react-native";
 import {
@@ -16,7 +14,6 @@ import {
 import { useLoginData } from "../hooks";
 
 export default function Login() {
-  const { colors } = useTheme();
   const {
     studentId,
     password,
@@ -29,20 +26,25 @@ export default function Login() {
   } = useLoginData();
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[styles.container, { backgroundColor: colors.background }]}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-    >
+    <View className="flex-1 bg-base">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        bounces={true}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          paddingBottom: 40,
+          justifyContent: "space-between",
+        }}
+        bounces
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <View>
           <LoginLogo />
-
           <LoginForm
             studentId={studentId}
             password={password}
@@ -51,58 +53,12 @@ export default function Login() {
             onPasswordChange={setPassword}
             onSubmit={handleLogin}
           />
-
           <DemoLoginButton onPress={handleDemoLogin} />
         </View>
 
         <CreditsButton onPress={showCredits} />
       </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: Platform.select({ web: 20, default: 40 }),
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    justifyContent: "space-between",
-  },
-  logo: {
-    width: 180,
-    height: 180,
-    alignSelf: "center",
-    marginTop: Platform.select({ web: 40, default: 70 }),
-    marginBottom: Platform.select({ web: 40, default: 70 }),
-  },
-  formContainer: {
-    width: "100%",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 30,
-    textAlign: "center",
-  },
-  inputContainer: {
-    width: "100%",
-    marginBottom: 20,
-    backgroundColor: "transparent",
-  },
-  button: {
-    marginTop: 10,
-  },
-  creditsButton: {
-    marginTop: 20,
-    paddingVertical: 8,
-    alignItems: "center",
-  },
-  creditsText: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-});

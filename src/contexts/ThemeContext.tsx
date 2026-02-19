@@ -1,10 +1,17 @@
-import Colors, { ColorScheme, ThemeColors } from "@/src/constants/Colors";
-import React, { createContext, ReactNode, useContext } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useColorScheme as useNativeWindColorScheme } from "nativewind";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { useColorScheme as useRNColorScheme } from "react-native";
+import Colors from "../constants/Colors";
+
+type ColorScheme = "light" | "dark";
 
 interface ThemeContextType {
   colorScheme: ColorScheme;
-  colors: ThemeColors;
+  colors: typeof Colors.light;
   isDark: boolean;
+  toggleTheme: () => void;
+  setTheme: (theme: ColorScheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -13,14 +20,56 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Force light mode always
-  const colorScheme: ColorScheme = "light";
+const THEME_STORAGE_KEY = "user-theme-preference";
 
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const { colorScheme, setColorScheme } = useNativeWindColorScheme();
+  const systemColorScheme = useRNColorScheme();
+  const [isReady, setIsReady] = useState(false);
+
+  // Load saved theme preference on mount
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (savedTheme === "dark" || savedTheme === "light") {
+          setColorScheme(savedTheme);
+        }
+      } catch (error) {
+        console.error("Failed to load theme preference:", error);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    loadTheme();
+  }, [setColorScheme]);
+
+  const toggleTheme = () => {
+    const isEffectivelyDark = colorScheme === "dark" || (!colorScheme && systemColorScheme === "dark");
+    const newScheme = isEffectivelyDark ? "light" : "dark";
+    
+    setColorScheme(newScheme);
+    AsyncStorage.setItem(THEME_STORAGE_KEY, newScheme).catch((error) => {
+      console.error("Failed to save theme preference:", error);
+    });
+  };
+
+  const setTheme = (theme: ColorScheme) => {
+    setColorScheme(theme);
+    AsyncStorage.setItem(THEME_STORAGE_KEY, theme).catch((error) => {
+      console.error("Failed to save theme preference:", error);
+    });
+  };
+
+  const activeColorScheme = (colorScheme === "dark" || (!colorScheme && systemColorScheme === "dark")) ? "dark" : "light";
+  
   const value: ThemeContextType = {
-    colorScheme,
-    colors: Colors[colorScheme],
-    isDark: false,
+    colorScheme: activeColorScheme,
+    colors: Colors[activeColorScheme],
+    isDark: activeColorScheme === "dark",
+    toggleTheme,
+    setTheme,
   };
 
   return (

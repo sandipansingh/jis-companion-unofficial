@@ -1,32 +1,22 @@
 import {
   EmptyState,
   ErrorState,
+  Header,
   LoadingState,
-  Text,
   View,
 } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import { TransactionCard } from "../components";
 import { useFeesData } from "../hooks";
 
 export default function Fees() {
-  const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
   const { feeData, loading, error, refreshFeeData } = useFeesData();
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={[commonStyles.header, { backgroundColor: colors.surface }]}>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Fees & Dues
-        </Text>
-      </View>
+    <View className="flex-1 bg-base">
+      <Header title="Fees & Dues" />
 
       {loading ? (
         <LoadingState message="Loading fee details..." />
@@ -36,14 +26,11 @@ export default function Fees() {
         <EmptyState message="No transactions found" />
       ) : (
         <ScrollView
-          style={commonStyles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: bottomOffset + 100 },
-          ]}
+          className="flex-1"
+          contentContainerStyle={{ paddingBottom: bottomOffset + 100 }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.content}>
+          <View className="p-4 gap-4">
             {feeData.map((transaction, index) => (
               <TransactionCard key={index} transaction={transaction} />
             ))}
@@ -53,13 +40,3 @@ export default function Fees() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    paddingBottom: 16,
-  },
-  content: {
-    padding: 16,
-    gap: 16,
-  },
-});

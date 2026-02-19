@@ -11,6 +11,7 @@ import {
   VirtualLabExperiment,
 } from "@/src/features/virtual-labs/api/virtualLabs";
 import * as SQLite from "expo-sqlite";
+import { Platform } from "react-native";
 
 export interface AttendancePercentageData extends AttendanceData {
   studentId: string;
@@ -26,93 +27,112 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
     return db;
   }
 
-  db = await SQLite.openDatabaseAsync("jiscompanion.db");
+  const setupDatabase = async (database: SQLite.SQLiteDatabase) => {
+    await database.execAsync(`
+      PRAGMA journal_mode = WAL;
+      
+      CREATE TABLE IF NOT EXISTS login_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT UNIQUE NOT NULL,
+        login_response TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
 
-  await db.execAsync(`
-    PRAGMA journal_mode = WAL;
-    
-    CREATE TABLE IF NOT EXISTS login_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT UNIQUE NOT NULL,
-      login_response TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
+      CREATE TABLE IF NOT EXISTS user_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT UNIQUE NOT NULL,
+        profile_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
 
-    CREATE TABLE IF NOT EXISTS user_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT UNIQUE NOT NULL,
-      profile_data TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
+      CREATE TABLE IF NOT EXISTS attendance_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT NOT NULL,
+        month_key TEXT NOT NULL,
+        subject_wise_data TEXT NOT NULL,
+        date_wise_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE(student_id, month_key)
+      );
 
-    CREATE TABLE IF NOT EXISTS attendance_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT NOT NULL,
-      month_key TEXT NOT NULL,
-      subject_wise_data TEXT NOT NULL,
-      date_wise_data TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL,
-      UNIQUE(student_id, month_key)
-    );
+      CREATE TABLE IF NOT EXISTS fees_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT UNIQUE NOT NULL,
+        fee_ledger TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
 
-    CREATE TABLE IF NOT EXISTS fees_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT UNIQUE NOT NULL,
-      fee_ledger TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
+      CREATE TABLE IF NOT EXISTS attendance_percentage (
+        student_id TEXT PRIMARY KEY NOT NULL,
+        total_class INTEGER NOT NULL,
+        attd INTEGER NOT NULL,
+        pcent REAL NOT NULL,
+        last_updated TEXT NOT NULL
+      );
 
-    CREATE TABLE IF NOT EXISTS attendance_percentage (
-      student_id TEXT PRIMARY KEY NOT NULL,
-      total_class INTEGER NOT NULL,
-      attd INTEGER NOT NULL,
-      pcent REAL NOT NULL,
-      last_updated TEXT NOT NULL
-    );
+      CREATE TABLE IF NOT EXISTS virtual_labs_courses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT NOT NULL,
+        courses_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
 
-    CREATE TABLE IF NOT EXISTS virtual_labs_courses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT NOT NULL,
-      courses_data TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
+      CREATE TABLE IF NOT EXISTS virtual_labs_experiments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT NOT NULL,
+        course TEXT NOT NULL,
+        stream TEXT NOT NULL,
+        semester TEXT NOT NULL,
+        experiments_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE(student_id, course, stream, semester)
+      );
 
-    CREATE TABLE IF NOT EXISTS virtual_labs_experiments (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT NOT NULL,
-      course TEXT NOT NULL,
-      stream TEXT NOT NULL,
-      semester TEXT NOT NULL,
-      experiments_data TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL,
-      UNIQUE(student_id, course, stream, semester)
-    );
+      CREATE TABLE IF NOT EXISTS library_books (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        student_id TEXT NOT NULL,
+        filter_type TEXT NOT NULL,
+        books_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE(student_id, filter_type)
+      );
 
-    CREATE TABLE IF NOT EXISTS library_books (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      student_id TEXT NOT NULL,
-      filter_type TEXT NOT NULL,
-      books_data TEXT NOT NULL,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL,
-      UNIQUE(student_id, filter_type)
-    );
+      CREATE INDEX IF NOT EXISTS idx_login_student_id ON login_data(student_id);
+      CREATE INDEX IF NOT EXISTS idx_user_student_id ON user_data(student_id);
+      CREATE INDEX IF NOT EXISTS idx_attendance_student_month ON attendance_data(student_id, month_key);
+      CREATE INDEX IF NOT EXISTS idx_fees_student_id ON fees_data(student_id);
+      CREATE INDEX IF NOT EXISTS idx_attendance_percentage_student_id ON attendance_percentage(student_id);
+      CREATE INDEX IF NOT EXISTS idx_virtual_labs_courses_student_id ON virtual_labs_courses(student_id);
+      CREATE INDEX IF NOT EXISTS idx_virtual_labs_experiments_student_course ON virtual_labs_experiments(student_id, course, stream, semester);
+      CREATE INDEX IF NOT EXISTS idx_library_books_student_filter ON library_books(student_id, filter_type);
+    `);
+  };
 
-    CREATE INDEX IF NOT EXISTS idx_login_student_id ON login_data(student_id);
-    CREATE INDEX IF NOT EXISTS idx_user_student_id ON user_data(student_id);
-    CREATE INDEX IF NOT EXISTS idx_attendance_student_month ON attendance_data(student_id, month_key);
-    CREATE INDEX IF NOT EXISTS idx_fees_student_id ON fees_data(student_id);
-    CREATE INDEX IF NOT EXISTS idx_attendance_percentage_student_id ON attendance_percentage(student_id);
-    CREATE INDEX IF NOT EXISTS idx_virtual_labs_courses_student_id ON virtual_labs_courses(student_id);
-    CREATE INDEX IF NOT EXISTS idx_virtual_labs_experiments_student_course ON virtual_labs_experiments(student_id, course, stream, semester);
-    CREATE INDEX IF NOT EXISTS idx_library_books_student_filter ON library_books(student_id, filter_type);
-  `);
+  try {
+    db = await SQLite.openDatabaseAsync("jiscompanion.db");
+    await setupDatabase(db);
+  } catch (error: any) {
+    if (Platform.OS === "web" && error?.message?.includes("Invalid VFS state")) {
+      console.warn("Database initialization failed with Invalid VFS state. Attempting to reset database...", error);
+      try {
+        await SQLite.deleteDatabaseAsync("jiscompanion.db");
+        db = await SQLite.openDatabaseAsync("jiscompanion.db");
+        await setupDatabase(db);
+      } catch (retryError) {
+        console.error("Failed to recover database:", retryError);
+        throw retryError;
+      }
+    } else {
+      throw error;
+    }
+  }
 
   console.log("Database initialized successfully");
   return db;

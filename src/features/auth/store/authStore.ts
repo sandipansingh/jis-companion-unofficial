@@ -14,6 +14,12 @@ import {
   UserProfileData,
 } from "../api/auth";
 
+interface AttendancePercentageCache {
+  total_class: number;
+  attd: number;
+  pcent: number;
+}
+
 interface AuthState {
   isLoggedIn: boolean;
   studentId: string | null;
@@ -22,6 +28,7 @@ interface AuthState {
   isOnline: boolean;
   fromCache: boolean;
   isDemoAccount: boolean;
+  cachedAttendancePercentage: AttendancePercentageCache | null;
   checkAuthStatus: () => Promise<void>;
   login: (studentId: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -41,6 +48,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isOnline: true,
   fromCache: false,
   isDemoAccount: false,
+  cachedAttendancePercentage: null,
 
   checkAuthStatus: async () => {
     const clearAuthState = async () => {
@@ -71,6 +79,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
+      let cachedAttendancePercentage: AttendancePercentageCache | null = null;
+      try {
+        const { getAttendancePercentage } = await import(
+          "@/src/services/database"
+        );
+        cachedAttendancePercentage = await getAttendancePercentage(
+          authStatus.studentId!
+        );
+      } catch (e) {
+        // ignore
+      }
+
       set({
         isLoggedIn: true,
         studentId: authStatus.studentId!,
@@ -79,6 +99,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isOnline: authStatus.isOnline,
         fromCache: authStatus.fromCache,
         isDemoAccount: authStatus.isDemoAccount || false,
+        cachedAttendancePercentage,
       });
 
       if (

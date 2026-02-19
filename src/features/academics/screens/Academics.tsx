@@ -1,5 +1,4 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { Header, View } from "@/src/components";
 import {
   AttendanceCalendar,
   ClassRoutineSection,
@@ -9,14 +8,12 @@ import { useAcademicsData } from "@/src/features/academics/hooks";
 import { useAttendanceStore } from "@/src/features/academics/store/attendanceStore";
 import { createClassId } from "@/src/features/academics/utils/classId";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
 import { getWeekDates } from "@/src/utils/dateHelpers";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Platform, ScrollView, StyleSheet } from "react-native";
+import { Platform, ScrollView } from "react-native";
 
 export default function Academics() {
-  const { colors } = useTheme();
   const { bottomOffset } = useSafeAreaStore();
   const router = useRouter();
   const { setSelectedClass } = useAttendanceStore();
@@ -67,34 +64,24 @@ export default function Academics() {
 
   const handleClassPress = (classItem: any) => {
     setSelectedClass(classItem);
-
     const classId = createClassId(
       classItem.date1,
       classItem.emp_code,
-      classItem.Period_name
+      classItem.Period_name,
     );
-
     router.push(`/academics/class/${classId}`);
   };
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          Academics
-        </Text>
-      </View>
+    <View className="flex-1 bg-base">
+      <Header title="Academics" />
 
       <ScrollView
-        style={commonStyles.scrollView}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        bounces={true}
+        bounces
       >
-        <View style={styles.content}>
-          {/* Attendance Calendar */}
+        <View className="p-4">
           <AttendanceCalendar
             currentMonth={currentMonth}
             weekDates={weekDates}
@@ -109,7 +96,6 @@ export default function Academics() {
             getAttendanceWithFallback={getAttendanceWithFallback}
           />
 
-          {/* Date Picker Modal */}
           <DatePickerModal
             visible={showDatePicker}
             date={tempDate}
@@ -118,7 +104,6 @@ export default function Academics() {
             onConfirm={confirmDateSelection}
           />
 
-          {/* Class Routine Section */}
           <ClassRoutineSection
             selectedDate={selectedDate}
             routine={routine}
@@ -133,13 +118,3 @@ export default function Academics() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    ...commonStyles.header,
-    backgroundColor: "#ffffff",
-  },
-  content: {
-    padding: 16,
-  },
-});

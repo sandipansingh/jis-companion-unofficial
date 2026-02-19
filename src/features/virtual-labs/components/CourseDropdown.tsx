@@ -1,7 +1,6 @@
-import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { ChevronDown } from "lucide-react-native";
-import { Modal, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Check, ChevronDown } from "lucide-react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 interface DropdownOption {
   label: string;
@@ -29,34 +28,39 @@ export function CourseDropdown({
   onClose,
   onSelect,
 }: CourseDropdownProps) {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
 
   return (
     <>
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+      <View className="mb-5">
+        <Text
+          className="text-xs text-ink-500 dark:text-ink-400 mb-2 ml-1 tracking-widest uppercase"
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          {label}
+        </Text>
         <TouchableOpacity
-          style={[
-            styles.dropdown,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              shadowColor: colors.shadow,
-            },
-          ]}
+          className="flex-row items-center justify-between bg-surface dark:bg-ink-900 border border-border rounded-xl px-3.5 py-3.5"
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.04,
+            shadowRadius: 2,
+            elevation: 1,
+          }}
           onPress={onOpen}
         >
           <Text
-            style={[
-              styles.dropdownText,
-              {
-                color: value ? colors.text : colors.textSecondary,
-              },
-            ]}
+            className={
+              value
+                ? "text-ink-900 dark:text-ink-100 text-sm"
+                : "text-ink-400 dark:text-ink-500 text-sm"
+            }
+            style={{ fontFamily: "GeneralSans-Medium" }}
           >
             {value || placeholder}
           </Text>
-          <ChevronDown size={18} color={colors.textSecondary} />
+          <ChevronDown size={18} color={isDark ? "#94A3B8" : "#64748B"} />
         </TouchableOpacity>
       </View>
 
@@ -67,34 +71,48 @@ export function CourseDropdown({
         onRequestClose={onClose}
       >
         <TouchableOpacity
-          style={styles.dropdownOverlay}
+          className="flex-1 justify-center items-center px-5"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
           activeOpacity={1}
           onPress={onClose}
         >
           <View
-            style={[
-              styles.dropdownContent,
-              { backgroundColor: colors.surface, shadowColor: colors.shadow },
-            ]}
+            className="w-full bg-surface dark:bg-ink-900 rounded-2xl overflow-hidden"
+            style={{
+              maxHeight: "70%",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.25,
+              shadowRadius: 8,
+              elevation: 5,
+            }}
           >
-            <ScrollView style={styles.dropdownScroll}>
+            <ScrollView style={{ maxHeight: 400 }}>
               {options.map((option, index) => (
                 <TouchableOpacity
                   key={option.value}
-                  style={[
-                    styles.dropdownItem,
-                    {
-                      borderBottomColor: colors.border,
-                      borderBottomWidth: index === options.length - 1 ? 0 : 1,
-                    },
-                  ]}
+                  className="flex-row items-center justify-between px-4 py-4"
+                  style={{
+                    borderBottomWidth: index === options.length - 1 ? 0 : 1,
+                    borderBottomColor: isDark ? "#334155" : "#CBD5E1",
+                    backgroundColor:
+                      value === option.label
+                        ? isDark
+                          ? "#1F2937"
+                          : "#EEF3FF"
+                        : "transparent",
+                  }}
                   onPress={() => onSelect(option.value)}
                 >
                   <Text
-                    style={[styles.dropdownItemText, { color: colors.text }]}
+                    className="text-ink-900 dark:text-ink-100 text-base"
+                    style={{ fontFamily: "GeneralSans-Medium" }}
                   >
                     {option.label}
                   </Text>
+                  {value === option.label && (
+                    <Check size={16} color="#2B5BDB" />
+                  )}
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -104,61 +122,3 @@ export function CourseDropdown({
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  formGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 11,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  dropdown: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 14,
-    borderRadius: 12,
-    borderWidth: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  dropdownText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  dropdownOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  dropdownContent: {
-    width: "100%",
-    maxHeight: "70%",
-    borderRadius: 16,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-    overflow: "hidden",
-  },
-  dropdownScroll: {
-    maxHeight: 400,
-  },
-  dropdownItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-});

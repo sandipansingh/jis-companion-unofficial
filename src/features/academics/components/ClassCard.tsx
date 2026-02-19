@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { Clock, User } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SubjectWiseAttendance } from "../api";
 
 interface ClassCardProps {
@@ -17,65 +15,64 @@ export function ClassCard({
   isFallback = false,
   onPress,
 }: ClassCardProps) {
-  const { colors } = useTheme();
-
   const subjectParts = classData.subject_name.split(" - ");
   const subjectCode = subjectParts[0]?.trim();
   const subjectName = subjectParts[1]?.trim() || classData.subject_name;
 
   return (
     <TouchableOpacity
-      style={[
-        styles.classCard,
-        {
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          shadowColor: colors.shadow,
-        },
-        isFallback && styles.fallbackCard,
-      ]}
+      className="bg-surface rounded-2xl border border-border p-4 mb-3"
+      style={{
+        opacity: isFallback ? 0.75 : 1,
+        shadowColor: "#0F172A",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+      }}
       onPress={onPress}
       disabled={!onPress}
+      activeOpacity={0.8}
     >
-      <View style={styles.classHeader}>
-        <View
-          style={[
-            styles.subjectBadge,
-            { backgroundColor: colors.primary + "15" },
-            isFallback && { opacity: 0.6 },
-          ]}
-        >
-          <Text style={[styles.subjectCode, { color: colors.primary }]}>
+      {/* Header: subject code + time */}
+      <View className="flex-row items-center justify-between mb-2">
+        <View className="bg-cobalt-50 border border-border rounded-full px-3 py-1">
+          <Text
+            className="text-[11px] text-cobalt-600"
+            style={{ fontFamily: "GeneralSans-Semibold" }}
+          >
             {subjectCode}
           </Text>
         </View>
-        <View style={styles.timeContainer}>
-          <Clock size={14} color={colors.textSecondary} />
-          <Text style={[styles.timeText, { color: colors.textSecondary }]}>
+        <View className="flex-row items-center gap-1">
+          <Clock size={12} color="#94A3B8" />
+          <Text
+            className="text-xs text-ink-500"
+            style={{ fontFamily: "GeneralSans-Regular" }}
+          >
             {time}
           </Text>
         </View>
       </View>
 
+      {/* Subject name */}
       <Text
-        style={[
-          styles.subjectName,
-          { color: colors.text },
-          isFallback && styles.fallbackText,
-        ]}
+        className="text-base text-ink-900 mb-2 leading-snug"
+        style={{
+          fontFamily: "GeneralSans-Semibold",
+          fontStyle: isFallback ? "italic" : "normal",
+        }}
         numberOfLines={2}
       >
         {subjectName}
       </Text>
 
-      <View style={styles.facultyRow}>
-        <User size={14} color={colors.textSecondary} />
+      {/* Faculty */}
+      <View className="flex-row items-center gap-1.5">
+        <User size={12} color="#94A3B8" />
         <Text
-          style={[
-            styles.facultyName,
-            { color: colors.textSecondary },
-            isFallback && styles.fallbackText,
-          ]}
+          className="text-xs text-ink-500"
+          style={{ fontFamily: "GeneralSans-Regular" }}
           numberOfLines={1}
         >
           {classData.faculty}
@@ -84,66 +81,3 @@ export function ClassCard({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  classCard: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 12,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  fallbackCard: {
-    opacity: 0.7,
-  },
-  classHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-    backgroundColor: "transparent",
-  },
-  subjectBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  subjectCode: {
-    fontSize: 12,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  timeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  timeText: {
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  subjectName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 8,
-    lineHeight: 22,
-  },
-  facultyRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "transparent",
-  },
-  facultyName: {
-    fontSize: 13,
-    fontWeight: "500",
-    flex: 1,
-  },
-  fallbackText: {
-    fontStyle: "italic",
-  },
-});

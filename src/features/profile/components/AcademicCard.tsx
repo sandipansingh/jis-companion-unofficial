@@ -1,6 +1,4 @@
 import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { StyleSheet } from "react-native";
 
 interface AcademicCardProps {
   title: string;
@@ -8,38 +6,20 @@ interface AcademicCardProps {
 }
 
 export function AcademicCard({ title, score }: AcademicCardProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={[styles.academicCard, { borderColor: colors.border }]}>
-      <Text style={[styles.academicCardTitle, { color: colors.textSecondary }]}>
+    <View className="flex-1 p-4 rounded-xl border border-border bg-surface dark:bg-ink-900 items-center" style={{ minWidth: 100 }}>
+      <Text
+        className="text-xs text-ink-500 dark:text-ink-400 mb-2 text-center"
+        style={{ fontFamily: "GeneralSans-Medium" }}
+      >
         {title}
       </Text>
-      <Text style={[styles.academicCardScore, { color: colors.text }]}>
+      <Text
+        className="text-xl text-ink-900 dark:text-white"
+        style={{ fontFamily: "ClashDisplay-Bold" }}
+      >
         {score}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  academicCard: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: "center",
-    backgroundColor: "transparent",
-    minWidth: 100,
-  },
-  academicCardTitle: {
-    fontSize: 12,
-    fontWeight: "500",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  academicCardScore: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-});

@@ -1,15 +1,8 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
+import { Header, View } from "@/src/components";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { commonStyles } from "@/src/styles/commonStyles";
 import { LogOut } from "lucide-react-native";
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import {
   AcademicTabContent,
   BankTabContent,
@@ -22,7 +15,6 @@ import {
 import { useProfileData } from "../hooks/useProfileData";
 
 export default function Profile() {
-  const { colors } = useTheme();
   const { isDemoAccount } = useAuthStore();
   const { bottomOffset } = useSafeAreaStore();
   const {
@@ -43,27 +35,25 @@ export default function Profile() {
   } = useProfileData();
 
   return (
-    <View
-      style={[commonStyles.container, { backgroundColor: colors.background }]}
-    >
-      <View style={[commonStyles.header, { backgroundColor: colors.surface }]}>
-        <Text style={[commonStyles.headerTitle, { color: colors.text }]}>
-          My Profile
-        </Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LogOut size={22} color={colors.error} />
-        </TouchableOpacity>
-      </View>
+    <View className="flex-1 bg-base">
+      <Header
+        title="My Profile"
+        actionElement={
+          <TouchableOpacity
+            className="items-center justify-center p-2"
+            onPress={handleLogout}
+          >
+            <LogOut size={22} color="#DC2626" />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
-        style={commonStyles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: bottomOffset + 100 },
-        ]}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: bottomOffset + 100 }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
+        <View className="p-4 gap-4">
           <ProfileInfo
             name={loginData?.student_name}
             studentId={studentId || undefined}
@@ -79,14 +69,16 @@ export default function Profile() {
             onTabChange={setActiveTab}
           />
 
+          {/* Tab content card */}
           <View
-            style={[
-              styles.tabContent,
-              {
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-              },
-            ]}
+            className="bg-surface dark:bg-surface rounded-2xl border border-border p-5"
+            style={{
+              shadowColor: "#0F172A",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.06,
+              shadowRadius: 8,
+              elevation: 2,
+            }}
           >
             {activeTab === "personal" && (
               <PersonalTabContent
@@ -108,9 +100,7 @@ export default function Profile() {
             {activeTab === "guardian" && (
               <GuardianTabContent
                 guardianName={userData?.STUDENT_REGISTRATION_DETAIL_sGurName}
-                guardianMobile1={
-                  userData?.STUDENT_REGISTRATION_DETAIL_sGurMobile
-                }
+                guardianMobile1={userData?.STUDENT_REGISTRATION_DETAIL_sGurMobile}
                 guardianMobile2={userData?.gurdian_adm_mobile}
                 guardianEmail1={userData?.STUDENT_REGISTRATION_DETAIL_sGurEmail}
                 guardianEmail2={userData?.gurdian_adm_email}
@@ -140,7 +130,6 @@ export default function Profile() {
         </View>
       </ScrollView>
 
-      {/* Modals */}
       <ChangePasswordModal
         visible={showChangePasswordModal}
         onClose={() => setShowChangePasswordModal(false)}
@@ -149,26 +138,3 @@ export default function Profile() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  logoutButton: {
-    position: "absolute",
-    right: 16,
-    top: Platform.select({ web: 16, default: 60 }),
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Platform.select({ web: 12, default: 8 }),
-  },
-  scrollContent: {
-    paddingBottom: 16,
-  },
-  content: {
-    padding: 16,
-    gap: 16,
-  },
-  tabContent: {
-    padding: 20,
-    borderRadius: 16,
-    borderWidth: 1,
-  },
-});

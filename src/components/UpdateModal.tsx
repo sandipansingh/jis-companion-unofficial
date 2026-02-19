@@ -4,7 +4,7 @@ import { useAlertStore } from "@/src/store/alertStore";
 import { UpdateType } from "@/src/utils/versionHelpers";
 import { ArrowRight, Bug, Rocket, Sparkles } from "lucide-react-native";
 import React from "react";
-import { Linking, Modal, ScrollView, StyleSheet, View } from "react-native";
+import { Linking, Modal, ScrollView, View } from "react-native";
 import { Button } from "./Button";
 import { Text } from "./Themed";
 
@@ -56,7 +56,7 @@ export function UpdateModal({
       case "minor":
         return {
           Icon: Sparkles,
-          iconColor: colors.accent,
+          iconColor: colors.primary,
           title: "New Features!",
         };
       case "patch":
@@ -90,71 +90,88 @@ export function UpdateModal({
       visible={visible}
       transparent
       animationType="fade"
+      statusBarTranslucent
       onRequestClose={canDismiss ? onDismiss : undefined}
     >
-      <View style={styles.overlay}>
+      <View className="flex-1 bg-black/60 justify-center items-center p-6">
         <View
-          style={[
-            styles.container,
-            { backgroundColor: colors.surface, shadowColor: colors.shadow },
-          ]}
+          className="w-full max-w-[400px] max-h-[85%] rounded-[24px]"
+          style={{
+            backgroundColor: colors.surface,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.2,
+            shadowRadius: 20,
+            elevation: 10,
+          }}
         >
           <ScrollView
-            contentContainerStyle={styles.content}
+            contentContainerStyle={{ padding: 24, alignItems: "center" }}
             showsVerticalScrollIndicator={false}
           >
             {/* Header Icon */}
-            <View style={styles.iconWrapper}>
+            <View className="mb-5">
               <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: iconColor + "20" },
-                ]}
+                className="w-20 h-20 rounded-full justify-center items-center"
+                style={{ backgroundColor: iconColor + "20" }}
               >
                 <Icon size={40} color={iconColor} strokeWidth={1.5} />
               </View>
             </View>
 
             {/* Title */}
-            <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+            <Text
+              className="text-2xl font-bold text-center mb-3 text-ink-950"
+              style={{ fontFamily: "ClashDisplay-Bold" }}
+            >
+              {title}
+            </Text>
 
             {/* Message */}
-            <Text style={[styles.message, { color: colors.textSecondary }]}>
+            <Text
+              className="text-base text-center text-ink-600 mb-6 leading-6 px-2"
+              style={{ fontFamily: "GeneralSans-Regular" }}
+            >
               {getMessage()}
             </Text>
 
             {/* Version Info */}
             <View
-              style={[
-                styles.versionRow,
-                { backgroundColor: colors.backgroundSecondary },
-              ]}
+              className="flex-row items-center justify-between w-full py-3 px-6 rounded-2xl mb-6 bg-ink-50/50"
             >
-              <View style={styles.versionItem}>
+              <View className="items-center flex-1">
                 <Text
-                  style={[styles.versionLabel, { color: colors.textMuted }]}
+                  className="text-xs text-ink-500 mb-1 font-semibold uppercase tracking-wider"
+                  style={{ fontFamily: "GeneralSans-Medium" }}
                 >
                   Current
                 </Text>
-                <Text style={[styles.versionValue, { color: colors.text }]}>
+                <Text
+                  className="text-base font-bold text-ink-950"
+                  style={{ fontFamily: "ClashDisplay-Semibold" }}
+                >
                   {currentVersion}
                 </Text>
               </View>
 
               <ArrowRight
                 size={20}
-                color={colors.textMuted}
+                color={colors.textSecondary}
                 strokeWidth={1.5}
-                style={styles.arrowIcon}
+                className="mx-5 opacity-50"
               />
 
-              <View style={styles.versionItem}>
+              <View className="items-center flex-1">
                 <Text
-                  style={[styles.versionLabel, { color: colors.textMuted }]}
+                  className="text-xs text-ink-500 mb-1 font-semibold uppercase tracking-wider"
+                  style={{ fontFamily: "GeneralSans-Medium" }}
                 >
                   Latest
                 </Text>
-                <Text style={[styles.versionValue, { color: colors.primary }]}>
+                <Text
+                  className="text-base font-bold"
+                  style={{ fontFamily: "ClashDisplay-Semibold", color: colors.primary }}
+                >
                   v{appInfo.version}
                 </Text>
               </View>
@@ -162,14 +179,16 @@ export function UpdateModal({
 
             {/* Release Notes */}
             {appInfo.releaseNotes && (
-              <View style={styles.releaseNotesContainer}>
+              <View className="w-full mb-6 p-4 bg-ink-50/50 rounded-xl">
                 <Text
-                  style={[styles.releaseNotesTitle, { color: colors.text }]}
+                  className="text-sm font-bold mb-2 uppercase text-ink-950"
+                  style={{ fontFamily: "GeneralSans-Semibold" }}
                 >
                   What's New
                 </Text>
                 <Text
-                  style={[styles.releaseNotes, { color: colors.textSecondary }]}
+                  className="text-sm leading-5 text-ink-600"
+                  style={{ fontFamily: "GeneralSans-Regular" }}
                 >
                   {appInfo.releaseNotes
                     .replace(/<br\s*\/?>/gi, "\n")
@@ -190,32 +209,31 @@ export function UpdateModal({
             )}
 
             {/* Buttons */}
-            <View style={styles.buttonContainer}>
-              {updateType === "major" ? (
+            <View className="w-full gap-3">
+              <Button
+                title="Update Now"
+                onPress={handleOpenStore}
+                variant="primary"
+                style={{ height: 50, borderRadius: 12 }}
+                textStyle={{ fontSize: 16 }}
+              />
+
+              {updateType !== "major" && (
                 <Button
-                  title="Update Now"
-                  onPress={handleOpenStore}
-                  variant="primary"
-                  fullWidth
+                  title="Maybe Later"
+                  onPress={onDismiss}
+                  variant="secondary"
+                  style={{
+                    height: 50,
+                    borderRadius: 12,
+                    borderWidth: 0,
+                    backgroundColor: "transparent",
+                  }}
+                  textStyle={{
+                    fontSize: 16,
+                    color: colors.textSecondary,
+                  }}
                 />
-              ) : (
-                <>
-                  <Button
-                    title="Update Now"
-                    onPress={handleOpenStore}
-                    variant="primary"
-                    fullWidth
-                  />
-                  <View style={styles.buttonSpacer} />
-                  <Button
-                    title="Maybe Later"
-                    onPress={onDismiss}
-                    variant="secondary"
-                    fullWidth
-                    style={{ backgroundColor: "transparent" }}
-                    textStyle={{ color: colors.textSecondary }}
-                  />
-                </>
               )}
             </View>
           </ScrollView>
@@ -225,100 +243,3 @@ export function UpdateModal({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  container: {
-    borderRadius: 24,
-    width: "100%",
-    maxWidth: 400,
-    maxHeight: "85%",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 20,
-    elevation: 10,
-  },
-  content: {
-    padding: 24,
-    alignItems: "center",
-  },
-  iconWrapper: {
-    marginBottom: 20,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    marginBottom: 12,
-    textAlign: "center",
-    letterSpacing: -0.5,
-  },
-  message: {
-    fontSize: 16,
-    lineHeight: 22,
-    marginBottom: 24,
-    textAlign: "center",
-    paddingHorizontal: 10,
-  },
-  versionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    marginBottom: 24,
-    width: "100%",
-  },
-  versionItem: {
-    alignItems: "center",
-  },
-  versionLabel: {
-    fontSize: 12,
-    marginBottom: 4,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  versionValue: {
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  arrowIcon: {
-    marginHorizontal: 20,
-  },
-  releaseNotesContainer: {
-    width: "100%",
-    marginBottom: 24,
-    padding: 16,
-    backgroundColor: "rgba(0,0,0,0.03)",
-    borderRadius: 12,
-  },
-  releaseNotesTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    marginBottom: 8,
-    textTransform: "uppercase",
-  },
-  releaseNotes: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  buttonContainer: {
-    width: "100%",
-  },
-  buttonSpacer: {
-    height: 12,
-  },
-});

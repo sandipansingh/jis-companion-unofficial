@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { getMonthName } from "@/src/utils/dateHelpers";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface MonthHeaderProps {
   month: number;
@@ -16,47 +14,28 @@ export function MonthHeader({
   onMonthYearPress,
   onTodayPress,
 }: MonthHeaderProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.header}>
-      <TouchableOpacity onPress={onMonthYearPress} style={styles.monthButton}>
-        <Text style={[styles.title, { color: colors.text }]}>
-          {getMonthName(month)} {year}
+    <View className="flex-row items-center justify-between mb-3">
+      <TouchableOpacity onPress={onMonthYearPress} activeOpacity={0.7}>
+        <Text
+          className="text-base text-ink-950 dark:text-white"
+          style={{ fontFamily: "ClashDisplay-Semibold" }}
+        >
+          {getMonthName(month)}, {year}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onTodayPress} style={styles.todayButton}>
-        <Text style={[styles.todayText, { color: colors.primary }]}>Today</Text>
+      <TouchableOpacity
+        onPress={onTodayPress}
+        activeOpacity={0.7}
+        className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-xl px-3 py-1"
+      >
+        <Text
+          className="text-xs text-cobalt-600 dark:text-cobalt-300"
+          style={{ fontFamily: "GeneralSans-Semibold" }}
+        >
+          Today
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-    backgroundColor: "transparent",
-  },
-  monthButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "transparent",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  todayButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: "transparent",
-  },
-  todayText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});

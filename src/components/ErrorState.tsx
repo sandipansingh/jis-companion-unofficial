@@ -1,8 +1,6 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { commonStyles } from "@/src/styles/commonStyles";
 import React from "react";
+import { Text, View } from "react-native";
 import { Button } from "./Button";
-import { Text, View } from "./Themed";
 
 interface ErrorStateProps {
   message: string;
@@ -13,28 +11,26 @@ interface ErrorStateProps {
 export function ErrorState({
   message,
   onRetry,
-  retryText = "Retry",
+  retryText = "Try again",
 }: ErrorStateProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={commonStyles.centerContainer}>
-      <Text style={[commonStyles.errorText, { color: colors.error }]}>
+    <View className="flex-1 items-center justify-center gap-5 bg-base px-8">
+      <View className="w-20 h-20 rounded-3xl bg-danger-light items-center justify-center">
+        <Text className="text-3xl">⚠️</Text>
+      </View>
+      <Text
+        className="text-base text-ink-700 text-center leading-6"
+        style={{ fontFamily: "GeneralSans-Regular" }}
+      >
         {message}
       </Text>
       {onRetry && (
         <Button
           title={retryText}
           onPress={onRetry}
+          variant="secondary"
           fullWidth={false}
-          style={{
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            height: "auto",
-          }}
-          textStyle={{
-            fontSize: 14,
-          }}
+          size="sm"
         />
       )}
     </View>

@@ -1,5 +1,5 @@
 import { AlertProvider, DemoBanner, UpdateModal } from "@/src/components";
-import { ThemeProvider } from "@/src/contexts/ThemeContext";
+import { ThemeProvider, useTheme } from "@/src/contexts/ThemeContext";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
 import { useSilentOTAUpdate } from "@/src/hooks/useSilentOTAUpdate";
@@ -13,6 +13,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { AppState, Platform } from "react-native";
 import "react-native-reanimated";
+import "../../global.css";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,6 +22,14 @@ export { ErrorBoundary } from "expo-router";
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
+    "ClashDisplay-Bold":     require("../../assets/fonts/ClashDisplay-Bold.otf"),
+    "ClashDisplay-Semibold": require("../../assets/fonts/ClashDisplay-Semibold.otf"),
+    "ClashDisplay-Medium":   require("../../assets/fonts/ClashDisplay-Medium.otf"),
+    "ClashDisplay-Regular":  require("../../assets/fonts/ClashDisplay-Regular.otf"),
+    "GeneralSans-Bold":      require("../../assets/fonts/GeneralSans-Bold.otf"),
+    "GeneralSans-Semibold":  require("../../assets/fonts/GeneralSans-Semibold.otf"),
+    "GeneralSans-Medium":    require("../../assets/fonts/GeneralSans-Medium.otf"),
+    "GeneralSans-Regular":   require("../../assets/fonts/GeneralSans-Regular.otf"),
   });
 
   useEffect(() => {
@@ -33,13 +42,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <StatusBar style="auto" />
       <RootLayoutNav />
     </ThemeProvider>
   );
 }
 
 function RootLayoutNav() {
+  const { colorScheme } = useTheme();
   const segments = useSegments();
   const router = useRouter();
   const { isLoggedIn, checkAuthStatus, syncDataInBackground } = useAuthStore();
@@ -150,6 +159,7 @@ function RootLayoutNav() {
 
   return (
     <>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
       {isLoggedIn ? (
         <Stack
           screenOptions={{

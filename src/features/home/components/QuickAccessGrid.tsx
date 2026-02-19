@@ -1,7 +1,5 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
 import { LucideIcon } from "lucide-react-native";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export interface MenuItem {
   id: string;
@@ -16,79 +14,47 @@ interface QuickAccessGridProps {
 }
 
 export function QuickAccessGrid({ items, onItemPress }: QuickAccessGridProps) {
-  const { colors } = useTheme();
-
   return (
-    <>
+    <View className="mb-4">
       <Text
-        style={[
-          styles.sectionTitle,
-          { color: colors.text, marginTop: 24, marginBottom: 16 },
-        ]}
+        className="text-base text-ink-900 dark:text-ink-100 mb-4"
+        style={{ fontFamily: "ClashDisplay-Semibold" }}
       >
         Quick Access
       </Text>
-
-      <View style={styles.gridContainer}>
+      <View className="flex-row flex-wrap gap-3">
         {items.map((item) => (
           <TouchableOpacity
             key={item.id}
-            style={styles.menuItem}
-            activeOpacity={0.7}
             onPress={() => onItemPress(item.id)}
+            activeOpacity={0.75}
+            className="items-center"
+            style={{ width: "21%" }}
           >
             <View
-              style={[
-                styles.menuIcon,
-                {
-                  backgroundColor: item.color + "20",
-                  shadowColor: colors.shadow,
-                },
-              ]}
+              className="w-14 h-14 rounded-2xl items-center justify-center mb-2"
+              style={{
+                backgroundColor: item.color + "18",
+                borderWidth: 1,
+                borderColor: item.color + "25",
+                shadowColor: item.color,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.14,
+                shadowRadius: 8,
+                elevation: 3,
+              }}
             >
-              <item.icon size={24} color={item.color} />
+              <item.icon size={24} color={item.color} strokeWidth={1.8} />
             </View>
-            <Text style={[styles.menuLabel, { color: colors.textSecondary }]}>
+            <Text
+              className="text-[11px] text-ink-600 dark:text-ink-400 text-center leading-4"
+              style={{ fontFamily: "GeneralSans-Medium" }}
+            >
               {item.title}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-    </>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 15,
-    backgroundColor: "transparent",
-  },
-  menuItem: {
-    width: "23%",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-  },
-  menuIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
-  menuLabel: {
-    fontSize: 10,
-    fontWeight: "500",
-    textAlign: "center",
-    lineHeight: 12,
-  },
-});
