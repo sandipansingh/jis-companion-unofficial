@@ -198,6 +198,7 @@ function RootLayoutNav() {
           screenOptions={{
             animation: "slide_from_right",
             title: "JIS Companion (Unofficial)",
+            headerShown: false,
             contentStyle: {
               backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
             },
