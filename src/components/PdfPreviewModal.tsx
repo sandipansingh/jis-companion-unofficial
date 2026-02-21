@@ -154,9 +154,8 @@ export function PdfPreviewModal({
           {/* Header */}
           <View className="flex-row items-center justify-between py-4 px-4 bg-white border-b border-border">
             <Text
-              className="flex-1 text-base font-semibold text-ink-900 mr-4"
+              className="flex-1 text-base font-semibold text-ink-900 mr-4 font-display-md"
               numberOfLines={1}
-              style={{ fontFamily: "ClashDisplay-Medium" }}
             >
               {filename}
             </Text>
@@ -179,8 +178,7 @@ export function PdfPreviewModal({
               <View className="absolute inset-0 justify-center items-center z-10 bg-white">
                 <ActivityIndicator size="large" color="#2B5BDB" />
                 <Text
-                  className="mt-3 text-sm text-ink-500"
-                  style={{ fontFamily: "GeneralSans-Regular" }}
+                  className="mt-3 text-sm text-ink-500 font-sans"
                 >
                   Loading PDF...
                 </Text>

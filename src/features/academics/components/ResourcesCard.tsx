@@ -29,8 +29,7 @@ export function ResourcesCard({ resources, onResourcePress }: ResourcesCardProps
       }}
     >
       <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-3"
-        style={{ fontFamily: "GeneralSans-Semibold" }}
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-3 font-sans-semi"
       >
         Resources
       </Text>
@@ -46,8 +45,7 @@ export function ResourcesCard({ resources, onResourcePress }: ResourcesCardProps
               <FileText size={18} color={isDark ? "#F87171" : "#DC2626"} />
             </View>
             <Text
-              className="flex-1 text-sm text-ink-900 dark:text-white"
-              style={{ fontFamily: "GeneralSans-Medium" }}
+              className="flex-1 text-sm text-ink-900 dark:text-white font-sans-md"
               numberOfLines={1}
             >
               {resource.filename}

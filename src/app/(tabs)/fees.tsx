@@ -1,1 +1,1 @@
-export { default } from "@/src/features/fees/screens/Fees";
+export { Fees as default } from "@/src/features/fees";

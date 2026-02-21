@@ -42,6 +42,8 @@ export default function Profile() {
           <TouchableOpacity
             className="items-center justify-center p-2"
             onPress={handleLogout}
+            accessibilityLabel="Logout"
+            accessibilityRole="button"
           >
             <LogOut size={22} color="#DC2626" />
           </TouchableOpacity>
@@ -51,7 +53,7 @@ export default function Profile() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: bottomOffset + 100 }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
       >
         <View className="p-4 gap-4">
           <ProfileInfo

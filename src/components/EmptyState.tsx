@@ -15,8 +15,7 @@ export function EmptyState({ message, icon: Icon }: EmptyStateProps) {
         </View>
       )}
       <Text
-        className="text-base text-ink-600 text-center leading-6"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-base text-ink-600 text-center leading-6 font-sans"
       >
         {message}
       </Text>

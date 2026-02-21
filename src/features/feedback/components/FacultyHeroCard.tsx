@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { FacultyFeedbackItem } from "../api";
+import { FacultyFeedbackItem } from "../types";
 import { FacultyAvatar } from "./FacultyAvatar";
 
 interface FacultyHeroCardProps {
@@ -20,20 +20,17 @@ export function FacultyHeroCard({ faculty }: FacultyHeroCardProps) {
     >
       <FacultyAvatar imageUrl={faculty.fac_image} shortName={faculty.fac_sht_name} size={80} />
       <Text
-        className="text-xl text-ink-900 dark:text-white mt-3 text-center"
-        style={{ fontFamily: 'ClashDisplay-Semibold' }}
+        className="text-xl text-ink-900 dark:text-white mt-3 text-center font-display"
       >
         {faculty.fac_name}
       </Text>
       <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-1"
-        style={{ fontFamily: 'GeneralSans-Semibold' }}
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-1 font-sans-semi"
       >
         {faculty.sub_code}
       </Text>
       <Text
-        className="text-sm text-ink-600 dark:text-ink-300 mt-1 text-center"
-        style={{ fontFamily: 'GeneralSans-Regular' }}
+        className="text-sm text-ink-600 dark:text-ink-300 mt-1 text-center font-sans"
       >
         {faculty.sub_name}
       </Text>

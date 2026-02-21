@@ -50,8 +50,7 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
       }}
     >
       <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5"
-        style={{ fontFamily: "GeneralSans-Semibold" }}
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5 font-sans-semi"
       >
         Attendance Status
       </Text>
@@ -68,15 +67,15 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
           </View>
           <View>
             <Text
-              className="text-lg"
-              style={{ fontFamily: "ClashDisplay-Semibold", color: config.text }}
+              className="text-lg font-display"
+              style={{ color: config.text }}
             >
               {status}
             </Text>
             {config.message !== "" && (
               <Text
-                className="text-sm"
-                style={{ fontFamily: "GeneralSans-Regular", color: config.subtext }}
+                className="text-sm font-sans"
+                style={{ color: config.subtext }}
               >
                 {config.message}
               </Text>

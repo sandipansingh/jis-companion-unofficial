@@ -1,6 +1,6 @@
 import { Clock, User } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-import { SubjectWiseAttendance } from "../api";
+import { SubjectWiseAttendance } from "../types";
 
 interface ClassCardProps {
   classData: SubjectWiseAttendance;
@@ -38,8 +38,7 @@ export function ClassCard({
       <View className="flex-row items-center justify-between mb-2">
         <View className="bg-cobalt-50 border border-border rounded-full px-3 py-1">
           <Text
-            className="text-[11px] text-cobalt-600"
-            style={{ fontFamily: "GeneralSans-Semibold" }}
+            className="text-[11px] text-cobalt-600 font-sans-semi"
           >
             {subjectCode}
           </Text>
@@ -47,8 +46,7 @@ export function ClassCard({
         <View className="flex-row items-center gap-1">
           <Clock size={12} color="#94A3B8" />
           <Text
-            className="text-xs text-ink-500"
-            style={{ fontFamily: "GeneralSans-Regular" }}
+            className="text-xs text-ink-500 font-sans"
           >
             {time}
           </Text>
@@ -57,9 +55,8 @@ export function ClassCard({
 
       {/* Subject name */}
       <Text
-        className="text-base text-ink-900 mb-2 leading-snug"
+        className="text-base text-ink-900 mb-2 leading-snug font-sans-semi"
         style={{
-          fontFamily: "GeneralSans-Semibold",
           fontStyle: isFallback ? "italic" : "normal",
         }}
         numberOfLines={2}
@@ -71,8 +68,7 @@ export function ClassCard({
       <View className="flex-row items-center gap-1.5">
         <User size={12} color="#94A3B8" />
         <Text
-          className="text-xs text-ink-500"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-xs text-ink-500 font-sans"
           numberOfLines={1}
         >
           {classData.faculty}

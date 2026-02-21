@@ -1,1 +1,1 @@
-export { default } from "@/src/features/feedback/screens/FacultyRatingScreen";
+export { FacultyRatingScreen as default } from "@/src/features/feedback";

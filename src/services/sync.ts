@@ -1,46 +1,45 @@
 import {
-  AttendanceData,
-  DateWiseAttendance,
   fetchAttendancePercentage,
   fetchDateWiseAttendance,
   fetchSubjectWiseAttendance,
-  SubjectWiseAttendance,
 } from "@/src/features/academics/api/academics";
+import {
+  AttendanceData,
+  DateWiseAttendance,
+  SubjectWiseAttendance,
+} from "@/src/features/academics/types";
 import {
   login as apiLogin,
   clearUserData as clearSecureStoreData,
   fetchUserProfile,
   getStoredCredentials,
-  LoginResponse,
-  UserProfileData,
 } from "@/src/features/auth/api/auth";
-import {
-  FeeLedgerEntry,
-  fetchStudentFeeLedger,
-} from "@/src/features/fees/api/fees";
-import {
-  fetchLibraryBooks,
-  LibraryBook,
-  LibraryFilterType,
-} from "@/src/features/library/api/library";
+import { LoginResponse, UserProfileData } from "@/src/features/auth/types";
+import { fetchStudentFeeLedger } from "@/src/features/fees/api/fees";
+import { FeeLedgerEntry } from "@/src/features/fees/types";
+import { fetchLibraryBooks } from "@/src/features/library/api/library";
+import { LibraryBook, LibraryFilterType } from "@/src/features/library/types";
 import {
   fetchVirtualLabCourses,
   fetchVirtualLabExperiments,
+} from "@/src/features/virtual-labs/api/virtualLabs";
+import {
   VirtualLabCourse,
   VirtualLabExperiment,
-} from "@/src/features/virtual-labs/api/virtualLabs";
+} from "@/src/features/virtual-labs/types";
+import { Platform } from "react-native";
 import { getMonthEndDate, getMonthStartDate } from "../utils/dateHelpers";
+import { getItemAsync } from "../utils/secureStore";
 import {
-  deleteAllUserData,
   getAttendanceData,
   getAttendancePercentage,
   getFeeData,
+  getLatestLoginDataForStudent,
   getLibraryBooks,
   getLoginData,
   getUserData,
   getVirtualLabCourses,
   getVirtualLabExperiments,
-  hasLoginData,
   saveAttendanceData,
   saveAttendancePercentage,
   saveFeeData,
@@ -48,7 +47,7 @@ import {
   saveLoginData,
   saveUserData,
   saveVirtualLabCourses,
-  saveVirtualLabExperiments,
+  saveVirtualLabExperiments
 } from "./database";
 import { hasInternetConnection } from "./network";
 
@@ -80,6 +79,16 @@ export async function syncLoginData(
 
       const credentials = await getStoredCredentials();
       const isDemoLogin = credentials?.isDemoAccount || false;
+
+      if (freshLoginData.is_valid !== 1) {
+        return {
+          loginData: freshLoginData,
+          userData: null,
+          fromCache: false,
+          isOnline: true,
+          isDemoAccount: isDemoLogin,
+        };
+      }
 
       const freshUserData = await fetchUserProfile(
         freshLoginData.branch_id.toString(),
@@ -140,10 +149,67 @@ export async function checkAuthWithOfflineSupport(): Promise<{
   isDemoAccount?: boolean;
 }> {
   const isOnline = await hasInternetConnection();
+  const isWeb = Platform.OS === "web";
 
-  const localLoginCheck = await hasLoginData();
+  // Secure store is the authoritative source for the currently logged-in user.
+  // If credentials are absent there is no active session regardless of what
+  // the local DB contains (data is kept for future account switches).
+  const credentials = await getStoredCredentials();
+  const storedStudentId = await getItemAsync("student_id");
 
-  if (!localLoginCheck.exists) {
+  if (!credentials) {
+    // For web, we fall back only when a student_id is present in secure storage.
+    // Only login data for that student from the past 30 days is considered valid.
+    // This is not needed on native where secure storage is available.
+    if (isWeb) {
+      if (!storedStudentId) {
+        return {
+          isAuthenticated: false,
+          isOnline,
+          fromCache: false,
+          isDemoAccount: false,
+        };
+      }
+
+      const latestLoginFromDb = await getLatestLoginDataForStudent(
+        storedStudentId
+      );
+
+      if (latestLoginFromDb) {
+        const { loginData, studentId } = latestLoginFromDb;
+
+        if (isOnline) {
+          const userData = await fetchUserProfile(
+            loginData.branch_id.toString(),
+            loginData.std_id.toString()
+          );
+          if (userData) {
+            await saveUserData(studentId, userData);
+          }
+          return {
+            isAuthenticated: true,
+            studentId,
+            loginData,
+            userData: userData || undefined,
+            isOnline: true,
+            fromCache: false,
+            isDemoAccount: false,
+          };
+        } else {
+          const userData = await getUserData(studentId);
+          return {
+            isAuthenticated: true,
+            studentId,
+            loginData,
+            userData: userData || undefined,
+            isOnline: false,
+            fromCache: true,
+            isDemoAccount: false,
+          };
+        }
+      }
+    }
+
     return {
       isAuthenticated: false,
       isOnline,
@@ -152,14 +218,20 @@ export async function checkAuthWithOfflineSupport(): Promise<{
     };
   }
 
-  const studentId = localLoginCheck.studentId!;
+  // Use credentials.studentId as the canonical student ID for all DB ops.
+  const studentId = credentials.studentId;
+  const isDemoLogin = credentials.isDemoAccount || false;
 
   if (isOnline) {
     try {
-      const credentials = await getStoredCredentials();
+      const loginData = await apiLogin({
+        studentId,
+        password: credentials.password,
+      });
 
-      if (!credentials) {
-        await deleteAllUserData(studentId);
+      if (loginData.is_valid !== 1) {
+        console.log("Invalid credentials, clearing stored credentials");
+        await clearSecureStoreData();
         return {
           isAuthenticated: false,
           isOnline: true,
@@ -167,13 +239,6 @@ export async function checkAuthWithOfflineSupport(): Promise<{
           isDemoAccount: false,
         };
       }
-
-      const isDemoLogin = credentials.isDemoAccount || false;
-
-      const loginData = await apiLogin({
-        studentId: credentials.studentId,
-        password: credentials.password,
-      });
 
       const userData = await fetchUserProfile(
         loginData.branch_id.toString(),
@@ -203,8 +268,9 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         error.message?.includes("Invalid") ||
         error.response?.status === 401
       ) {
-        console.log("Invalid credentials, clearing all data");
-        await deleteAllUserData(studentId);
+        // Credentials rejected by server — clear only the secure store so the
+        // user must re-login. Cached DB rows are preserved for account switching.
+        console.log("Invalid credentials, clearing stored credentials");
         await clearSecureStoreData();
         return {
           isAuthenticated: false,
@@ -214,6 +280,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         };
       }
 
+      // Network/server error → fall back to cached DB data
       const loginData = await getLoginData(studentId);
       const userData = await getUserData(studentId);
 
@@ -459,6 +526,12 @@ export async function backgroundSyncUserData(
     console.log("Background sync: Updating user data");
 
     const loginData = await apiLogin({ studentId, password });
+
+    if (loginData.is_valid !== 1) {
+      console.log("Background sync: credentials are no longer valid");
+      return false;
+    }
+
     const userData = await fetchUserProfile(
       loginData.branch_id.toString(),
       loginData.std_id.toString()
@@ -477,10 +550,12 @@ export async function backgroundSyncUserData(
   }
 }
 
-export async function cleanupUserData(studentId: string): Promise<void> {
-  await deleteAllUserData(studentId);
+export async function cleanupUserData(_studentId: string): Promise<void> {
+  // Only clear the secure-store credentials so the user must re-authenticate.
+  // SQLite data is intentionally kept to support fast account switching:
+  // cached rows are keyed by student_id and will be upserted on next login.
   await clearSecureStoreData();
-  console.log(`Cleanup completed for student: ${studentId}`);
+  console.log(`Credentials cleared (DB data retained for account switching)`);
 }
 
 export async function syncVirtualLabCourses(): Promise<{

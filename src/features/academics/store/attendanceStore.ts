@@ -2,7 +2,7 @@ import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { syncAttendanceData } from "@/src/services/sync";
 import { getMonthKey as getMonthKeyHelper } from "@/src/utils/dateHelpers";
 import { create } from "zustand";
-import { DateWiseAttendance, SubjectWiseAttendance } from "../api/academics";
+import { DateWiseAttendance, SubjectWiseAttendance } from "../types";
 
 interface MonthAttendanceData {
   subjectWiseAttendance: SubjectWiseAttendance[];
@@ -72,6 +72,7 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
             },
           },
           loading: false,
+          fromCache: true,
         }));
       } else {
         set({ loading: true, error: null });
@@ -157,19 +158,7 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
     set({ selectedClass: classData });
   },
 
-  clearAttendanceData: async () => {
-    try {
-      const { studentId } = useAuthStore.getState();
-      if (studentId) {
-        const { deleteAttendanceData } = await import(
-          "@/src/services/database"
-        );
-        await deleteAttendanceData(studentId);
-      }
-      set({ monthlyData: {}, loading: false, error: null });
-    } catch (error) {
-      console.error("Error clearing attendance data:", error);
-      set({ monthlyData: {}, loading: false, error: null });
-    }
+  clearAttendanceData: () => {
+    set({ monthlyData: {}, loading: false, error: null });
   },
 }));

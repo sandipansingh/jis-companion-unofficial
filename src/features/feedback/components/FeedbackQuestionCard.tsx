@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { FeedbackQuestion } from "../api";
+import { FeedbackQuestion } from "../types";
 import { StarRating } from "./StarRating";
 
 interface FeedbackQuestionCardProps {
@@ -22,14 +22,12 @@ export function FeedbackQuestionCard({ question, rating, onRatingChange }: Feedb
     >
       <View className="mb-4">
         <Text
-          className="text-sm text-ink-900 dark:text-white leading-snug mb-1"
-          style={{ fontFamily: 'GeneralSans-Semibold' }}
+          className="text-sm text-ink-900 dark:text-white leading-snug mb-1 font-sans-semi"
         >
           {question.head}
         </Text>
         <Text
-          className="text-xs text-ink-500 dark:text-ink-400"
-          style={{ fontFamily: 'GeneralSans-Regular' }}
+          className="text-xs text-ink-500 dark:text-ink-400 font-sans"
         >
           {question.subhead}
         </Text>

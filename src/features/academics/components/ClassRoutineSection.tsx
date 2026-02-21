@@ -28,16 +28,14 @@ export function ClassRoutineSection({
     <View>
       <View className="flex-row items-center gap-2 mb-4">
         <Text
-          className="text-base text-ink-950 dark:text-white"
-          style={{ fontFamily: "ClashDisplay-Semibold" }}
+          className="text-base text-ink-950 dark:text-white font-display"
         >
           {dateLabel}
         </Text>
         {isFallbackData && (
           <View className="bg-ink-100 dark:bg-ink-900 rounded-full px-2.5 py-0.5">
             <Text
-              className="text-[10px] text-ink-500 dark:text-ink-400"
-              style={{ fontFamily: "GeneralSans-Medium" }}
+              className="text-[10px] text-ink-500 dark:text-ink-400 font-sans-md"
             >
               Based on previous week
             </Text>
@@ -45,15 +43,18 @@ export function ClassRoutineSection({
         )}
       </View>
       <View className="gap-0">
-        {routine.map((classItem, index) => (
-          <RoutineTimelineItem
-            key={index}
-            classItem={classItem}
-            time={getDisplayTime(classItem)}
-            isLast={index === routine.length - 1}
-            onPress={() => onClassPress(classItem)}
-          />
-        ))}
+        {routine.map((classItem, index) => {
+          const hasFacultyData = !!classItem.emp_code && classItem.emp_code.trim() !== "";
+          return (
+            <RoutineTimelineItem
+              key={index}
+              classItem={classItem}
+              time={getDisplayTime(classItem)}
+              isLast={index === routine.length - 1}
+              onPress={hasFacultyData ? () => onClassPress(classItem) : undefined}
+            />
+          );
+        })}
       </View>
     </View>
   );

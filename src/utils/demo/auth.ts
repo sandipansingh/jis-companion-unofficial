@@ -1,4 +1,4 @@
-import { LoginResponse, UserProfileData } from "@/src/features/auth/api/auth";
+import { LoginResponse, UserProfileData } from "@/src/features/auth/types";
 import { DEMO_COLLEGE, DEMO_COURSE, DEMO_STUDENT } from "./constants";
 
 /**

@@ -10,14 +10,12 @@ export function SubjectRow({ subject, obtained, full }: SubjectRowProps) {
   return (
     <View className="flex-row items-center justify-between py-1.5">
       <Text
-        className="text-sm text-ink-900 dark:text-ink-200"
-        style={{ fontFamily: 'GeneralSans-Medium' }}
+        className="text-sm text-ink-900 dark:text-ink-200 font-sans-md"
       >
         {subject}
       </Text>
       <Text
-        className="text-sm text-cobalt-500 dark:text-cobalt-300"
-        style={{ fontFamily: 'GeneralSans-Bold' }}
+        className="text-sm text-cobalt-500 dark:text-cobalt-300 font-sans-bold"
       >
         {obtained}/{full}
       </Text>

@@ -42,7 +42,7 @@ try {
     const onlyAllowed = dirtyFiles.every((f) => allowed.has(f));
     if (onlyAllowed) {
       console.log(
-        "⚠️ Working tree has only version files changed — staging them."
+        "Working tree has only version files changed — staging them."
       );
       run("git add package.json app.json");
     } else {
@@ -65,7 +65,7 @@ try {
   if (diff) {
     run(`git commit -m "chore(release): v${version}"`);
   } else {
-    console.log("ℹNo staged changes to commit.");
+    console.log("ℹ No staged changes to commit.");
   }
 
   run("git push origin HEAD");

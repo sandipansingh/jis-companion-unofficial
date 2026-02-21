@@ -35,8 +35,7 @@ export default function CourseSelection() {
         <View className="flex-1 items-center justify-center gap-3">
           <ActivityIndicator size="large" color="#2B5BDB" />
           <Text
-            className="text-sm text-ink-500"
-            style={{ fontFamily: "GeneralSans-Regular" }}
+            className="text-sm text-ink-500 font-sans"
           >
             Loading courses...
           </Text>

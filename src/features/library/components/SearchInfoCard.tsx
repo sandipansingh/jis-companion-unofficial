@@ -17,14 +17,12 @@ export function SearchInfoCard() {
         <Search size={32} color="#2B5BDB" />
       </View>
       <Text
-        className="text-xl text-ink-900 dark:text-white mb-2 text-center"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-xl text-ink-900 dark:text-white mb-2 text-center font-display"
       >
         Library Search
       </Text>
       <Text
-        className="text-sm text-ink-500 text-center leading-relaxed"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-sm text-ink-500 text-center leading-relaxed font-sans"
       >
         Search for books by title, author, call number, or ISBN and reserve them instantly.
       </Text>

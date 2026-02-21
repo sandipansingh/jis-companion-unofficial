@@ -18,8 +18,7 @@ export function WeekNavigator({ weekPeriod, onPrevious, onNext }: WeekNavigatorP
         <ChevronLeft size={18} color="#94A3B8" />
       </TouchableOpacity>
       <Text
-        className="text-sm text-ink-600 dark:text-ink-400"
-        style={{ fontFamily: "GeneralSans-Medium" }}
+        className="text-sm text-ink-600 dark:text-ink-400 font-sans-md"
       >
         {weekPeriod}
       </Text>

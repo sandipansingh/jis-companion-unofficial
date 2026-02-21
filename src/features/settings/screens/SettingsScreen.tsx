@@ -1,16 +1,13 @@
-import { Header } from "@/src/components";
-import { useRouter } from "expo-router";
+import { Header, Switch, Text, View } from "@/src/components";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { Moon, Sun } from "lucide-react-native";
-import { ScrollView, Switch, Text, View } from "react-native";
-import { useTheme } from "../../../contexts/ThemeContext";
+import { ScrollView } from "react-native";
 
 export default function SettingsScreen() {
-  const router = useRouter();
   const { isDark, toggleTheme, colors } = useTheme();
 
   return (
     <View className="flex-1 bg-base dark:bg-base">
-      {/* Header */}
       <Header title="Settings" showBackButton/>
 
       <ScrollView contentContainerClassName="p-4">
@@ -33,11 +30,7 @@ export default function SettingsScreen() {
               </View>
               <Switch
                 value={isDark}
-                onValueChange={() => {
-                  toggleTheme();
-                }}
-                trackColor={{ false: colors.ink === undefined ? "#E2E8F0" : colors.ink[300], true: colors.primary }}
-                thumbColor={colors.surface}
+                onValueChange={toggleTheme}
               />
             </View>
             <Text className="text-xs text-ink-500 dark:text-ink-400 mt-2 font-sans italic">

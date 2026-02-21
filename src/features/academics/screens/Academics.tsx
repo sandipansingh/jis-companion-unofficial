@@ -78,7 +78,7 @@ export default function Academics() {
 
       <ScrollView
         className="flex-1"
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         bounces
       >
         <View className="p-4">

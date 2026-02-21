@@ -50,6 +50,9 @@ export default function Root({ children }: PropsWithChildren) {
         {/* Service Worker Registration */}
         <script dangerouslySetInnerHTML={{ __html: sw }} />
 
+        {/* Prevent white flash before JS loads */}
+        <style dangerouslySetInnerHTML={{ __html: `html, body { background-color: #FAFAFA; margin: 0; padding: 0; }` }} />
+
         {/* This helps reset default browser styles for Expo/React Native Web */}
         <ScrollViewStyleReset />
       </head>
@@ -62,7 +65,7 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 const sw = `
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then(registration => {
       registration.update();

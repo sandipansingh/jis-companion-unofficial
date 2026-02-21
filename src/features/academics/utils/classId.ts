@@ -14,7 +14,12 @@ export function createClassId(
   const dateOnly = date.split("T")[0];
 
   // Extract period number from format "6 (12.20-13.00)"
-  const periodNumber = periodName.split(" ")[0];
+  const periodNumber = periodName?.split(" ")[0] || "1";
+
+  if (!empCode) {
+    console.warn("createClassId: empCode is undefined or null");
+    return `${dateOnly}-unknown-${periodNumber}`;
+  }
 
   // Replace / with _ for URL safety
   const safeEmpCode = empCode.replace(/\//g, "_");

@@ -31,17 +31,15 @@ export function HeaderCard({
         className="rounded-3xl items-center justify-center mb-5 bg-cobalt-50 dark:bg-ink-800"
         style={{ width: iconCircleSize, height: iconCircleSize }}
       >
-        <Icon size={iconSize} color="#2B5BDB" />
+        <Icon size={iconSize} className="text-cobalt-600 dark:text-white" />
       </View>
       <Text
-        className="text-2xl text-ink-950 dark:text-white mb-2 text-center"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-2xl text-ink-950 dark:text-white mb-2 text-center font-display"
       >
         {title}
       </Text>
       <Text
-        className="text-sm text-ink-600 dark:text-ink-400 text-center leading-5"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-sm text-ink-600 dark:text-ink-400 text-center leading-5 font-sans"
       >
         {description}
       </Text>

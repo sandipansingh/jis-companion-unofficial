@@ -4,7 +4,8 @@ import { router } from "expo-router";
 import {
   FlaskConical,
   Library,
-  MessageSquare
+  MessageSquare,
+  Users
 } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import {
@@ -38,6 +39,12 @@ export default function Home() {
       icon: MessageSquare,
       color: "#F59E0B",
     },
+        {
+      id: "connect",
+      title: "Connect",
+      icon: Users,
+      color: "#8B5CF6",
+    },
     // {
     //   id: "profile-video",
     //   title: "Profile Video",
@@ -62,10 +69,12 @@ export default function Home() {
       router.push("/virtual-labs");
     } else if (itemId === "library") {
       router.push("/library");
+    } else if (itemId === "connect") {
+      router.push("/connect");
     } else if (itemId === "feedback") {
       router.push("/feedback");
-    } else if (itemId === "profile-video") {
-      router.push("/profile-video");
+      // } else if (itemId === "profile-video") {
+      //   router.push("/profile-video");
     } else {
       showAlert({
         title:
@@ -90,7 +99,7 @@ export default function Home() {
 
       <ScrollView
         className="flex-1"
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         bounces
       >
         <View className="px-6 pt-6">

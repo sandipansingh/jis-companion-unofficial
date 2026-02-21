@@ -36,7 +36,7 @@ export default function ClassDetails() {
   } = useClassDetails(id);
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.base }}>
+    <View className="flex-1 bg-base">
       <Header title="Class Details" showBackButton />
 
       {/* Main Content */}
@@ -46,7 +46,7 @@ export default function ClassDetails() {
         </View>
       ) : !classData ? (
         <View className="flex-1 justify-center items-center">
-          <Text style={{ color: colors.text }}>Class data not found</Text>
+          <Text className="text-text">Class data not found</Text>
         </View>
       ) : (
         <ScrollView className="flex-1">

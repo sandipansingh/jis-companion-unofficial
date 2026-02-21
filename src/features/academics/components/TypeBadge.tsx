@@ -15,10 +15,9 @@ export function TypeBadge({ type }: TypeBadgeProps) {
       }`}
     >
       <Text
-        className={`text-sm ${
+        className={`text-sm font-sans-semi ${
           isLab ? "text-warning dark:text-yellow-400" : "text-ink-500 dark:text-ink-400"
         }`}
-        style={{ fontFamily: "GeneralSans-Semibold" }}
       >
         {type}
       </Text>

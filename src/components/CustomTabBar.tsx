@@ -1,11 +1,13 @@
+import { getTabColors, getTabIndicatorColor, getTabVisualConfig } from "@/src/constants/tabColors";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useState } from "react";
-import { LayoutChangeEvent, Pressable, View } from "react-native";
+import { LayoutChangeEvent, Platform, Pressable, View } from "react-native";
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from "react-native-reanimated";
 
 export default function CustomTabBar({
@@ -13,17 +15,36 @@ export default function CustomTabBar({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const { isDark } = useTheme();
+  const isAndroid = Platform.OS === "android";
+  const isIOS = Platform.OS === "ios";
+  const isWeb = Platform.OS === "web";
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const { focusedColor, unfocusedColor } = getTabColors(isDark);
+  const indicatorColor = getTabIndicatorColor(isDark);
+  const tabVisuals = getTabVisualConfig({
+    isDark,
+    isAndroid,
+    isIOS,
+    variant: "bottom",
+  });
 
-  const tabWidth = dimensions.width / state.routes.length;
+  const visibleRoutes = state.routes.filter(
+    (route) => typeof descriptors[route.key]?.options?.tabBarIcon === "function",
+  );
+  const routesToRender = visibleRoutes.length > 0 ? visibleRoutes : state.routes;
+  const activeRouteKey = state.routes[state.index]?.key;
+  const visibleIndex = routesToRender.findIndex((route) => route.key === activeRouteKey);
+  const activeIndex = visibleIndex >= 0 ? visibleIndex : 0;
+  const tabWidth = dimensions.width / routesToRender.length;
   const translateX = useSharedValue(0);
 
   useEffect(() => {
-    translateX.value = withSpring(state.index * tabWidth, {
+    translateX.value = withSpring(activeIndex * tabWidth, {
       damping: 20,
       stiffness: 180,
     });
-  }, [state.index, tabWidth]);
+  }, [activeIndex, tabWidth]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -40,19 +61,28 @@ export default function CustomTabBar({
 
   return (
     <View
-      className="absolute bottom-8 left-0 right-0 h-[65px] rounded-[35px] bg-transparent overflow-hidden mx-[50px]"
+      className={
+        isWeb
+          ? "absolute bottom-8 h-[65px] rounded-[35px] bg-transparent overflow-hidden self-center w-[92%] max-w-[560px]"
+          : "absolute bottom-8 left-0 right-0 h-[65px] rounded-[35px] bg-transparent overflow-hidden mx-[50px]"
+      }
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
+        shadowOpacity: tabVisuals.shadowOpacity,
         shadowRadius: 12,
-        elevation: 8,
+        elevation: tabVisuals.elevation,
       }}
     >
       <BlurView
-        intensity={100}
-        tint="default"
-        className="flex-1 rounded-[35px] bg-white/65 dark:bg-black/65 border border-white/60 dark:border-white/10"
+        intensity={tabVisuals.blurIntensity}
+        tint={tabVisuals.tint}
+        className="flex-1 rounded-[35px]"
+        style={{
+          backgroundColor: tabVisuals.backgroundColor,
+          borderWidth: tabVisuals.borderWidth,
+          borderColor: tabVisuals.borderColor,
+        }}
       >
         <View
           className="flex-row h-full items-center"
@@ -60,21 +90,25 @@ export default function CustomTabBar({
         >
           {dimensions.width > 0 && (
             <Animated.View
-              className="absolute bg-slate-300 rounded-[25px] opacity-60"
+              className="absolute"
               style={[
                 {
+                  position: "absolute",
                   width: tabWidth - 20,
                   height: dimensions.height - 20,
                   left: 10,
+                  top: 10,
+                  borderRadius: (dimensions.height - 20) / 2,
+                  backgroundColor: indicatorColor,
                 },
                 animatedStyle,
               ]}
             />
           )}
 
-          {state.routes.map((route, index) => {
+          {routesToRender.map((route, index) => {
             const { options } = descriptors[route.key];
-            const isFocused = state.index === index;
+            const isFocused = activeIndex === index;
 
             const onPress = () => {
               const event = navigation.emit({
@@ -107,7 +141,7 @@ export default function CustomTabBar({
               >
                 {options.tabBarIcon?.({
                   focused: isFocused,
-                  color: isFocused ? "#1E2235" : "#64748B",
+                  color: isFocused ? focusedColor : unfocusedColor,
                   size: 24,
                 })}
               </Pressable>

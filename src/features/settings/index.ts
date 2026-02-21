@@ -1,1 +1,5 @@
-export { default as SettingsScreen } from "./screens/SettingsScreen";
+// Screens
+export * from "./screens";
+
+// Stores
+export * from "./store";

@@ -1,4 +1,5 @@
 import { AlertProvider, DemoBanner, UpdateModal } from "@/src/components";
+import { LoadingState } from "@/src/components/LoadingState";
 import { ThemeProvider, useTheme } from "@/src/contexts/ThemeContext";
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useNetworkStatus } from "@/src/hooks/useNetworkStatus";
@@ -11,7 +12,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, View } from "react-native";
 import "react-native-reanimated";
 import "../../global.css";
 
@@ -37,7 +38,11 @@ export default function RootLayout() {
   }, [error]);
 
   if (!loaded) {
-    return null;
+    // On web, expo-font injects @font-face CSS and fonts load via browser naturally.
+    // Don't block rendering — FOUT is better than a white screen.
+    if (Platform.OS !== "web") {
+      return null;
+    }
   }
 
   return (
@@ -69,7 +74,6 @@ function RootLayoutNav() {
 
       try {
         await initDatabase();
-
         await checkAuthStatus();
       } catch (error: any) {
         console.error("Initialization error:", error);
@@ -84,7 +88,9 @@ function RootLayoutNav() {
       }
 
       const elapsed = Date.now() - startTime;
-      const minDisplayTime = 1000;
+      // Only enforce minimum splash screen time on native (splash screen exists there).
+      // On web there is no splash screen, so skip the artificial delay.
+      const minDisplayTime = Platform.OS === "web" ? 0 : 1000;
 
       if (elapsed < minDisplayTime) {
         await new Promise((resolve) =>
@@ -93,7 +99,9 @@ function RootLayoutNav() {
       }
 
       setIsReady(true);
-      SplashScreen.hideAsync();
+      if (Platform.OS !== "web") {
+        SplashScreen.hideAsync();
+      }
     };
     initializeAuth();
   }, []);
@@ -154,18 +162,33 @@ function RootLayoutNav() {
   }, [isLoggedIn, segments, isReady, inAuthGroup]);
 
   if (!isReady || (!isLoggedIn && inAuthGroup)) {
+    if (Platform.OS === "web") {
+      return <LoadingState />;
+    }
     return null;
   }
 
   return (
-    <>
-      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+      }}
+    >
+      <StatusBar
+        style={colorScheme === "dark" ? "light" : "dark"}
+        translucent={Platform.OS === "android"}
+        backgroundColor="transparent"
+      />
       {isLoggedIn ? (
         <Stack
           screenOptions={{
             animation: "slide_from_right",
             title: "JIS Companion (Unofficial)",
             headerShown: false,
+            contentStyle: {
+              backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+            },
           }}
         >
           <Stack.Screen name="(tabs)" />
@@ -175,6 +198,9 @@ function RootLayoutNav() {
           screenOptions={{
             animation: "slide_from_right",
             title: "JIS Companion (Unofficial)",
+            contentStyle: {
+              backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+            },
           }}
         >
           <Stack.Screen name="login" options={{ headerShown: false }} />
@@ -191,6 +217,6 @@ function RootLayoutNav() {
           onDismiss={handleDismissUpdate}
         />
       )}
-    </>
+    </View>
   );
 }

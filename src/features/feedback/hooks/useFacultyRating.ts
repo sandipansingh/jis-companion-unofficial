@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { FacultyFeedbackItem, FeedbackQuestion } from "../api";
 import { useFeedbackStore } from "../store";
+import { FacultyFeedbackItem, FeedbackQuestion } from "../types";
 
 interface UseFacultyRatingParams {
   facCode: string | null;
@@ -52,7 +52,7 @@ export function useFacultyRating({
     if (feedbackQuestions.length > 0) {
       const initialRatings: { [key: number]: number } = {};
       feedbackQuestions.forEach((q) => {
-        initialRatings[q.id] = q.rating || 10;
+        initialRatings[q.id] = q.rating ?? 0;
       });
       setRatings(initialRatings);
     }

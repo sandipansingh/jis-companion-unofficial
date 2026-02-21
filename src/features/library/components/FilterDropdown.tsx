@@ -1,6 +1,6 @@
 import { Check } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-import { LibrarySearchField } from "../api";
+import { LibrarySearchField } from "../types";
 
 interface FilterDropdownProps {
   selectedField: LibrarySearchField;
@@ -41,10 +41,9 @@ export function FilterDropdown({ selectedField, onSelectField }: FilterDropdownP
           <Text
             className={`flex-1 text-sm ${
               selectedField === option.field
-                ? "text-cobalt-700 dark:text-white"
-                : "text-ink-800 dark:text-ink-300"
+                ? "text-cobalt-700 dark:text-white font-sans-semi"
+                : "text-ink-800 dark:text-ink-300 font-sans"
             }`}
-            style={{ fontFamily: selectedField === option.field ? "GeneralSans-Semibold" : "GeneralSans-Regular" }}
           >
             {option.label}
           </Text>

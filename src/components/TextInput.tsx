@@ -33,24 +33,24 @@ export function TextInput({
   const [isFocused, setIsFocused] = useState(false);
   const borderAnim = useRef(new Animated.Value(0)).current;
 
-  const handleFocus = () => {
+  const handleFocus: NonNullable<TextInputProps["onFocus"]> = (e) => {
     setIsFocused(true);
     Animated.timing(borderAnim, {
       toValue: 1,
       duration: 180,
       useNativeDriver: false,
     }).start();
-    props.onFocus?.(null as any);
+    props.onFocus?.(e);
   };
 
-  const handleBlur = () => {
+  const handleBlur: NonNullable<TextInputProps["onBlur"]> = (e) => {
     setIsFocused(false);
     Animated.timing(borderAnim, {
       toValue: 0,
       duration: 180,
       useNativeDriver: false,
     }).start();
-    props.onBlur?.(null as any);
+    props.onBlur?.(e);
   };
 
   const borderColor = borderAnim.interpolate({

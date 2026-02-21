@@ -39,21 +39,18 @@ export function ProgressCard({
       <View className="flex-row justify-between items-start mb-4">
         <View>
           <Text
-            className="text-lg text-ink-900 dark:text-white"
-            style={{ fontFamily: 'ClashDisplay-Semibold' }}
+            className="text-lg text-ink-900 dark:text-white font-display"
           >
             Your Progress
           </Text>
           <Text
-            className="text-xs text-ink-500 dark:text-ink-400 mt-0.5"
-            style={{ fontFamily: 'GeneralSans-Regular' }}
+            className="text-xs text-ink-500 dark:text-ink-400 mt-0.5 font-sans"
           >
             Complete feedback for all subjects
           </Text>
         </View>
         <Text
-          className="text-3xl text-cobalt-600 dark:text-cobalt-300"
-          style={{ fontFamily: 'ClashDisplay-Bold' }}
+          className="text-3xl text-cobalt-600 dark:text-cobalt-300 font-display-bold"
         >
           {progressPercentage}%
         </Text>
@@ -63,42 +60,36 @@ export function ProgressCard({
       <View className="flex-row gap-2 mb-4">
         <View className="flex-1 bg-success-light/60 dark:bg-green-900/30 border border-success-light dark:border-green-800 rounded-xl p-3 items-center">
           <Text
-            className="text-xl text-green-800 dark:text-green-300"
-            style={{ fontFamily: 'ClashDisplay-Bold' }}
+            className="text-xl text-green-800 dark:text-green-300 font-display-bold"
           >
             {submittedCount}
           </Text>
           <Text
-            className="text-[9px] text-green-700 dark:text-green-400 uppercase tracking-widest mt-0.5"
-            style={{ fontFamily: 'GeneralSans-Semibold' }}
+            className="text-[9px] text-green-700 dark:text-green-400 uppercase tracking-widest mt-0.5 font-sans-semi"
           >
             Done
           </Text>
         </View>
         <View className="flex-1 bg-warning-light/60 dark:bg-yellow-900/30 border border-warning/20 dark:border-yellow-800 rounded-xl p-3 items-center">
           <Text
-            className="text-xl text-yellow-800 dark:text-yellow-300"
-            style={{ fontFamily: "ClashDisplay-Bold" }}
+            className="text-xl text-yellow-800 dark:text-yellow-300 font-display-bold"
           >
             {pendingCount}
           </Text>
           <Text
-            className="text-[9px] text-yellow-700 uppercase tracking-widest mt-0.5"
-            style={{ fontFamily: "GeneralSans-Semibold" }}
+            className="text-[9px] text-yellow-700 dark:text-yellow-400 uppercase tracking-widest mt-0.5 font-sans-semi"
           >
             Pending
           </Text>
         </View>
         <View className="flex-1 bg-ink-100 dark:bg-ink-800 border border-border rounded-xl p-3 items-center">
           <Text
-            className="text-xl text-ink-700 dark:text-ink-300"
-            style={{ fontFamily: "ClashDisplay-Bold" }}
+            className="text-xl text-ink-700 dark:text-ink-300 font-display-bold"
           >
             {notOptedCount}
           </Text>
           <Text
-            className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-0.5"
-            style={{ fontFamily: "GeneralSans-Semibold" }}
+            className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mt-0.5 font-sans-semi"
           >
             Skipped
           </Text>

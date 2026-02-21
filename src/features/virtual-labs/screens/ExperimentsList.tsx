@@ -1,6 +1,7 @@
 import { EmptyState, Header, LoadingState } from "@/src/components";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
-import { FlatList, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { View } from "react-native";
 import { ExperimentCard } from "../components";
 import { useExperimentsData } from "../hooks/useExperimentsData";
 
@@ -26,12 +27,12 @@ export default function ExperimentsList() {
       ) : experiments.length === 0 ? (
         <EmptyState message="No experiments available" />
       ) : (
-        <FlatList
+        <FlashList
           data={experiments}
           renderItem={renderItem}
-          keyExtractor={(item, index) => `${item.sl}-${index}`}
+          keyExtractor={(item: any, index: number) => `${item.sl}-${index}`}
           contentContainerStyle={{ padding: 16, paddingBottom: bottomOffset + 20 }}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
       )}
     </View>

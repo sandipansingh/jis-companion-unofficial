@@ -1,5 +1,5 @@
 import { isClassInFuture } from "@/src/utils/dateHelpers";
-import { SubjectWiseAttendance } from "../api";
+import { SubjectWiseAttendance } from "../types";
 
 export function getAttendanceStatus(
   classData: SubjectWiseAttendance

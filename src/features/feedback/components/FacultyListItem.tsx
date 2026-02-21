@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { FacultyFeedbackItem } from "../api";
+import { FacultyFeedbackItem } from "../types";
 import { FacultyAvatar } from "./FacultyAvatar";
 import { FeedbackStatusBadge } from "./FeedbackStatusBadge";
 
@@ -26,23 +26,20 @@ export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
 
       <View className="flex-1 gap-0.5">
         <Text
-          className="text-base text-ink-900 dark:text-white"
-          style={{ fontFamily: 'GeneralSans-Semibold' }}
+          className="text-base text-ink-900 dark:text-white font-sans-semi"
           numberOfLines={1}
         >
           {faculty.fac_name}
         </Text>
         <Text
-          className="text-xs text-ink-500 dark:text-ink-400"
-          style={{ fontFamily: 'GeneralSans-Regular' }}
+          className="text-xs text-ink-500 dark:text-ink-400 font-sans"
           numberOfLines={1}
         >
           {faculty.sub_name}
         </Text>
         <View className="bg-ink-100 dark:bg-ink-800 rounded-full px-2 py-0.5 self-start mt-1">
           <Text
-            className="text-[10px] text-ink-500 dark:text-ink-300"
-            style={{ fontFamily: 'GeneralSans-Medium' }}
+            className="text-[10px] text-ink-500 dark:text-ink-300 font-sans-md"
           >
             {faculty.sub_code}
           </Text>

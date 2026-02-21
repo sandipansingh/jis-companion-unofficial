@@ -1,3 +1,4 @@
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { MapPin } from "lucide-react-native";
 import { Text, View } from "react-native";
 import { FacultyInfo } from "./FacultyInfo";
@@ -19,6 +20,8 @@ export function ClassInfoCard({
   facultyName,
   location,
 }: ClassInfoCardProps) {
+  const { isDark, colors } = useTheme();
+
   return (
     <View
       className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 mb-4"
@@ -36,17 +39,15 @@ export function ClassInfoCard({
       </View>
 
       <Text
-        className="text-2xl text-ink-900 dark:text-white mb-1.5 leading-tight"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-2xl text-ink-900 dark:text-white mb-1.5 leading-tight font-display"
       >
         {subjectName}
       </Text>
 
       <View className="flex-row items-center gap-1.5 mb-1">
-        <MapPin size={13} color="#94A3B8" />
+        <MapPin size={13} color={isDark ? colors.ink[400] : colors.ink[500]} />
         <Text
-          className="text-sm text-ink-500 dark:text-ink-400"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-sm text-ink-500 dark:text-ink-400 font-sans"
         >
           {location}
         </Text>

@@ -1,1 +1,1 @@
-export { default } from "@/src/features/virtual-labs/screens/ExperimentsList";
+export { ExperimentsList as default } from "@/src/features/virtual-labs";

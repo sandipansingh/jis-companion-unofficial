@@ -1,1 +1,1 @@
-export { default } from "@/src/features/academics/screens/ClassDetails";
+export { ClassDetails as default } from "@/src/features/academics";

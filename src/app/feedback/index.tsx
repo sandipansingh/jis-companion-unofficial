@@ -1,1 +1,1 @@
-export { default } from "@/src/features/feedback/screens/FeedbackHome";
+export { FeedbackHome as default } from "@/src/features/feedback";

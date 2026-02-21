@@ -62,7 +62,7 @@ const Colors = {
     textInverse: "#0F172A",
     
     // Border
-    border: "#1E293B", // ink.800 approx
+    border: "#1E293B", // ink.900 approx
     
     // Primary/Brand
     primary: "#4C7EF3", // cobalt.400 (lighter for dark mode)

@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { syncFeeData } from "@/src/services/sync";
 import { create } from "zustand";
-import { FeeLedgerEntry } from "../api/fees";
+import { FeeLedgerEntry } from "../types";
 
 interface FeesStore {
   feeData: FeeLedgerEntry[];
@@ -21,21 +21,28 @@ export const useFeesStore = create<FeesStore>((set, get) => ({
   fromCache: false,
 
   fetchFeeData: async () => {
-    const { feeData, loading } = get();
-    if (feeData.length > 0 || loading) {
-      console.log("Fee data already loaded or loading in progress");
+    const { loading } = get();
+    if (loading) return;
+
+    const { studentId, loginData } = useAuthStore.getState();
+    if (!studentId || !loginData) {
+      set({ error: "User not authenticated", loading: false });
       return;
     }
 
-    set({ loading: true, error: null });
+    try {
+      const { getFeeData } = await import("@/src/services/database");
+      const cached = await getFeeData(studentId);
+      if (cached) {
+        set({ feeData: cached, fromCache: true, error: null });
+      } else {
+        set({ loading: true, error: null });
+      }
+    } catch {
+      set({ loading: true, error: null });
+    }
 
     try {
-      const { studentId, loginData } = useAuthStore.getState();
-
-      if (!studentId || !loginData) {
-        throw new Error("User not authenticated");
-      }
-
       const result = await syncFeeData(studentId, loginData.branch_id);
 
       console.log(
@@ -51,34 +58,24 @@ export const useFeesStore = create<FeesStore>((set, get) => ({
       });
     } catch (error: any) {
       console.error("Failed to fetch fee data:", error);
-      set({
-        error: error.message || "Failed to fetch fee data",
-        loading: false,
-      });
+      const { feeData } = get();
+      if (feeData.length > 0) {
+        set({ loading: false, isOnline: false, fromCache: true });
+      } else {
+        set({
+          error: error.message || "Failed to fetch fee data",
+          loading: false,
+        });
+      }
     }
   },
 
-  clearFeeData: async () => {
-    try {
-      const { studentId } = useAuthStore.getState();
-      if (studentId) {
-        const { deleteFeeData } = await import("@/src/services/database");
-        await deleteFeeData(studentId);
-      }
-      set({
-        feeData: [],
-        loading: false,
-        error: null,
-        fromCache: false,
-      });
-    } catch (error) {
-      console.error("Error clearing fee data:", error);
-      set({
-        feeData: [],
-        loading: false,
-        error: null,
-        fromCache: false,
-      });
-    }
+  clearFeeData: () => {
+    set({
+      feeData: [],
+      loading: false,
+      error: null,
+      fromCache: false,
+    });
   },
 }));

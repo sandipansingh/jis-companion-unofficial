@@ -1,8 +1,8 @@
 import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { useAlertStore } from "@/src/store/alertStore";
 import { useEffect } from "react";
-import { LibraryFilterType } from "../api";
 import { useLibraryStore } from "../store";
+import { LibraryFilterType } from "../types";
 
 export function useMyBooksData() {
   const { showAlert } = useAlertStore();

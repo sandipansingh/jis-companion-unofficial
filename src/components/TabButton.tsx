@@ -27,10 +27,9 @@ export function TabButton({ label, isActive, onPress }: TabButtonProps) {
       activeOpacity={0.8}
     >
       <Text
-        className={`text-[11px] text-center tracking-widest uppercase ${
+        className={`text-[11px] text-center tracking-widest uppercase font-sans-semi ${
           isActive ? "text-white" : "text-ink-500 dark:text-ink-400"
         }`}
-        style={{ fontFamily: "GeneralSans-Semibold" }}
       >
         {label}
       </Text>

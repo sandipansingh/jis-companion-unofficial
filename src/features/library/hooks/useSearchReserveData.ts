@@ -2,7 +2,7 @@ import { useAuthStore } from "@/src/features/auth";
 import {
   LibrarySearchField,
   LibrarySearchResult,
-} from "@/src/features/library/api/library";
+} from "@/src/features/library/types";
 import { useAlertStore } from "@/src/store/alertStore";
 import { useEffect, useState } from "react";
 import { useLibraryStore } from "../store";

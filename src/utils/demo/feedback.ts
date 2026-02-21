@@ -1,7 +1,7 @@
 import {
   FacultyFeedbackItem,
   FeedbackQuestion,
-} from "@/src/features/feedback/api/feedback";
+} from "@/src/features/feedback/types";
 
 /**
  * Demo faculty list for feedback

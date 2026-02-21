@@ -1,1 +1,1 @@
-export { default } from "@/src/features/library/screens/SearchReserve";
+export { SearchReserve as default } from "@/src/features/library";

@@ -19,8 +19,7 @@ export function ErrorState({
         <Text className="text-3xl">⚠️</Text>
       </View>
       <Text
-        className="text-base text-ink-700 text-center leading-6"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-base text-ink-700 text-center leading-6 font-sans"
       >
         {message}
       </Text>

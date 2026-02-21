@@ -24,7 +24,14 @@ function StarButton({ num, value, onChange }: { num: number; value: number; onCh
   const emptyColor = isDark ? "#475569" : "#CBD5E1";
 
   return (
-    <TouchableOpacity onPress={handlePress} className="p-0.5" activeOpacity={0.7}>
+    <TouchableOpacity
+      onPress={handlePress}
+      className="p-0.5"
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={`Rate ${num} out of 10 stars`}
+      accessibilityState={{ selected: isFilled }}
+    >
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         <Star size={28} color={isFilled ? "#F59E0B" : emptyColor} fill={isFilled ? "#F59E0B" : "transparent"} />
       </Animated.View>

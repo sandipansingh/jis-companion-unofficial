@@ -34,8 +34,7 @@ export function CourseDropdown({
     <>
       <View className="mb-5">
         <Text
-          className="text-xs text-ink-500 dark:text-ink-400 mb-2 ml-1 tracking-widest uppercase"
-          style={{ fontFamily: "GeneralSans-Semibold" }}
+          className="text-xs text-ink-500 dark:text-ink-400 mb-2 ml-1 tracking-widest uppercase font-sans-semi"
         >
           {label}
         </Text>
@@ -51,12 +50,11 @@ export function CourseDropdown({
           onPress={onOpen}
         >
           <Text
-            className={
+            className={`text-sm font-sans-md ${
               value
-                ? "text-ink-900 dark:text-ink-100 text-sm"
-                : "text-ink-400 dark:text-ink-500 text-sm"
-            }
-            style={{ fontFamily: "GeneralSans-Medium" }}
+                ? "text-ink-900 dark:text-ink-100"
+                : "text-ink-400 dark:text-ink-500"
+            }`}
           >
             {value || placeholder}
           </Text>
@@ -71,15 +69,13 @@ export function CourseDropdown({
         onRequestClose={onClose}
       >
         <TouchableOpacity
-          className="flex-1 justify-center items-center px-5"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          className="flex-1 justify-center items-center px-5 bg-black/50"
           activeOpacity={1}
           onPress={onClose}
         >
           <View
-            className="w-full bg-surface dark:bg-ink-900 rounded-2xl overflow-hidden"
+            className="w-full bg-surface dark:bg-ink-900 rounded-2xl overflow-hidden max-h-[70%]"
             style={{
-              maxHeight: "70%",
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.25,
@@ -87,7 +83,7 @@ export function CourseDropdown({
               elevation: 5,
             }}
           >
-            <ScrollView style={{ maxHeight: 400 }}>
+            <ScrollView className="max-h-[400px]">
               {options.map((option, index) => (
                 <TouchableOpacity
                   key={option.value}
@@ -96,7 +92,7 @@ export function CourseDropdown({
                     borderBottomWidth: index === options.length - 1 ? 0 : 1,
                     borderBottomColor: isDark ? "#334155" : "#CBD5E1",
                     backgroundColor:
-                      value === option.label
+                      value === option.value
                         ? isDark
                           ? "#1F2937"
                           : "#EEF3FF"
@@ -105,12 +101,11 @@ export function CourseDropdown({
                   onPress={() => onSelect(option.value)}
                 >
                   <Text
-                    className="text-ink-900 dark:text-ink-100 text-base"
-                    style={{ fontFamily: "GeneralSans-Medium" }}
+                    className="text-ink-900 dark:text-ink-100 text-base font-sans-md"
                   >
                     {option.label}
                   </Text>
-                  {value === option.label && (
+                  {value === option.value && (
                     <Check size={16} color="#2B5BDB" />
                   )}
                 </TouchableOpacity>

@@ -45,17 +45,14 @@ export const TabBarIcon: React.FC<TabBarIconProps> = ({
       {/* Active Indicator Background */}
       <Animated.View
         className="absolute w-[50px] h-[50px] rounded-[25px] bg-slate-100"
-        style={useAnimatedStyle(() => ({
-          transform: [{ scale: withSpring(focused ? 1 : 0) }],
-          opacity: withTiming(focused ? 1 : 0),
-        }))}
+        style={animatedStyle}
       />
 
       {/* Icon */}
       <View className="z-10">
         <Icon
-          size={24}
-          color={focused ? "#1E2235" : "#64748B"}
+          size={size}
+          color={color}
           strokeWidth={focused ? 2 : 1.5}
         />
       </View>

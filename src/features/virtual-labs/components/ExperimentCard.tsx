@@ -33,16 +33,14 @@ export function ExperimentCard({
         <View className="flex-1 gap-1">
           <View className="bg-ink-100 dark:bg-ink-800 rounded-full px-2.5 py-0.5 self-start">
             <Text
-              className="text-[10px] text-ink-500 dark:text-ink-300"
-              style={{ fontFamily: "GeneralSans-Medium" }}
+              className="text-[10px] text-ink-500 dark:text-ink-300 font-sans-md"
             >
               #{serialNumber}
             </Text>
           </View>
           {subjectCode && (
             <Text
-              className="text-xs text-ink-500 dark:text-ink-400"
-              style={{ fontFamily: "GeneralSans-Regular" }}
+              className="text-xs text-ink-500 dark:text-ink-400 font-sans"
             >
               {subjectCode}
             </Text>
@@ -52,8 +50,7 @@ export function ExperimentCard({
 
       {/* Experiment name */}
       <Text
-        className="text-base text-ink-900 dark:text-white leading-snug mb-3"
-        style={{ fontFamily: "GeneralSans-Semibold" }}
+        className="text-base text-ink-900 dark:text-white leading-snug mb-3 font-sans-semi"
       >
         {experimentName}
       </Text>
@@ -66,8 +63,7 @@ export function ExperimentCard({
       >
         <PlayCircle size={16} color="#2B5BDB" />
         <Text
-          className="text-sm text-cobalt-600 dark:text-cobalt-400"
-          style={{ fontFamily: "GeneralSans-Semibold" }}
+          className="text-sm text-cobalt-600 dark:text-cobalt-400 font-sans-semi"
         >
           Start Simulation
         </Text>

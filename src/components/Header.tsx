@@ -38,8 +38,7 @@ export function Header({
             <ChevronLeft size={20} color={isDark ? "#F8FAFC" : "#1E2235"} />
           </TouchableOpacity>
           <Text
-            className="text-xl text-ink-900 dark:text-ink-100 flex-1"
-            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            className="text-xl text-ink-900 dark:text-ink-100 flex-1 font-display"
           >
             {title}
           </Text>
@@ -48,8 +47,7 @@ export function Header({
       ) : (
         <View className="flex-row items-center justify-between">
           <Text
-            className="text-xl text-ink-900 dark:text-ink-100"
-            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            className="text-xl text-ink-900 dark:text-ink-100 font-display"
           >
             {title}
           </Text>

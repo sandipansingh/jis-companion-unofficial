@@ -40,7 +40,7 @@ export default function Login() {
           justifyContent: "space-between",
         }}
         bounces
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         keyboardShouldPersistTaps="handled"
       >
         <View>

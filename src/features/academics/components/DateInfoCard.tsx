@@ -7,12 +7,19 @@ interface DateInfoCardProps {
 
 export function DateInfoCard({ date }: DateInfoCardProps) {
   const dateObj = new Date(date);
-  const formatted = dateObj.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-  const weekday = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+  const isValidDate = !Number.isNaN(dateObj.getTime());
+
+  const formatted = isValidDate
+    ? dateObj.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "—";
+
+  const weekday = isValidDate
+    ? dateObj.toLocaleDateString("en-US", { weekday: "long" })
+    : "Invalid date";
 
   return (
     <View
@@ -26,8 +33,7 @@ export function DateInfoCard({ date }: DateInfoCardProps) {
       }}
     >
       <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5"
-        style={{ fontFamily: "GeneralSans-Semibold" }}
+        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5 font-sans-semi"
       >
         Date
       </Text>
@@ -38,14 +44,12 @@ export function DateInfoCard({ date }: DateInfoCardProps) {
           </View>
           <View>
             <Text
-              className="text-base text-cobalt-900 dark:text-white"
-              style={{ fontFamily: "ClashDisplay-Semibold" }}
+              className="text-base text-cobalt-900 dark:text-white font-display"
             >
               {formatted}
             </Text>
             <Text
-              className="text-xs text-cobalt-500 dark:text-ink-300"
-              style={{ fontFamily: "GeneralSans-Regular" }}
+              className="text-xs text-cobalt-500 dark:text-ink-300 font-sans"
             >
               {weekday}
             </Text>

@@ -10,10 +10,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { FacultyFeedbackItem } from "../api";
 import { FacultyListItem, ProgressCard } from "../components";
 import { useFeedbackData } from "../hooks";
 import { useFeedbackStore } from "../store";
+import { FacultyFeedbackItem } from "../types";
 import { createFacultyId } from "../utils/facultyId";
 
 export default function FacultyListScreen() {
@@ -70,14 +70,12 @@ export default function FacultyListScreen() {
             <Lock size={36} color="#94A3B8" />
           </View>
           <Text
-            className="text-xl text-ink-900 mb-2 dark:text-ink-100"
-            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            className="text-xl text-ink-900 mb-2 dark:text-ink-100 font-display"
           >
             Feedback Locked
           </Text>
           <Text
-            className="text-sm text-ink-500 text-center leading-relaxed"
-            style={{ fontFamily: "GeneralSans-Regular" }}
+            className="text-sm text-ink-500 text-center leading-relaxed font-sans"
           >
             Your feedback has been submitted successfully.
           </Text>
@@ -86,14 +84,13 @@ export default function FacultyListScreen() {
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: bottomOffset + 120 }}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         >
           {loading ? (
             <View className="items-center py-16 gap-3">
               <ActivityIndicator size="large" color="#2B5BDB" />
               <Text
-                className="text-sm text-ink-500"
-                style={{ fontFamily: "GeneralSans-Regular" }}
+                className="text-sm text-ink-500 font-sans"
               >
                 Loading...
               </Text>
@@ -102,8 +99,7 @@ export default function FacultyListScreen() {
             <View className="items-center py-16 gap-4">
               <AlertCircle size={48} color="#DC2626" />
               <Text
-                className="text-sm text-danger text-center"
-                style={{ fontFamily: "GeneralSans-Regular" }}
+                className="text-sm text-danger text-center font-sans"
               >
                 {error}
               </Text>
@@ -124,8 +120,7 @@ export default function FacultyListScreen() {
                 <View className="items-center py-16 gap-4">
                   <Clipboard size={48} color="#CBD5E1" />
                   <Text
-                    className="text-sm text-ink-500"
-                    style={{ fontFamily: "GeneralSans-Regular" }}
+                    className="text-sm text-ink-500 font-sans"
                   >
                     No feedback available
                   </Text>
@@ -145,10 +140,9 @@ export default function FacultyListScreen() {
               {totalCount > 0 && (
                 <View className="mt-6 gap-3">
                   {showConfirmLock ? (
-                    <View className="bg-ink-100 rounded-2xl p-4 gap-4">
+                    <View className="bg-ink-100 dark:bg-ink-800 rounded-2xl p-4 gap-4">
                       <Text
-                        className="text-center text-ink-900"
-                        style={{ fontFamily: "GeneralSans-Semibold" }}
+                        className="text-center text-ink-900 dark:text-ink-100 font-sans-semi"
                       >
                         Finalize & Submit All Feedback?
                       </Text>
@@ -179,8 +173,7 @@ export default function FacultyListScreen() {
                   )}
 
                   <Text
-                    className="text-center text-[10px] text-ink-400"
-                    style={{ fontFamily: "GeneralSans-Regular" }}
+                    className="text-center text-[10px] text-ink-400 font-sans"
                   >
                     Once submitted, feedback cannot be edited.
                   </Text>

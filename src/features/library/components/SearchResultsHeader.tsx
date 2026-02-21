@@ -22,14 +22,12 @@ export function SearchResultsHeader({ count }: SearchResultsHeaderProps) {
       </View>
       <View>
         <Text
-          className="text-base text-ink-900 dark:text-white"
-          style={{ fontFamily: "ClashDisplay-Semibold" }}
+          className="text-base text-ink-900 dark:text-white font-display"
         >
           {count} {count === 1 ? "Book" : "Books"} Found
         </Text>
         <Text
-          className="text-xs text-ink-500 dark:text-ink-400"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-xs text-ink-500 dark:text-ink-400 font-sans"
         >
           Tap to reserve available books
         </Text>

@@ -17,14 +17,12 @@ export function NoResultsView() {
         <Search size={40} color="#CBD5E1" />
       </View>
       <Text
-        className="text-lg text-ink-900 mb-2"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-lg text-ink-900 mb-2 font-display"
       >
         No Results Found
       </Text>
       <Text
-        className="text-sm text-ink-500 text-center"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-sm text-ink-500 text-center font-sans"
       >
         Try adjusting your search query or filter
       </Text>

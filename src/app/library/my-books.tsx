@@ -1,1 +1,1 @@
-export { default } from "@/src/features/library/screens/MyBooks";
+export { MyBooks as default } from "@/src/features/library";

@@ -13,8 +13,7 @@ export function DemoLoginButton({ onPress }: DemoLoginButtonProps) {
       <View className="flex-row items-center gap-2">
         <View className="h-px w-8 bg-ink-300" />
         <Text
-          className="text-sm text-ink-500"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-sm text-ink-500 font-sans"
         >
           or try demo login
         </Text>

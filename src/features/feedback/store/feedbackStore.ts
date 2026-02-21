@@ -1,16 +1,18 @@
 import { useAuthStore } from "@/src/features/auth";
 import { create } from "zustand";
 import {
-  FacultyFeedbackItem,
-  FeedbackLockStatus,
-  FeedbackQuestion,
-  finalSaveFeedback,
-  getFacultyList,
-  getFeedbackLockStatus,
-  getFeedbackQuestions,
-  markFacultyNotOpted,
-  saveFeedback,
+    finalSaveFeedback,
+    getFacultyList,
+    getFeedbackLockStatus,
+    getFeedbackQuestions,
+    markFacultyNotOpted,
+    saveFeedback,
 } from "../api";
+import {
+    FacultyFeedbackItem,
+    FeedbackLockStatus,
+    FeedbackQuestion,
+} from "../types";
 
 interface FeedbackStore {
   lockStatus: FeedbackLockStatus | null;

@@ -63,7 +63,6 @@ export function CalendarStrip({
       {weekDates.map((date, idx) => {
         const status = getAttendanceStatus(date);
         const isSelected = isSameDay(date, selectedDate);
-        const isToday = isSameDay(date, new Date());
         const attendance = getAttendanceWithFallback(date);
         const s = getStatusStyles(status);
 

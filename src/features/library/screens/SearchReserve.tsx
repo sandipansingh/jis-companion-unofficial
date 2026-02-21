@@ -79,8 +79,7 @@ export default function SearchReserve() {
             <View className="items-center py-12 gap-3">
               <ActivityIndicator size="large" color="#2B5BDB" />
               <Text
-                className="text-sm text-ink-500"
-                style={{ fontFamily: "GeneralSans-Regular" }}
+                className="text-sm text-ink-500 font-sans"
               >
                 Searching library...
               </Text>

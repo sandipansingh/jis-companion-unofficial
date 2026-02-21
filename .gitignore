@@ -42,7 +42,10 @@ yarn-error.*
 # misc
 *.log
 *.sh
-.github/
+# misc
+*.log
+*.sh
+note.txt
 
 # build outputs
 /builds

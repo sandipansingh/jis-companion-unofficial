@@ -2,14 +2,19 @@ import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/features/academics/api/academics";
-import { LoginResponse, UserProfileData } from "@/src/features/auth/api/auth";
-import { FeeLedgerEntry } from "@/src/features/fees/api/fees";
-import { LibraryBook } from "@/src/features/library/api/library";
+} from "@/src/features/academics/types";
+import { LoginResponse, UserProfileData } from "@/src/features/auth/types";
+import {
+  QRPayload,
+  ScannedContact,
+  SocialProfile,
+} from "@/src/features/connect/types";
+import { FeeLedgerEntry } from "@/src/features/fees/types";
+import { LibraryBook } from "@/src/features/library/types";
 import {
   VirtualLabCourse,
   VirtualLabExperiment,
-} from "@/src/features/virtual-labs/api/virtualLabs";
+} from "@/src/features/virtual-labs/types";
 import * as SQLite from "expo-sqlite";
 import { Platform } from "react-native";
 
@@ -21,46 +26,47 @@ export interface AttendancePercentageData extends AttendanceData {
 const GLOBAL_DATA_KEY = "__global__";
 
 let db: SQLite.SQLiteDatabase | null = null;
+let initPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (db) {
     return db;
   }
 
-  const setupDatabase = async (database: SQLite.SQLiteDatabase) => {
+  if (initPromise) {
+    return initPromise;
+  }
+
+  const CURRENT_DB_VERSION = 1;
+
+  const createTablesV1 = async (database: SQLite.SQLiteDatabase) => {
     await database.execAsync(`
-      PRAGMA journal_mode = WAL;
-      
       CREATE TABLE IF NOT EXISTS login_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id TEXT UNIQUE NOT NULL,
+        student_id TEXT PRIMARY KEY NOT NULL,
         login_response TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS user_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id TEXT UNIQUE NOT NULL,
+        student_id TEXT PRIMARY KEY NOT NULL,
         profile_data TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS attendance_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id TEXT NOT NULL,
         month_key TEXT NOT NULL,
         subject_wise_data TEXT NOT NULL,
         date_wise_data TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL,
-        UNIQUE(student_id, month_key)
+        PRIMARY KEY (student_id, month_key)
       );
 
       CREATE TABLE IF NOT EXISTS fees_data (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id TEXT UNIQUE NOT NULL,
+        student_id TEXT PRIMARY KEY NOT NULL,
         fee_ledger TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
@@ -75,15 +81,13 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       );
 
       CREATE TABLE IF NOT EXISTS virtual_labs_courses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id TEXT NOT NULL,
+        student_id TEXT PRIMARY KEY NOT NULL,
         courses_data TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL
       );
 
       CREATE TABLE IF NOT EXISTS virtual_labs_experiments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id TEXT NOT NULL,
         course TEXT NOT NULL,
         stream TEXT NOT NULL,
@@ -91,51 +95,111 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
         experiments_data TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL,
-        UNIQUE(student_id, course, stream, semester)
+        PRIMARY KEY (student_id, course, stream, semester)
       );
 
       CREATE TABLE IF NOT EXISTS library_books (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id TEXT NOT NULL,
         filter_type TEXT NOT NULL,
         books_data TEXT NOT NULL,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL,
-        UNIQUE(student_id, filter_type)
+        PRIMARY KEY (student_id, filter_type)
       );
 
-      CREATE INDEX IF NOT EXISTS idx_login_student_id ON login_data(student_id);
-      CREATE INDEX IF NOT EXISTS idx_user_student_id ON user_data(student_id);
-      CREATE INDEX IF NOT EXISTS idx_attendance_student_month ON attendance_data(student_id, month_key);
-      CREATE INDEX IF NOT EXISTS idx_fees_student_id ON fees_data(student_id);
-      CREATE INDEX IF NOT EXISTS idx_attendance_percentage_student_id ON attendance_percentage(student_id);
-      CREATE INDEX IF NOT EXISTS idx_virtual_labs_courses_student_id ON virtual_labs_courses(student_id);
-      CREATE INDEX IF NOT EXISTS idx_virtual_labs_experiments_student_course ON virtual_labs_experiments(student_id, course, stream, semester);
-      CREATE INDEX IF NOT EXISTS idx_library_books_student_filter ON library_books(student_id, filter_type);
+      CREATE TABLE IF NOT EXISTS social_profiles (
+        student_id TEXT PRIMARY KEY NOT NULL,
+        social_data TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS scanned_contacts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        scanned_by TEXT NOT NULL,
+        student_id TEXT,
+        payload TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        UNIQUE(scanned_by, student_id)
+      );
     `);
   };
 
-  try {
-    db = await SQLite.openDatabaseAsync("jiscompanion.db");
-    await setupDatabase(db);
-  } catch (error: any) {
-    if (Platform.OS === "web" && error?.message?.includes("Invalid VFS state")) {
-      console.warn("Database initialization failed with Invalid VFS state. Attempting to reset database...", error);
-      try {
-        await SQLite.deleteDatabaseAsync("jiscompanion.db");
-        db = await SQLite.openDatabaseAsync("jiscompanion.db");
-        await setupDatabase(db);
-      } catch (retryError) {
-        console.error("Failed to recover database:", retryError);
-        throw retryError;
-      }
-    } else {
-      throw error;
+  const setupDatabase = async (database: SQLite.SQLiteDatabase) => {
+    if (Platform.OS !== 'web') {
+      await database.execAsync(`PRAGMA journal_mode = WAL;`);
     }
-  }
 
-  console.log("Database initialized successfully");
-  return db;
+    // Read current schema version
+    const versionRow = await database.getFirstAsync<{ user_version: number }>(
+      `PRAGMA user_version`
+    );
+    const currentVersion = versionRow?.user_version ?? 0;
+
+    if (currentVersion < 1) {
+      // Migration v0 → v1: drop old tables (which may have autoincrement id columns)
+      // and recreate with student_id as the natural primary key.
+      // This runs on both fresh installs and upgrades from the old schema.
+      console.log("Running DB migration to version 1");
+      await database.execAsync(`
+        DROP TABLE IF EXISTS login_data;
+        DROP TABLE IF EXISTS user_data;
+        DROP TABLE IF EXISTS attendance_data;
+        DROP TABLE IF EXISTS fees_data;
+        DROP TABLE IF EXISTS attendance_percentage;
+        DROP TABLE IF EXISTS virtual_labs_courses;
+        DROP TABLE IF EXISTS virtual_labs_experiments;
+        DROP TABLE IF EXISTS library_books;
+        DROP TABLE IF EXISTS social_profiles;
+        DROP TABLE IF EXISTS scanned_contacts;
+      `);
+      await createTablesV1(database);
+      await database.execAsync(`PRAGMA user_version = ${CURRENT_DB_VERSION};`);
+      console.log("DB migration to version 1 complete");
+    } else {
+      // Schema is up-to-date; just ensure tables exist (idempotent)
+      await createTablesV1(database);
+    }
+  };
+
+  initPromise = (async () => {
+    try {
+      const database = await SQLite.openDatabaseAsync("jiscompanion.db");
+      await setupDatabase(database);
+      db = database;
+      console.log("Database initialized successfully");
+      return db;
+    } catch (error: any) {
+      if (
+        Platform.OS === "web" &&
+        (error?.message?.includes("Invalid VFS state") ||
+          error?.message?.includes("Access Handles cannot be created") ||
+          error?.message?.includes("NoModificationAllowedError"))
+      ) {
+        console.warn("Database lock/VFS error detected. Deleting and retrying...", error);
+        try {
+          if (db) {
+            await db.closeAsync();
+          }
+          await SQLite.deleteDatabaseAsync("jiscompanion.db");
+          const database = await SQLite.openDatabaseAsync("jiscompanion.db");
+          await setupDatabase(database);
+          db = database;
+          console.log("Database recovered and initialized successfully");
+          return db;
+        } catch (retryError) {
+          console.error("Failed to recover database:", retryError);
+          initPromise = null;
+          throw retryError;
+        }
+      } else {
+        initPromise = null;
+        throw error;
+      }
+    }
+  })();
+
+  return initPromise;
 }
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
@@ -157,16 +221,32 @@ interface SaveDataParams {
 
 interface GetDataParams {
   table: string;
-  studentId: string;
+  studentId?: string;
   columns: string[];
   additionalKeys?: { [key: string]: any };
+  orderBy?: string;
+  limit?: number;
+  updatedSince?: number;
 }
 
 interface DeleteDataParams {
   table: string;
-  studentId: string;
+  studentId?: string;
   additionalKeys?: { [key: string]: any };
+  idColumn?: string;
+  idValue?: any;
   logMessage?: string;
+}
+
+interface GetAllDataParams {
+  table: string;
+  studentId?: string;
+  columns: string[];
+  additionalKeys?: { [key: string]: any };
+  whereColumn?: string;
+  whereValue?: any;
+  orderBy?: string;
+  limit?: number;
 }
 
 async function saveData({
@@ -184,13 +264,16 @@ async function saveData({
   const additionalKeyColumns = Object.keys(additionalKeys);
   const additionalKeyValues = Object.values(additionalKeys);
 
-  const allColumns = [
-    "student_id",
-    ...additionalKeyColumns,
+  // Primary-key columns (conflict target)
+  const pkColumns = ["student_id", ...additionalKeyColumns];
+
+  // All columns to insert (pk + data + timestamps)
+  const allInsertColumns = [
+    ...pkColumns,
     ...columns,
     ...(includeTimestamps ? ["created_at", "updated_at"] : []),
   ];
-  const placeholders = allColumns.map(() => "?").join(", ");
+  const placeholders = allInsertColumns.map(() => "?").join(", ");
   const allValues = [
     studentId,
     ...additionalKeyValues,
@@ -198,9 +281,20 @@ async function saveData({
     ...(includeTimestamps ? [now, now] : []),
   ];
 
+  // On conflict update data columns + updated_at but preserve created_at
+  const updateColumns = [
+    ...columns,
+    ...(includeTimestamps ? ["updated_at"] : []),
+  ];
+  const updateSet = updateColumns
+    .map((col) => `${col} = excluded.${col}`)
+    .join(", ");
+  const conflictTarget = pkColumns.join(", ");
+
   await database.runAsync(
-    `INSERT OR REPLACE INTO ${table} (${allColumns.join(", ")})
-     VALUES (${placeholders})`,
+    `INSERT INTO ${table} (${allInsertColumns.join(", ")})
+     VALUES (${placeholders})
+     ON CONFLICT(${conflictTarget}) DO UPDATE SET ${updateSet}`,
     ...allValues
   );
 
@@ -214,24 +308,48 @@ async function getData<T>({
   studentId,
   columns,
   additionalKeys = {},
+  orderBy,
+  limit,
+  updatedSince,
 }: GetDataParams): Promise<T | null> {
   const database = await getDatabase();
 
   const additionalKeyColumns = Object.keys(additionalKeys);
   const additionalKeyValues = Object.values(additionalKeys);
 
-  const whereConditions = [
-    "student_id = ?",
-    ...additionalKeyColumns.map((key) => `${key} = ?`),
-  ];
-  const whereValues = [studentId, ...additionalKeyValues];
+  const whereConditions: string[] = [];
+  const whereValues: any[] = [];
 
-  const result = await database.getFirstAsync<any>(
-    `SELECT ${columns.join(", ")} FROM ${table} WHERE ${whereConditions.join(
-      " AND "
-    )}`,
-    ...whereValues
-  );
+  if (studentId) {
+    whereConditions.push("student_id = ?");
+    whereValues.push(studentId);
+  }
+
+  additionalKeyColumns.forEach((key) => {
+    whereConditions.push(`${key} = ?`);
+  });
+  whereValues.push(...additionalKeyValues);
+
+  if (updatedSince !== undefined) {
+    whereConditions.push("updated_at > ?");
+    whereValues.push(updatedSince);
+  }
+
+  let query = `SELECT ${columns.join(", ")} FROM ${table}`;
+
+  if (whereConditions.length > 0) {
+    query += ` WHERE ${whereConditions.join(" AND ")}`;
+  }
+
+  if (orderBy) {
+    query += ` ORDER BY ${orderBy}`;
+  }
+
+  if (limit) {
+    query += ` LIMIT ${limit}`;
+  }
+
+  const result = await database.getFirstAsync<any>(query, ...whereValues);
 
   return result || null;
 }
@@ -240,10 +358,23 @@ async function deleteData({
   table,
   studentId,
   additionalKeys = {},
+  idColumn,
+  idValue,
   logMessage,
 }: DeleteDataParams): Promise<void> {
   const database = await getDatabase();
 
+  // ID-based deletion (e.g. scanned_contacts by row id)
+  if (idColumn !== undefined && idValue !== undefined) {
+    await database.runAsync(
+      `DELETE FROM ${table} WHERE ${idColumn} = ?`,
+      idValue
+    );
+    if (logMessage) console.log(logMessage);
+    return;
+  }
+
+  // Standard student-scoped deletion
   const additionalKeyColumns = Object.keys(additionalKeys);
   const additionalKeyValues = Object.values(additionalKeys);
 
@@ -261,6 +392,56 @@ async function deleteData({
   if (logMessage) {
     console.log(logMessage);
   }
+}
+
+async function getAllData<T>({
+  table,
+  studentId,
+  columns,
+  additionalKeys = {},
+  whereColumn,
+  whereValue,
+  orderBy,
+  limit,
+}: GetAllDataParams): Promise<T[]> {
+  const database = await getDatabase();
+
+  const additionalKeyColumns = Object.keys(additionalKeys);
+  const additionalKeyValues = Object.values(additionalKeys);
+
+  const whereConditions: string[] = [];
+  const whereValues: any[] = [];
+
+  if (studentId !== undefined) {
+    whereConditions.push("student_id = ?");
+    whereValues.push(studentId);
+  }
+
+  if (whereColumn !== undefined && whereValue !== undefined) {
+    whereConditions.push(`${whereColumn} = ?`);
+    whereValues.push(whereValue);
+  }
+
+  additionalKeyColumns.forEach((key) => {
+    whereConditions.push(`${key} = ?`);
+  });
+  whereValues.push(...additionalKeyValues);
+
+  let query = `SELECT ${columns.join(", ")} FROM ${table}`;
+
+  if (whereConditions.length > 0) {
+    query += ` WHERE ${whereConditions.join(" AND ")}`;
+  }
+
+  if (orderBy) {
+    query += ` ORDER BY ${orderBy}`;
+  }
+
+  if (limit) {
+    query += ` LIMIT ${limit}`;
+  }
+
+  return database.getAllAsync<T>(query, ...whereValues);
 }
 
 export async function saveLoginData(
@@ -307,6 +488,36 @@ export async function hasLoginData(): Promise<{
   }
 
   return { exists: false };
+}
+
+export async function getLatestLoginDataForStudent(
+  studentId: string
+): Promise<{
+  studentId: string;
+  loginData: LoginResponse;
+} | null> {
+  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+
+  const result = await getData<{
+    student_id: string;
+    login_response: string;
+  }>({
+    table: "login_data",
+    studentId,
+    columns: ["student_id", "login_response"],
+    orderBy: "updated_at DESC",
+    limit: 1,
+    updatedSince: thirtyDaysAgo,
+  });
+
+  if (result) {
+    return {
+      studentId: result.student_id,
+      loginData: JSON.parse(result.login_response) as LoginResponse,
+    };
+  }
+
+  return null;
 }
 
 export async function deleteLoginData(studentId: string): Promise<void> {
@@ -634,6 +845,107 @@ export async function getLibraryBooks(
   return null;
 }
 
+
+export async function saveSocialProfile(
+  studentId: string,
+  profile: SocialProfile
+): Promise<void> {
+  await saveData({
+    table: "social_profiles",
+    studentId,
+    columns: ["social_data"],
+    values: [JSON.stringify(profile)],
+    logMessage: `Social profile saved for student: ${studentId}`,
+  });
+}
+
+export async function getSocialProfile(
+  studentId: string
+): Promise<SocialProfile | null> {
+  const result = await getData<{ social_data: string }>({
+    table: "social_profiles",
+    studentId,
+    columns: ["social_data"],
+  });
+
+  if (result) {
+    return JSON.parse(result.social_data) as SocialProfile;
+  }
+
+  return null;
+}
+
+export async function saveScannedContact(
+  scannedBy: string,
+  payload: QRPayload
+): Promise<void> {
+  const database = await getDatabase();
+  const now = Date.now();
+  const dataStr = JSON.stringify(payload);
+  const studentId = payload.studentId;
+
+  try {
+    if (studentId) {
+      // Upsert: on conflict (scanned_by, student_id) update payload + timestamp
+      await database.runAsync(
+        `INSERT INTO scanned_contacts (scanned_by, student_id, payload, timestamp)
+         VALUES (?, ?, ?, ?)
+         ON CONFLICT(scanned_by, student_id) DO UPDATE SET
+           payload = excluded.payload,
+           timestamp = excluded.timestamp`,
+        scannedBy,
+        studentId,
+        dataStr,
+        now
+      );
+    } else {
+      await database.runAsync(
+        "INSERT INTO scanned_contacts (scanned_by, payload, timestamp) VALUES (?, ?, ?)",
+        scannedBy,
+        dataStr,
+        now
+      );
+    }
+    console.log(`Scanned contact saved for user: ${scannedBy}`);
+  } catch (error) {
+    console.error("Error saving scanned contact:", error);
+    throw error;
+  }
+}
+
+export async function getScannedContacts(
+  scannedBy: string
+): Promise<ScannedContact[]> {
+  const rows = await getAllData<{
+    id: number;
+    scanned_by: string;
+    payload: string;
+    timestamp: number;
+  }>({
+    table: "scanned_contacts",
+    columns: ["id", "scanned_by", "payload", "timestamp"],
+    whereColumn: "scanned_by",
+    whereValue: scannedBy,
+    orderBy: "timestamp DESC",
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    scannedBy: row.scanned_by,
+    payload: JSON.parse(row.payload),
+    timestamp: row.timestamp,
+  }));
+}
+
+export async function deleteScannedContact(id: number): Promise<void> {
+  await deleteData({
+    table: "scanned_contacts",
+    idColumn: "id",
+    idValue: id,
+    logMessage: `Scanned contact deleted: ${id}`,
+  });
+}
+
 export async function deleteLibraryBooks(studentId: string): Promise<void> {
   await deleteData({
     table: "library_books",
@@ -670,6 +982,14 @@ export async function deleteAllUserData(studentId: string): Promise<void> {
       "DELETE FROM library_books WHERE student_id = ?",
       studentId
     );
+    await database.runAsync(
+      "DELETE FROM social_profiles WHERE student_id = ?",
+      studentId
+    );
+    await database.runAsync(
+      "DELETE FROM scanned_contacts WHERE scanned_by = ?",
+      studentId
+    );
   });
 
   console.log(`All data deleted for student: ${studentId}`);
@@ -687,6 +1007,8 @@ export async function clearDatabase(): Promise<void> {
     DELETE FROM virtual_labs_courses;
     DELETE FROM virtual_labs_experiments;
     DELETE FROM library_books;
+    DELETE FROM social_profiles;
+    DELETE FROM scanned_contacts;
   `);
 
   console.log("Database cleared");

@@ -46,14 +46,12 @@ export function AlertProvider() {
           }}
         >
           <Text
-            className="text-lg text-center mb-2 text-ink-950 dark:text-white"
-            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            className="text-lg text-center mb-2 text-ink-950 dark:text-white font-display"
           >
             {title}
           </Text>
           <Text
-            className="text-sm text-center mb-6 text-ink-600 dark:text-ink-300 leading-5"
-            style={{ fontFamily: "GeneralSans-Regular" }}
+            className="text-sm text-center mb-6 text-ink-600 dark:text-ink-300 leading-5 font-sans"
           >
             {message}
           </Text>
@@ -68,18 +66,8 @@ export function AlertProvider() {
                     onCancel?.();
                     hideAlert();
                   }}
-                  style={{
-                    height: 44,
-                    borderRadius: 8,
-                    backgroundColor: "transparent",
-                    borderWidth: 1,
-                    borderColor: isDark ? "#334155" : "#E2E8F0",
-                  }}
-                  textStyle={{
-                    fontSize: 14,
-                    color: isDark ? "#94A3B8" : "#64748B",
-                    fontFamily: "GeneralSans-Medium",
-                  }}
+                  className="h-11 rounded-lg bg-transparent border border-ink-300 dark:border-ink-800"
+                  textClassName="text-sm text-ink-600 dark:text-ink-500 font-sans-md"
                 />
               </View>
             )}
@@ -93,18 +81,8 @@ export function AlertProvider() {
                     Linking.openURL(linkUrl);
                     hideAlert();
                   }}
-                  style={{
-                    height: 44,
-                    borderRadius: 8,
-                    backgroundColor: "transparent",
-                    borderWidth: 1,
-                    borderColor: "#2B5BDB",
-                  }}
-                  textStyle={{
-                    fontSize: 14,
-                    color: "#2B5BDB",
-                    fontFamily: "GeneralSans-Medium",
-                  }}
+                  className="h-11 rounded-lg bg-transparent border border-cobalt-500"
+                  textClassName="text-sm text-cobalt-500 font-sans-md"
                 />
               </View>
             )}
@@ -117,14 +95,8 @@ export function AlertProvider() {
                   onConfirm?.();
                   hideAlert();
                 }}
-                style={{
-                  height: 44,
-                  borderRadius: 8,
-                }}
-                textStyle={{
-                  fontSize: 14,
-                  fontFamily: "GeneralSans-Medium",
-                }}
+                className="h-11 rounded-lg"
+                textClassName="text-sm font-sans-md"
               />
             </View>
           </View>

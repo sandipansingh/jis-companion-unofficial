@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  ActivityIndicator,
-  Text as RNText,
-  TextStyle,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  View,
+    ActivityIndicator,
+    Text as RNText,
+    TextStyle,
+    TouchableOpacity,
+    TouchableOpacityProps,
+    View,
 } from "react-native";
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -14,6 +14,7 @@ interface ButtonProps extends TouchableOpacityProps {
   loading?: boolean;
   fullWidth?: boolean;
   textStyle?: TextStyle;
+  textClassName?: string;
   icon?: React.ReactNode;
   iconPosition?: "left" | "right";
   size?: "sm" | "md" | "lg";
@@ -27,11 +28,13 @@ export function Button({
   disabled,
   style,
   textStyle,
+  textClassName,
   icon,
   iconPosition = "left",
   size = "md",
+  className,
   ...props
-}: ButtonProps) {
+}: ButtonProps & { className?: string }) {
   const isDisabled = disabled || loading;
 
   const containerBase =
@@ -66,7 +69,7 @@ export function Button({
 
   return (
     <TouchableOpacity
-      className={`${containerBase} ${widthClass} ${variantClass} ${opacityClass} items-center justify-center`}
+      className={`${containerBase} ${widthClass} ${variantClass} ${opacityClass} items-center justify-center ${className || ""}`}
       style={style}
       disabled={isDisabled}
       activeOpacity={0.82}
@@ -78,7 +81,7 @@ export function Button({
         <View className="flex-row items-center justify-center gap-2">
           {icon && iconPosition === "left" && icon}
           <RNText
-            className={`${textClass} ${textColorClass} font-sans-semi`}
+            className={`${textClass} ${textColorClass} font-sans-semi ${textClassName || ""}`}
             style={textStyle}
           >
             {title}

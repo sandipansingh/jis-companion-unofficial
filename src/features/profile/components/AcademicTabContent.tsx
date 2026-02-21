@@ -1,6 +1,6 @@
 import { Text, View } from "@/src/components";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import type { UserProfileData } from "@/src/features/auth/api/auth";
+import type { UserProfileData } from "@/src/features/auth/types";
 import { Award, Briefcase, Calculator } from "lucide-react-native";
 import { AcademicCard } from "./AcademicCard";
 import { SemesterRow } from "./SemesterRow";
@@ -30,8 +30,7 @@ export function AcademicTabContent({
           <View className="flex-row items-center gap-2 mb-2 pb-1">
             <Briefcase size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
             <Text
-              className="text-sm text-ink-900 dark:text-white"
-              style={{ fontFamily: "GeneralSans-Bold" }}
+              className="text-sm text-ink-900 dark:text-white font-sans-bold"
             >
               Academic History
             </Text>
@@ -62,8 +61,7 @@ export function AcademicTabContent({
           <View className="flex-row items-center gap-2 mb-2 pb-1">
             <Calculator size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
             <Text
-              className="text-sm text-ink-900 dark:text-white"
-              style={{ fontFamily: "GeneralSans-Bold" }}
+              className="text-sm text-ink-900 dark:text-white font-sans-bold"
             >
               Class XII Marks
             </Text>
@@ -108,8 +106,7 @@ export function AcademicTabContent({
         <View className="flex-row items-center gap-2 mb-2 pb-1">
           <Award size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
           <Text
-            className="text-sm text-ink-900 dark:text-white"
-            style={{ fontFamily: "GeneralSans-Bold" }}
+            className="text-sm text-ink-900 dark:text-white font-sans-bold"
           >
             Semester Results
           </Text>

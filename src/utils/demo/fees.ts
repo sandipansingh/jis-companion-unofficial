@@ -1,4 +1,4 @@
-import { FeeLedgerEntry } from "@/src/features/fees/api/fees";
+import { FeeLedgerEntry } from "@/src/features/fees/types";
 
 /**
  * Generate demo fee ledger entries

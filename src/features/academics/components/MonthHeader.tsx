@@ -18,8 +18,7 @@ export function MonthHeader({
     <View className="flex-row items-center justify-between mb-3">
       <TouchableOpacity onPress={onMonthYearPress} activeOpacity={0.7}>
         <Text
-          className="text-base text-ink-950 dark:text-white"
-          style={{ fontFamily: "ClashDisplay-Semibold" }}
+          className="text-base text-ink-950 dark:text-white font-display"
         >
           {getMonthName(month)}, {year}
         </Text>
@@ -30,8 +29,7 @@ export function MonthHeader({
         className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-xl px-3 py-1"
       >
         <Text
-          className="text-xs text-cobalt-600 dark:text-cobalt-300"
-          style={{ fontFamily: "GeneralSans-Semibold" }}
+          className="text-xs text-cobalt-600 dark:text-cobalt-300 font-sans-semi"
         >
           Today
         </Text>

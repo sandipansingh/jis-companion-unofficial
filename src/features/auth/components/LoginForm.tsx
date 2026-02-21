@@ -20,10 +20,9 @@ export function LoginForm({
   onSubmit,
 }: LoginFormProps) {
   return (
-    <View className="w-full gap-4" accessibilityRole={"form" as any}>
+    <View className="w-full gap-4">
       <Text
-        className="text-2xl text-ink-950 dark:text-white mb-2"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-2xl text-ink-950 dark:text-white mb-2 font-display"
       >
         Sign in
       </Text>

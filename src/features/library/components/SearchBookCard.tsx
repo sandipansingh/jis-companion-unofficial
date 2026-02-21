@@ -1,6 +1,6 @@
 import { Book, BookmarkPlus } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-import { LibrarySearchResult } from "../api";
+import { LibrarySearchResult } from "../types";
 
 interface SearchBookCardProps {
   book: LibrarySearchResult;
@@ -29,16 +29,14 @@ export function SearchBookCard({ book, onReserve, isDemoUser = false }: SearchBo
         </View>
         <View className="flex-1">
           <Text
-            className="text-base text-ink-900 dark:text-white leading-snug mb-0.5"
-            style={{ fontFamily: "GeneralSans-Semibold" }}
+            className="text-base text-ink-900 dark:text-white leading-snug mb-0.5 font-sans-semi"
             numberOfLines={2}
           >
             {book.acc_title}
           </Text>
           {book.acc_edition && (
             <Text
-              className="text-xs text-ink-400 dark:text-ink-500 italic"
-              style={{ fontFamily: "GeneralSans-Regular" }}
+              className="text-xs text-ink-400 dark:text-ink-500 italic font-sans"
             >
               Edition: {book.acc_edition}
             </Text>
@@ -48,18 +46,16 @@ export function SearchBookCard({ book, onReserve, isDemoUser = false }: SearchBo
 
       {/* Author/Subject */}
       <Text
-        className="text-sm text-ink-600 dark:text-ink-300 mb-1"
-        style={{ fontFamily: "GeneralSans-Regular" }}
+        className="text-sm text-ink-600 dark:text-ink-300 mb-1 font-sans"
       >
-        <Text style={{ fontFamily: "GeneralSans-Semibold" }}>Author: </Text>
+        <Text className="font-sans-semi">Author: </Text>
         {book.acc_author || "N/A"}
       </Text>
       {book.acc_subject && (
         <Text
-          className="text-sm text-ink-500 dark:text-ink-400 mb-3"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-sm text-ink-500 dark:text-ink-400 mb-3 font-sans"
         >
-          <Text style={{ fontFamily: "GeneralSans-Semibold" }}>Subject: </Text>
+          <Text className="font-sans-semi">Subject: </Text>
           {book.acc_subject}
         </Text>
       )}
@@ -67,28 +63,28 @@ export function SearchBookCard({ book, onReserve, isDemoUser = false }: SearchBo
       {/* Availability grid */}
       <View className="flex-row bg-ink-100 dark:bg-ink-900 rounded-xl p-3 mb-3 gap-2">
         <View className="flex-1 items-center">
-          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5 font-sans-semi">
             Total
           </Text>
-          <Text className="text-xl text-ink-800 dark:text-white" style={{ fontFamily: "ClashDisplay-Bold" }}>
+          <Text className="text-xl text-ink-800 dark:text-white font-display-bold">
             {book.tot_copy}
           </Text>
         </View>
         <View className="w-px bg-ink-300/50 dark:bg-ink-700" />
         <View className="flex-1 items-center">
-          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5 font-sans-semi">
             On Shelf
           </Text>
-          <Text className="text-xl text-green-700 dark:text-green-500" style={{ fontFamily: "ClashDisplay-Bold" }}>
+          <Text className="text-xl text-green-700 dark:text-green-500 font-display-bold">
             {book.tot_shelf}
           </Text>
         </View>
         <View className="w-px bg-ink-300/50 dark:bg-ink-700" />
         <View className="flex-1 items-center">
-          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5" style={{ fontFamily: "GeneralSans-Semibold" }}>
+          <Text className="text-[9px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-0.5 font-sans-semi">
             Issued
           </Text>
-          <Text className="text-xl text-yellow-700 dark:text-yellow-500" style={{ fontFamily: "ClashDisplay-Bold" }}>
+          <Text className="text-xl text-yellow-700 dark:text-yellow-500 font-display-bold">
             {book.tot_issued}
           </Text>
         </View>
@@ -113,8 +109,7 @@ export function SearchBookCard({ book, onReserve, isDemoUser = false }: SearchBo
       >
         <BookmarkPlus size={16} color={isAvailable && !isDemoUser ? "#FFFFFF" : "#94A3B8"} />
         <Text
-          className={`text-sm ${isAvailable && !isDemoUser ? "text-white" : "text-ink-500"}`}
-          style={{ fontFamily: "GeneralSans-Semibold" }}
+          className={`text-sm ${isAvailable && !isDemoUser ? "text-white" : "text-ink-500"} font-sans-semi`}
         >
           {isDemoUser ? "Demo Mode – View Only" : isAvailable ? "Reserve Book" : "Not Available"}
         </Text>

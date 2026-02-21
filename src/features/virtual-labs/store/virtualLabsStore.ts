@@ -3,7 +3,7 @@ import {
   syncVirtualLabExperiments,
 } from "@/src/services/sync";
 import { create } from "zustand";
-import { VirtualLabCourse, VirtualLabExperiment } from "../api/virtualLabs";
+import { VirtualLabCourse, VirtualLabExperiment } from "../types";
 
 interface VirtualLabsState {
   courses: VirtualLabCourse[];
@@ -82,30 +82,14 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
     set({ error: null });
   },
 
-  clearVirtualLabsData: async () => {
-    try {
-      const { deleteVirtualLabCourses, deleteVirtualLabExperiments } =
-        await import("@/src/services/database");
-      await deleteVirtualLabCourses();
-      await deleteVirtualLabExperiments();
-      set({
-        courses: [],
-        experiments: [],
-        selectedCourse: null,
-        loading: false,
-        error: null,
-        fromCache: false,
-      });
-    } catch (error) {
-      console.error("Error clearing virtual labs data:", error);
-      set({
-        courses: [],
-        experiments: [],
-        selectedCourse: null,
-        loading: false,
-        error: null,
-        fromCache: false,
-      });
-    }
+  clearVirtualLabsData: () => {
+    set({
+      courses: [],
+      experiments: [],
+      selectedCourse: null,
+      loading: false,
+      error: null,
+      fromCache: false,
+    });
   },
 }));

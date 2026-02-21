@@ -10,9 +10,8 @@ import {
   changePassword as apiChangePassword,
   fetchUserProfile,
   getStoredCredentials,
-  LoginResponse,
-  UserProfileData,
 } from "../api/auth";
+import { LoginResponse, UserProfileData } from "../types";
 
 interface AttendancePercentageCache {
   total_class: number;
@@ -159,6 +158,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const result = await syncLoginData(studentId, password);
 
+      if (!result.loginData || result.loginData.is_valid !== 1) {
+        return false;
+      }
+
       set({
         isLoggedIn: true,
         studentId,
@@ -216,11 +219,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { studentId } = get();
       if (studentId) {
         await cleanupUserData(studentId);
-
-        const { deleteAttendancePercentage } = await import(
-          "@/src/services/database"
-        );
-        await deleteAttendancePercentage(studentId);
       }
 
       const { useAttendanceStore } = await import(

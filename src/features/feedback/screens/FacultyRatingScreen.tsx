@@ -63,8 +63,7 @@ export default function FacultyRatingScreen() {
         <View className="flex-1 items-center justify-center gap-3">
           <ActivityIndicator size="large" color="#2B5BDB" />
           <Text
-            className="text-sm text-ink-500"
-            style={{ fontFamily: "GeneralSans-Regular" }}
+            className="text-sm text-ink-500 font-sans"
           >
             Loading faculty information...
           </Text>
@@ -80,8 +79,7 @@ export default function FacultyRatingScreen() {
             <View className="items-center justify-center py-16 gap-3">
               <ActivityIndicator size="large" color="#2B5BDB" />
               <Text
-                className="text-sm text-ink-500"
-                style={{ fontFamily: "GeneralSans-Regular" }}
+                className="text-sm text-ink-500 font-sans"
               >
                 Loading questions...
               </Text>
@@ -92,7 +90,7 @@ export default function FacultyRatingScreen() {
                 <FeedbackQuestionCard
                   key={question.id}
                   question={question}
-                  rating={ratings[question.id] || 10}
+                  rating={ratings[question.id] ?? 0}
                   onRatingChange={(value) => updateRating(question.id, value)}
                 />
               ))}

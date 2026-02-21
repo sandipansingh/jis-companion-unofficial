@@ -1,8 +1,9 @@
 import { useTheme } from "@/src/contexts/ThemeContext";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Settings } from "lucide-react-native";
-import { ActivityIndicator, Image, Platform, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from "react-native";
 
 interface WelcomeCardProps {
   userName: string;
@@ -29,13 +30,16 @@ export function WelcomeCard({
   const firstName = userName.split(" ")[0] || "Student";
 
   const getInitials = (name: string) => {
-    if (!name) return "ST";
-    return name
+    if (!name?.trim()) return "ST";
+    const initials = name
+      .trim()
       .split(" ")
+      .filter((p) => p.length > 0)
       .map((p) => p[0])
       .join("")
       .substring(0, 2)
       .toUpperCase();
+    return initials || "ST";
   };
 
   const router = useRouter();
@@ -69,14 +73,12 @@ export function WelcomeCard({
       <View className="flex-row items-start justify-between mb-6">
         <View className="flex-1 pr-4">
           <Text
-            className="text-xs text-ink-500 dark:text-ink-400 tracking-widest uppercase mb-1"
-            style={{ fontFamily: "GeneralSans-Medium" }}
+            className="text-xs text-ink-500 dark:text-ink-400 tracking-widest uppercase mb-1 font-sans-md"
           >
             Welcome back
           </Text>
           <Text
-            className="text-[28px] text-ink-950 dark:text-ink-100 leading-tight"
-            style={{ fontFamily: "ClashDisplay-Bold" }}
+            className="text-[28px] text-ink-950 dark:text-ink-100 leading-tight font-display-bold"
             numberOfLines={1}
             adjustsFontSizeToFit
           >
@@ -85,8 +87,7 @@ export function WelcomeCard({
           <View className="flex-row items-center gap-1.5 mt-2 flex-wrap">
             <View className="bg-cobalt-50 dark:bg-cobalt-900 rounded-full px-2.5 py-0.5 border border-border">
               <Text
-                className="text-[11px] text-cobalt-600 dark:text-cobalt-300"
-                style={{ fontFamily: "GeneralSans-Medium" }}
+                className="text-[11px] text-cobalt-600 dark:text-cobalt-300 font-sans-md"
               >
                 {courseName}
               </Text>
@@ -94,8 +95,7 @@ export function WelcomeCard({
             <View className="w-1 h-1 rounded-full bg-ink-400" />
             <View className="bg-ink-200 dark:bg-ink-800 rounded-full px-2.5 py-0.5">
               <Text
-                className="text-[11px] text-ink-600 dark:text-ink-300"
-                style={{ fontFamily: "GeneralSans-Medium" }}
+                className="text-[11px] text-ink-600 dark:text-ink-300 font-sans-md"
               >
                 {collegeName}
               </Text>
@@ -108,9 +108,9 @@ export function WelcomeCard({
         <View className="flex-row items-center gap-3">
           <TouchableOpacity 
             onPress={() => router.push("/settings")}
-            className="w-10 h-10 rounded-full bg-white/50 items-center justify-center border border-white/60"
+            className="w-10 h-10 rounded-full bg-white/50 dark:bg-ink-700/50 items-center justify-center border border-white/60 dark:border-ink-600/60"
           >
-            <Settings size={20} color="#1E293B" />
+            <Settings size={20} color={isDark ? "#E2E8F0" : "#1E293B"} />
           </TouchableOpacity>
 
           <View
@@ -126,14 +126,13 @@ export function WelcomeCard({
             {profileImageUrl ? (
               <Image
                 source={{ uri: profileImageUrl }}
-                className="w-16 h-16 rounded-2xl"
-                style={{ borderWidth: 2, borderColor: "rgba(255,255,255,0.9)" }}
+                contentFit="cover"
+                style={{ width: 64, height: 64, borderRadius: 16, borderWidth: 2, borderColor: "rgba(255,255,255,0.9)" }}
               />
             ) : (
               <View className="w-16 h-16 rounded-2xl bg-cobalt-500 items-center justify-center">
                 <Text
-                  className="text-xl text-white"
-                  style={{ fontFamily: "ClashDisplay-Semibold" }}
+                  className="text-xl text-white font-display"
                 >
                   {getInitials(userName)}
                 </Text>
@@ -160,8 +159,7 @@ export function WelcomeCard({
           }}
         >
           <Text
-            className="text-[10px] text-ink-500  dark:text-ink-400 uppercase tracking-widest mb-1"
-            style={{ fontFamily: "GeneralSans-Medium" }}
+            className="text-[10px] text-ink-500  dark:text-ink-400 uppercase tracking-widest mb-1 font-sans-md"
           >
             Attendance
           </Text>
@@ -169,19 +167,14 @@ export function WelcomeCard({
             <ActivityIndicator size="small" color="#2B5BDB" />
           ) : (
             <Text
-              className="text-3xl"
+              className="text-3xl font-display-bold"
               style={{
-                fontFamily: "ClashDisplay-Bold",
                 color: attendanceColor,
               }}
             >
               {attendancePercentage}
               <Text
-                style={{
-                  fontFamily: "GeneralSans-Regular",
-                  fontSize: 16,
-                  color: "#94A3B8",
-                }}
+                className="text-base text-ink-500 font-sans"
               >
                 %
               </Text>
@@ -202,8 +195,7 @@ export function WelcomeCard({
           }}
         >
           <Text
-            className="text-[10px] text-ink-500  dark:text-ink-400 uppercase tracking-widest mb-1"
-            style={{ fontFamily: "GeneralSans-Medium" }}
+            className="text-[10px] text-ink-500  dark:text-ink-400 uppercase tracking-widest mb-1 font-sans-md"
           >
             Classes
           </Text>
@@ -212,14 +204,12 @@ export function WelcomeCard({
           ) : (
             <View className="flex-row items-end gap-1">
               <Text
-                className="text-3xl text-ink-950 dark:text-ink-100"
-                style={{ fontFamily: "ClashDisplay-Bold" }}
+                className="text-3xl text-ink-950 dark:text-ink-100 font-display-bold"
               >
                 {attendedClass}
               </Text>
               <Text
-                className="text-base text-ink-400 dark:text-ink-500 mb-1"
-                style={{ fontFamily: "GeneralSans-Regular" }}
+                className="text-base text-ink-400 dark:text-ink-500 mb-1 font-sans"
               >
                 /{totalClass}
               </Text>

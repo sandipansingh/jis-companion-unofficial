@@ -1,4 +1,5 @@
 import { Button } from "@/src/components";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 
@@ -17,6 +18,8 @@ export function DatePickerModal({
   onChange,
   onConfirm,
 }: DatePickerModalProps) {
+  const { isDark, colors } = useTheme();
+
   if (Platform.OS === "android") {
     return visible ? (
       <DateTimePicker
@@ -24,6 +27,7 @@ export function DatePickerModal({
         mode="date"
         display="default"
         onChange={onChange}
+        themeVariant={isDark ? "dark" : "light"}
       />
     ) : null;
   }
@@ -37,28 +41,35 @@ export function DatePickerModal({
     >
       <TouchableOpacity
         className="flex-1 justify-end"
-        style={{ backgroundColor: "rgba(15,23,42,0.5)" }}
+        style={{ backgroundColor: isDark ? "rgba(2,6,23,0.72)" : "rgba(15,23,42,0.5)" }}
         activeOpacity={1}
         onPress={onClose}
+        accessible={true}
+        accessibilityLabel="Close date picker"
+        accessibilityRole="button"
       >
         <TouchableOpacity
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
           className="bg-surface rounded-t-3xl px-5 pb-8 pt-5"
           style={{
-            shadowColor: "#0F172A",
+            backgroundColor: colors.surface,
+            shadowColor: isDark ? "#000" : "#0F172A",
             shadowOffset: { width: 0, height: -4 },
-            shadowOpacity: 0.12,
+            shadowOpacity: isDark ? 0.35 : 0.12,
             shadowRadius: 16,
             elevation: 8,
           }}
         >
           {/* Handle bar */}
-          <View className="w-10 h-1 rounded-full bg-ink-300 self-center mb-4" />
+          <View
+            className="w-10 h-1 rounded-full self-center mb-4"
+            style={{ backgroundColor: isDark ? colors.textTertiary : colors.border }}
+          />
 
           <Text
-            className="text-xl text-ink-900 text-center mb-4"
-            style={{ fontFamily: "ClashDisplay-Semibold" }}
+            className="text-xl text-center mb-4 font-display"
+            style={{ color: colors.text }}
           >
             Select Date
           </Text>
@@ -68,6 +79,7 @@ export function DatePickerModal({
             mode="date"
             display="spinner"
             onChange={onChange}
+            themeVariant={isDark ? "dark" : "light"}
             style={{ height: 200 }}
           />
 

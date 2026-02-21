@@ -1,4 +1,4 @@
-import { LibraryBook } from "@/src/features/library/api/library";
+import { LibraryBook } from "@/src/features/library/types";
 import { Book, Clock } from "lucide-react-native";
 import { Text, View } from "react-native";
 
@@ -31,8 +31,7 @@ export function BookCard({ book }: BookCardProps) {
         <View className="flex-row items-center justify-between mb-1.5">
           <View className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-full px-2.5 py-0.5">
             <Text
-              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-wider"
-              style={{ fontFamily: "GeneralSans-Semibold" }}
+              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-wider font-sans-semi"
               numberOfLines={1}
             >
               {book.acc_type}
@@ -42,8 +41,7 @@ export function BookCard({ book }: BookCardProps) {
             <View className="flex-row items-center gap-1 bg-warning-light dark:bg-yellow-900/30 rounded-full px-2 py-0.5">
               <Clock size={10} color="#D97706" />
               <Text
-                className="text-[10px] text-yellow-700 dark:text-yellow-500"
-                style={{ fontFamily: "GeneralSans-Semibold" }}
+                className="text-[10px] text-yellow-700 dark:text-yellow-500 font-sans-semi"
               >
                 Due
               </Text>
@@ -53,15 +51,13 @@ export function BookCard({ book }: BookCardProps) {
 
         {/* Title */}
         <Text
-          className="text-sm text-ink-900 dark:text-white leading-snug mb-0.5"
-          style={{ fontFamily: "GeneralSans-Semibold" }}
+          className="text-sm text-ink-900 dark:text-white leading-snug mb-0.5 font-sans-semi"
           numberOfLines={2}
         >
           {book.reader_acc_name}
         </Text>
         <Text
-          className="text-xs text-ink-500 mb-2"
-          style={{ fontFamily: "GeneralSans-Regular" }}
+          className="text-xs text-ink-500 mb-2 font-sans"
         >
           Acc: {book.reader_acc_no}
         </Text>
@@ -70,22 +66,19 @@ export function BookCard({ book }: BookCardProps) {
         <View className="flex-row border-t border-border pt-2 gap-4">
           <View className="flex-1">
             <Text
-              className="text-[9px] text-ink-500 uppercase tracking-widest mb-0.5"
-              style={{ fontFamily: "GeneralSans-Semibold" }}
+              className="text-[9px] text-ink-500 uppercase tracking-widest mb-0.5 font-sans-semi"
             >
               Issued
             </Text>
             <Text
-              className="text-xs text-ink-800"
-              style={{ fontFamily: "GeneralSans-Medium" }}
+              className="text-xs text-ink-800 font-sans-md"
             >
               {book.issue_date}
             </Text>
           </View>
           <View className="flex-1 items-end">
             <Text
-              className="text-[9px] text-ink-500 uppercase tracking-widest mb-0.5"
-              style={{ fontFamily: "GeneralSans-Semibold" }}
+              className="text-[9px] text-ink-500 uppercase tracking-widest mb-0.5 font-sans-semi"
             >
               {isReturned ? "Returned" : "Due Date"}
             </Text>

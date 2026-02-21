@@ -2,7 +2,7 @@ import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/features/academics/api/academics";
+} from "@/src/features/academics/types";
 import { DEMO_FACULTY_LIST } from "./feedback";
 
 /**

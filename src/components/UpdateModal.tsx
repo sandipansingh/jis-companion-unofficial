@@ -4,7 +4,7 @@ import { useAlertStore } from "@/src/store/alertStore";
 import { UpdateType } from "@/src/utils/versionHelpers";
 import { ArrowRight, Bug, Rocket, Sparkles } from "lucide-react-native";
 import React from "react";
-import { Linking, Modal, ScrollView, View } from "react-native";
+import { Linking, Modal, processColor, ScrollView, View } from "react-native";
 import { Button } from "./Button";
 import { Text } from "./Themed";
 
@@ -16,6 +16,25 @@ interface UpdateModalProps {
   onDismiss: () => void;
 }
 
+function withOpacity(color: string, opacity: number): string {
+  try {
+    const processed = processColor(color);
+    if (typeof processed !== "number") {
+      return "transparent";
+    }
+
+    const colorInt = processed >>> 0;
+    const red = (colorInt >> 16) & 255;
+    const green = (colorInt >> 8) & 255;
+    const blue = colorInt & 255;
+    const clampedOpacity = Math.max(0, Math.min(1, opacity));
+
+    return `rgba(${red}, ${green}, ${blue}, ${clampedOpacity})`;
+  } catch {
+    return "transparent";
+  }
+}
+
 export function UpdateModal({
   visible,
   updateType,
@@ -25,6 +44,7 @@ export function UpdateModal({
 }: UpdateModalProps) {
   const { colors } = useTheme();
   const { showAlert } = useAlertStore();
+  const mutedSurface = withOpacity(colors.text, 0.06);
 
   const handleOpenStore = async () => {
     try {
@@ -107,13 +127,13 @@ export function UpdateModal({
         >
           <ScrollView
             contentContainerStyle={{ padding: 24, alignItems: "center" }}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
           >
             {/* Header Icon */}
             <View className="mb-5">
               <View
                 className="w-20 h-20 rounded-full justify-center items-center"
-                style={{ backgroundColor: iconColor + "20" }}
+                style={{ backgroundColor: withOpacity(iconColor, 0.125) }}
               >
                 <Icon size={40} color={iconColor} strokeWidth={1.5} />
               </View>
@@ -121,34 +141,35 @@ export function UpdateModal({
 
             {/* Title */}
             <Text
-              className="text-2xl font-bold text-center mb-3 text-ink-950"
-              style={{ fontFamily: "ClashDisplay-Bold" }}
+              className="text-2xl font-bold text-center mb-3 font-display-bold"
+              style={{ color: colors.text }}
             >
               {title}
             </Text>
 
             {/* Message */}
             <Text
-              className="text-base text-center text-ink-600 mb-6 leading-6 px-2"
-              style={{ fontFamily: "GeneralSans-Regular" }}
+              className="text-base text-center mb-6 leading-6 px-2 font-sans"
+              style={{ color: colors.textSecondary }}
             >
               {getMessage()}
             </Text>
 
             {/* Version Info */}
             <View
-              className="flex-row items-center justify-between w-full py-3 px-6 rounded-2xl mb-6 bg-ink-50/50"
+              className="flex-row items-center justify-between w-full py-3 px-6 rounded-2xl mb-6"
+              style={{ backgroundColor: mutedSurface }}
             >
               <View className="items-center flex-1">
                 <Text
-                  className="text-xs text-ink-500 mb-1 font-semibold uppercase tracking-wider"
-                  style={{ fontFamily: "GeneralSans-Medium" }}
+                  className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md"
+                  style={{ color: colors.textTertiary }}
                 >
                   Current
                 </Text>
                 <Text
-                  className="text-base font-bold text-ink-950"
-                  style={{ fontFamily: "ClashDisplay-Semibold" }}
+                  className="text-base font-bold font-display"
+                  style={{ color: colors.text }}
                 >
                   {currentVersion}
                 </Text>
@@ -163,14 +184,14 @@ export function UpdateModal({
 
               <View className="items-center flex-1">
                 <Text
-                  className="text-xs text-ink-500 mb-1 font-semibold uppercase tracking-wider"
-                  style={{ fontFamily: "GeneralSans-Medium" }}
+                  className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md"
+                  style={{ color: colors.textTertiary }}
                 >
                   Latest
                 </Text>
                 <Text
-                  className="text-base font-bold"
-                  style={{ fontFamily: "ClashDisplay-Semibold", color: colors.primary }}
+                  className="text-base font-bold font-display"
+                  style={{ color: colors.primary }}
                 >
                   v{appInfo.version}
                 </Text>
@@ -179,16 +200,19 @@ export function UpdateModal({
 
             {/* Release Notes */}
             {appInfo.releaseNotes && (
-              <View className="w-full mb-6 p-4 bg-ink-50/50 rounded-xl">
+              <View
+                className="w-full mb-6 p-4 rounded-xl"
+                style={{ backgroundColor: mutedSurface }}
+              >
                 <Text
-                  className="text-sm font-bold mb-2 uppercase text-ink-950"
-                  style={{ fontFamily: "GeneralSans-Semibold" }}
+                  className="text-sm font-sans-semi mb-2 uppercase"
+                  style={{ color: colors.text }}
                 >
                   What's New
                 </Text>
                 <Text
-                  className="text-sm leading-5 text-ink-600"
-                  style={{ fontFamily: "GeneralSans-Regular" }}
+                  className="text-sm leading-5 font-sans"
+                  style={{ color: colors.textSecondary }}
                 >
                   {appInfo.releaseNotes
                     .replace(/<br\s*\/?>/gi, "\n")
@@ -214,8 +238,8 @@ export function UpdateModal({
                 title="Update Now"
                 onPress={handleOpenStore}
                 variant="primary"
-                style={{ height: 50, borderRadius: 12 }}
-                textStyle={{ fontSize: 16 }}
+                className="h-[50px] rounded-xl"
+                textClassName="text-base"
               />
 
               {updateType !== "major" && (
@@ -223,16 +247,9 @@ export function UpdateModal({
                   title="Maybe Later"
                   onPress={onDismiss}
                   variant="secondary"
-                  style={{
-                    height: 50,
-                    borderRadius: 12,
-                    borderWidth: 0,
-                    backgroundColor: "transparent",
-                  }}
-                  textStyle={{
-                    fontSize: 16,
-                    color: colors.textSecondary,
-                  }}
+                  className="h-[50px] rounded-xl border-0 bg-transparent"
+                  textClassName="text-base"
+                  textStyle={{ color: colors.textSecondary }}
                 />
               )}
             </View>

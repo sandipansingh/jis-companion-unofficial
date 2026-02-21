@@ -1,18 +1,6 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
 import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-
-export interface VirtualLabCourse {
-  course_name: string;
-  stream_name: string;
-  sem_no: string;
-}
-
-export interface VirtualLabExperiment {
-  sl: number;
-  subject_code?: string;
-  experiment: string;
-  link: string;
-}
+import { VirtualLabCourse, VirtualLabExperiment } from "../types";
 
 /**
  * Fetch available virtual lab courses/streams.

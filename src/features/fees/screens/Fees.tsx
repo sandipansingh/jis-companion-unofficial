@@ -28,7 +28,7 @@ export default function Fees() {
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingBottom: bottomOffset + 100 }}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         >
           <View className="p-4 gap-4">
             {feeData.map((transaction, index) => (

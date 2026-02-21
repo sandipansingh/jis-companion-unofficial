@@ -1,7 +1,7 @@
 import {
   LibraryBook,
   LibrarySearchResult,
-} from "@/src/features/library/api/library";
+} from "@/src/features/library/types";
 import { DEMO_STUDENT } from "./constants";
 
 /**

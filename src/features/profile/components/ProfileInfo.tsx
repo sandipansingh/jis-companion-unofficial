@@ -1,4 +1,5 @@
-import { Image, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Text, View } from "react-native";
 import { RegistrationRollInfo } from "./RegistrationRollInfo";
 
 interface ProfileInfoProps {
@@ -26,8 +27,12 @@ export function ProfileInfo({
       {profileImageUrl ? (
         <Image
           source={{ uri: profileImageUrl }}
-          className="w-28 h-28 rounded-2xl mb-4"
+          contentFit="cover"
           style={{
+            width: 112,
+            height: 112,
+            borderRadius: 16,
+            marginBottom: 16,
             borderWidth: 3,
             borderColor: "#EEF3FF",
             shadowColor: "#2B5BDB",
@@ -49,8 +54,7 @@ export function ProfileInfo({
           }}
         >
           <Text
-            className="text-4xl text-white"
-            style={{ fontFamily: "ClashDisplay-Bold" }}
+            className="text-4xl text-white font-display-bold"
           >
             {getInitials(name || "Student")}
           </Text>
@@ -59,8 +63,7 @@ export function ProfileInfo({
 
       {/* Name */}
       <Text
-        className="text-2xl text-ink-900 dark:text-ink-100 uppercase tracking-wide mb-2"
-        style={{ fontFamily: "ClashDisplay-Semibold" }}
+        className="text-2xl text-ink-900 dark:text-ink-100 uppercase tracking-wide mb-2 font-display"
       >
         {name || "Student"}
       </Text>
@@ -69,8 +72,7 @@ export function ProfileInfo({
       <View className="flex-row items-center gap-2">
         {studentId && (
           <Text
-            className="text-sm text-cobalt-600 dark:text-cobalt-400"
-            style={{ fontFamily: "GeneralSans-Semibold" }}
+            className="text-sm text-cobalt-600 dark:text-cobalt-400 font-sans-semi"
           >
             {studentId}
           </Text>
@@ -81,8 +83,7 @@ export function ProfileInfo({
         {semester && (
           <View className="bg-cobalt-50 dark:bg-cobalt-900 border border-border rounded-full px-3 py-1">
             <Text
-              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-widest"
-              style={{ fontFamily: "GeneralSans-Semibold" }}
+              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-widest font-sans-semi"
             >
               Semester {semester}
             </Text>

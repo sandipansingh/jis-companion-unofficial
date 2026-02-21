@@ -3,12 +3,12 @@ import { useAlertStore } from "@/src/store/alertStore";
 import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 interface ChangePasswordModalProps {
@@ -120,8 +120,7 @@ export default function ChangePasswordModal({
             >
               {/* Header */}
               <Text
-                className="text-xl text-ink-900 mb-6"
-                style={{ fontFamily: "ClashDisplay-Semibold" }}
+                className="text-xl text-ink-900 mb-6 font-display"
               >
                 Change Password
               </Text>
@@ -130,8 +129,7 @@ export default function ChangePasswordModal({
               {isWeb && (
                 <View className="mb-5">
                   <Text
-                    className="text-sm text-ink-500 mb-2"
-                    style={{ fontFamily: "GeneralSans-Semibold" }}
+                    className="text-sm text-ink-500 mb-2 font-sans-semi"
                   >
                     Current Password
                   </Text>
@@ -149,8 +147,7 @@ export default function ChangePasswordModal({
                   />
                   {errors.currentPassword && (
                     <Text
-                      className="text-xs text-danger mt-1 ml-1"
-                      style={{ fontFamily: "GeneralSans-Regular" }}
+                      className="text-xs text-danger mt-1 ml-1 font-sans"
                     >
                       {errors.currentPassword}
                     </Text>
@@ -161,8 +158,7 @@ export default function ChangePasswordModal({
               {/* New Password */}
               <View className="mb-5">
                 <Text
-                  className="text-sm text-ink-500 mb-2"
-                  style={{ fontFamily: "GeneralSans-Semibold" }}
+                  className="text-sm text-ink-500 mb-2 font-sans-semi"
                 >
                   New Password
                 </Text>
@@ -181,8 +177,7 @@ export default function ChangePasswordModal({
                 />
                 {errors.newPassword && (
                   <Text
-                    className="text-xs text-danger mt-1 ml-1"
-                    style={{ fontFamily: "GeneralSans-Regular" }}
+                    className="text-xs text-danger mt-1 ml-1 font-sans"
                   >
                     {errors.newPassword}
                   </Text>
@@ -192,8 +187,7 @@ export default function ChangePasswordModal({
               {/* Confirm Password */}
               <View className="mb-5">
                 <Text
-                  className="text-sm text-ink-500 mb-2"
-                  style={{ fontFamily: "GeneralSans-Semibold" }}
+                  className="text-sm text-ink-500 mb-2 font-sans-semi"
                 >
                   Confirm New Password
                 </Text>
@@ -211,8 +205,7 @@ export default function ChangePasswordModal({
                 />
                 {errors.confirmPassword && (
                   <Text
-                    className="text-xs text-danger mt-1 ml-1"
-                    style={{ fontFamily: "GeneralSans-Regular" }}
+                    className="text-xs text-danger mt-1 ml-1 font-sans"
                   >
                     {errors.confirmPassword}
                   </Text>

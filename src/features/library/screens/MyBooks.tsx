@@ -1,8 +1,10 @@
-import { EmptyState, Header, LoadingState, TabButton } from "@/src/components";
+import { EmptyState, Header, LoadingState } from "@/src/components";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
+import { FlashList } from "@shopify/flash-list";
 import { BookOpen } from "lucide-react-native";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { BookCard } from "../components";
+import { LibraryTabs } from "../components/LibraryTabs";
 import { useMyBooksData } from "../hooks";
 
 export default function MyBooks() {
@@ -21,27 +23,10 @@ export default function MyBooks() {
 
       {/* Filter tabs */}
       <View className="px-4 pt-4 pb-2">
-        <View
-          className="flex-row bg-ink-100 dark:bg-ink-900 rounded-2xl p-1"
-          style={{
-            shadowColor: "#0F172A",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.04,
-            shadowRadius: 4,
-            elevation: 1,
-          }}
-        >
-          <TabButton
-            label="All Books"
-            isActive={filterType === "1"}
-            onPress={() => handleFilterChange("1")}
-          />
-          <TabButton
-            label="To Return"
-            isActive={filterType === "2"}
-            onPress={() => handleFilterChange("2")}
-          />
-        </View>
+        <LibraryTabs
+          activeTab={filterType}
+          onTabChange={(tab) => handleFilterChange(tab as any)}
+        />
       </View>
 
       {loading ? (
@@ -56,12 +41,12 @@ export default function MyBooks() {
           icon={BookOpen}
         />
       ) : (
-        <FlatList
+        <FlashList
           data={books}
           renderItem={renderBookItem}
-          keyExtractor={(item, index) => `${item.reader_acc_id}-${index}`}
+          keyExtractor={(item: any, index: number) => `${item.reader_acc_id}-${index}`}
           contentContainerStyle={{ paddingTop: 8, paddingBottom: bottomOffset + 20 }}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true}
         />
       )}
     </View>

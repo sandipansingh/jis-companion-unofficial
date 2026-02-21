@@ -2,13 +2,15 @@ import { useAuthStore } from "@/src/features/auth/store/authStore";
 import { syncLibraryBooks } from "@/src/services/sync";
 import { create } from "zustand";
 import {
-  LibraryBook,
-  LibraryFilterType,
-  LibrarySearchField,
-  LibrarySearchResult,
-  reserveLibraryBook,
-  searchLibraryBooks,
+    reserveLibraryBook,
+    searchLibraryBooks,
 } from "../api/library";
+import {
+    LibraryBook,
+    LibraryFilterType,
+    LibrarySearchField,
+    LibrarySearchResult,
+} from "../types";
 
 interface LibraryState {
   books: LibraryBook[];
@@ -46,7 +48,18 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   searchQuery: "",
 
   fetchBooks: async (readerCode: string, type: LibraryFilterType) => {
-    set({ loading: true, error: null });
+    try {
+      const { getLibraryBooks } = await import("@/src/services/database");
+      const cached = await getLibraryBooks(readerCode, type);
+      if (cached) {
+        set({ books: cached, filterType: type, fromCache: true, error: null });
+      } else {
+        set({ loading: true, error: null });
+      }
+    } catch {
+      set({ loading: true, error: null });
+    }
+
     try {
       const result = await syncLibraryBooks(readerCode, type);
 
@@ -64,10 +77,15 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       });
     } catch (error: any) {
       console.error("Failed to fetch library books:", error);
-      set({
-        error: error.message || "Failed to fetch library books",
-        loading: false,
-      });
+      const { books } = get();
+      if (books.length > 0) {
+        set({ loading: false, isOnline: false, fromCache: true });
+      } else {
+        set({
+          error: error.message || "Failed to fetch library books",
+          loading: false,
+        });
+      }
     }
   },
 
@@ -79,28 +97,13 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     set({ error: null });
   },
 
-  clearBooks: async () => {
-    try {
-      const { studentId } = useAuthStore.getState();
-      if (studentId) {
-        const { deleteLibraryBooks } = await import("@/src/services/database");
-        await deleteLibraryBooks(studentId);
-      }
-      set({
-        books: [],
-        error: null,
-        loading: false,
-        fromCache: false,
-      });
-    } catch (error) {
-      console.error("Error clearing library books:", error);
-      set({
-        books: [],
-        error: null,
-        loading: false,
-        fromCache: false,
-      });
-    }
+  clearBooks: () => {
+    set({
+      books: [],
+      error: null,
+      loading: false,
+      fromCache: false,
+    });
   },
 
   searchBooks: async (field: LibrarySearchField, query: string) => {

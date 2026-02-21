@@ -6,8 +6,8 @@ import {
 } from "@/src/utils/dateHelpers";
 import { getFileName, parseSubjectName } from "@/src/utils/stringHelpers";
 import { useEffect, useState } from "react";
-import { SubjectWiseAttendance } from "../api";
 import { useAttendanceStore } from "../store";
+import { SubjectWiseAttendance } from "../types";
 import { getAttendanceStatus } from "../utils/attendanceHelpers";
 import { parseClassId } from "../utils/classId";
 

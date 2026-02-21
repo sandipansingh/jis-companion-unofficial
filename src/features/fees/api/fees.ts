@@ -1,18 +1,7 @@
 import apiClient, { StandardApiResponse } from "@/src/api/client";
 import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
 import { getDemoFeeData } from "@/src/utils/demo";
-
-export interface FeeLedgerEntry {
-  vou_date: string;
-  mr_no: string;
-  chq_no: string;
-  act_amt: number;
-  bill_amt: number;
-  recd_amt: number;
-  bill_type_name: string;
-  sem_name: string;
-  bal_amt: number;
-}
+import { FeeLedgerEntry } from "../types";
 
 /**
  * Fetch the student's fee ledger summary.

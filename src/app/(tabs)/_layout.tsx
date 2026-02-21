@@ -1,4 +1,5 @@
 import CustomTabBar from "@/src/components/CustomTabBar";
+import { useTheme } from "@/src/contexts/ThemeContext";
 import { useSafeAreaStore } from "@/src/store/safeAreaStore";
 import { Tabs } from "expo-router";
 import { BookOpen, CreditCard, Home, User } from "lucide-react-native";
@@ -7,7 +8,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
-  const { bottomOffset, setInsets } = useSafeAreaStore();
+  const { colorScheme } = useTheme();
+  const { setInsets } = useSafeAreaStore();
 
   useEffect(() => {
     setInsets({
@@ -23,6 +25,9 @@ export default function TabLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        sceneStyle: {
+          backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+        },
       }}
     >
       <Tabs.Screen
@@ -47,7 +52,7 @@ export default function TabLayout() {
         name="fees"
         options={{
           title: "Fees",
-           tabBarIcon: ({ focused, color, size }) => (
+          tabBarIcon: ({ focused, color, size }) => (
             <CreditCard size={size} color={color} strokeWidth={focused ? 2 : 1.5} />
           ),
         }}
