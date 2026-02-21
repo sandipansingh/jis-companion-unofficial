@@ -50,8 +50,8 @@ const Colors = {
     },
   },
   dark: {
-    base: "#020617", // darker
-    surface: "#0F172A", // ink.950
+    base: "#000000",
+    surface: "#18181B",
     elevated: "#1E293B", // ink.900 approx
     overlay: "#334155", // ink.800
     

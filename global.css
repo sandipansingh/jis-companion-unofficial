@@ -11,8 +11,8 @@
   }
 
   .dark:root {
-    --color-base: 2 6 23; /* Dark base */
-    --color-surface: 15 23 42; /* Dark surface */
+    --color-base: 0 0 0; /* Base Black */
+    --color-surface: 24 24 27; /* #18181B */
     --color-text: 248 250 252; /* Light text */
     --color-border: 51 65 85; /* ink-800 #334155 */
   }
