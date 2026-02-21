@@ -83,7 +83,8 @@
         }
       ],
       "expo-asset",
-      "expo-video"
+      "expo-video",
+       "./plugins/withGradleMemory"
     ],
     "experiments": {
       "typedRoutes": true
