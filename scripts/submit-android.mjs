@@ -8,14 +8,29 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const buildsDir = path.join(rootDir, "builds");
 
+const isTruthy = (value) => {
+  if (value == null) return false;
+  const normalized = String(value).trim().toLowerCase();
+  return !["", "0", "false", "no", "off"].includes(normalized);
+};
+
+const skipBuild =
+  process.argv.includes("--skip-build") ||
+  isTruthy(process.env.npm_config_skip_build) ||
+  isTruthy(process.env.SKIP_BUILD);
+
 const run = (cmd, opts = {}) => {
   console.log(`→ ${cmd}`);
   execSync(cmd, { stdio: "inherit", cwd: rootDir, ...opts });
 };
 
 try {
-  console.log("Building Android AAB locally...\n");
-  run("npm run build:android:prod:local");
+  if (skipBuild) {
+    console.log("Skipping Android build (--skip-build passed).\n");
+  } else {
+    console.log("Building Android AAB locally...\n");
+    run("npm run build:android:prod:local");
+  }
 
   console.log("\nFinding AAB file...");
   const files = fs

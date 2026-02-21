@@ -13,8 +13,8 @@ module.exports = function withGradleMemory(config) {
             }
         };
 
-        set('org.gradle.jvmargs', '-Xmx6g -XX:MaxMetaspaceSize=1536m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8');
-        set('kotlin.daemon.jvm.options', '-Xmx3g');
+        set('org.gradle.jvmargs', '-Xmx3g -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8');
+        set('kotlin.daemon.jvm.options', '-Xmx1536m');
 
         return config;
     });
