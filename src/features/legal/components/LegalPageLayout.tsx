@@ -1,4 +1,5 @@
-import { ScrollView, View, type ReactNode } from 'react-native';
+import type { ReactNode } from 'react';
+import { ScrollView, View } from 'react-native';
 
 interface LegalPageLayoutProps {
   children: ReactNode;
