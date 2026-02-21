@@ -26,7 +26,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         sceneStyle: {
-          backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+          backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA",
         },
       }}
     >

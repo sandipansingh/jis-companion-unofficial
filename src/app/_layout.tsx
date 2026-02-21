@@ -172,7 +172,7 @@ function RootLayoutNav() {
     <View
       style={{
         flex: 1,
-        backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+        backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA",
       }}
     >
       <StatusBar
@@ -187,7 +187,7 @@ function RootLayoutNav() {
             title: "JIS Companion (Unofficial)",
             headerShown: false,
             contentStyle: {
-              backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+              backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA",
             },
           }}
         >
@@ -200,7 +200,7 @@ function RootLayoutNav() {
             title: "JIS Companion (Unofficial)",
             headerShown: false,
             contentStyle: {
-              backgroundColor: colorScheme === "dark" ? "#020617" : "#FAFAFA",
+              backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA",
             },
           }}
         >
