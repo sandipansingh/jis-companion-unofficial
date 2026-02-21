@@ -36,6 +36,7 @@ It provides quick access to common student workflows like academics, fees, libra
 
 - **Node.js:** `>=22.0.0` (from `package.json` engines)
 - **npm**
+- **Java:** `17` (required for Android build scripts)
 - **Expo tooling** (installed through project dependencies)
 - For Android native builds: Android SDK + emulator/device
 - For cloud builds/submission: Expo account + EAS login
@@ -112,6 +113,8 @@ Recommended usage:
 ---
 
 ### 4) Android build scripts (dev vs prod, local vs cloud)
+
+> Android build scripts require **Java 17**.
 
 #### Development APK
 
