@@ -8,16 +8,18 @@ interface SettingsState {
   shareCollege: boolean;
   shareContact: boolean;
   shareSocial: boolean;
+  hasReadVideoByteGuidelines: boolean;
   setTheme: (value: "light" | "dark") => void;
   setShareProfilePic: (value: boolean) => void;
   setShareCollege: (value: boolean) => void;
   setShareContact: (value: boolean) => void;
   setShareSocial: (value: boolean) => void;
+  setHasReadVideoByteGuidelines: (value: boolean) => void;
 }
 
 type PersistedSettingsState = Pick<
   SettingsState,
-  "theme" | "shareProfilePic" | "shareCollege" | "shareContact" | "shareSocial"
+  "theme" | "shareProfilePic" | "shareCollege" | "shareContact" | "shareSocial" | "hasReadVideoByteGuidelines"
 >;
 
 const defaultPersistedSettings: PersistedSettingsState = {
@@ -26,6 +28,7 @@ const defaultPersistedSettings: PersistedSettingsState = {
   shareCollege: true,
   shareContact: true,
   shareSocial: true,
+  hasReadVideoByteGuidelines: false,
 };
 
 const migrateSettings = (
@@ -37,6 +40,7 @@ const migrateSettings = (
   switch (version) {
     case 0:
     case 1:
+    case 2:
       return {
         ...defaultPersistedSettings,
         ...state,
@@ -57,16 +61,18 @@ export const useSettingsStore = create<SettingsState>()(
       shareCollege: true,
       shareContact: true,
       shareSocial: true,
+      hasReadVideoByteGuidelines: false,
       setTheme: (value) => set({ theme: value }),
       setShareProfilePic: (value) => set({ shareProfilePic: value }),
       setShareCollege: (value) => set({ shareCollege: value }),
       setShareContact: (value) => set({ shareContact: value }),
       setShareSocial: (value) => set({ shareSocial: value }),
+      setHasReadVideoByteGuidelines: (value) => set({ hasReadVideoByteGuidelines: value }),
     }),
     {
       name: "user-settings-storage",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
+      version: 2,
       migrate: migrateSettings,
     }
   )

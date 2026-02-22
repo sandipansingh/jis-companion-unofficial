@@ -33,7 +33,7 @@ export default function SettingsScreen() {
                 onValueChange={toggleTheme}
               />
             </View>
-            <Text className="text-xs text-ink-500 dark:text-ink-400 mt-2 font-sans italic">
+            <Text className="text-xs text-ink-500 dark:text-ink-400 mt-2 italic">
               Note: Dark mode is currently in beta. For the best experience, we recommend using light mode.
             </Text>
           </View>

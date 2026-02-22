@@ -41,7 +41,7 @@ export function QuickAccessGrid({ items, onItemPress }: QuickAccessGridProps) {
             key={item.id}
             onPress={() => onItemPress(item.id)}
             activeOpacity={0.75}
-            className="items-center w-[21%]"
+            className="items-center w-[21%] mb-4"
           >
             <View
               className="w-14 h-14 rounded-2xl items-center justify-center mb-2"

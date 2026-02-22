@@ -48,14 +48,13 @@ export default function CourseSelection() {
     <View className="flex-1 bg-base">
       <Header title="Virtual Labs" showBackButton />
 
-      <ScrollView className="flex-1">
-        <View className="p-4 gap-5">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="px-5 pt-6 pb-2 gap-5">
           <HeaderCard
+            variant="hero"
             title="Lab Configuration"
             description="Select your course details to view available virtual experiments."
             icon={FlaskConical}
-            iconSize={40}
-            iconCircleSize={80}
           />
 
           <CourseDropdown

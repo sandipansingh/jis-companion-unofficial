@@ -9,9 +9,10 @@ export default function LibraryHome() {
   return (
     <View className="flex-1 bg-base">
       <Header title="Library" showBackButton />
-      <ScrollView className="flex-1">
-        <View className="p-5 gap-4">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="px-5 pt-6 pb-2">
           <HeaderCard
+            variant="hero"
             title="Library Services"
             description="Manage your borrowed books and discover new titles"
             icon={BookOpen}
