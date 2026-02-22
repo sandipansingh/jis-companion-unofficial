@@ -5,8 +5,7 @@ import {
   FlaskConical,
   Library,
   MessageSquare,
-  Users,
-  Video
+  Users
 } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import {
@@ -40,12 +39,12 @@ export default function Home() {
       icon: MessageSquare,
       color: "#F59E0B",
     },
-    {
-      id: "video-byte",
-      title: "Video Byte",
-      icon: Video,
-      color: "#EF4444",
-    },
+    // {
+    //   id: "video-byte",
+    //   title: "Video Byte",
+    //   icon: Video,
+    //   color: "#EF4444",
+    // },
     {
       id: "connect",
       title: "Connect",
@@ -74,8 +73,8 @@ export default function Home() {
       router.push("/connect");
     } else if (itemId === "feedback") {
       router.push("/feedback");
-      } else if (itemId === "video-byte") {
-        router.push("/video-byte");
+    // } else if (itemId === "video-byte") {
+    //   router.push("/video-byte");
     } else {
       showAlert({
         title:
