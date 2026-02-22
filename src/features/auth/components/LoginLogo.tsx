@@ -19,7 +19,7 @@ export function LoginLogo() {
       <Text
         className="text-[32px] text-ink-950 dark:text-ink-500 mt-6 tracking-tight font-display-bold"
       >
-        JIS Companion
+        Companion
       </Text>
       <Text
         className="text-sm text-ink-500 mt-1.5 tracking-wide font-sans"
