@@ -23,6 +23,7 @@ interface SegmentedControlProps<T extends string> {
 export function SegmentedControl<T extends string>({ tabs, activeTab, onTabChange }: SegmentedControlProps<T>) {
   const { isDark } = useTheme();
   const isAndroid = Platform.OS === "android";
+  const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
   const [containerSize, setContainerSize] = useState({ width: 0, height: 55 });
   const translateX = useSharedValue(0);
@@ -30,6 +31,7 @@ export function SegmentedControl<T extends string>({ tabs, activeTab, onTabChang
   const tabVisuals = getTabVisualConfig({
     isDark,
     isAndroid,
+    isIOS,
     variant: "segmented",
   });
 

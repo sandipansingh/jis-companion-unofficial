@@ -66,7 +66,7 @@ export function getTabVisualConfig({
         : isDark
           ? "rgba(0, 0, 0, 0.55)"
           : "rgba(255, 255, 255, 0.55)",
-      borderWidth: 1,
+      borderWidth: isIOS ? 0 : 1,
       borderColor,
       shadowOpacity: isAndroid ? 0 : 0.1,
       elevation: isAndroid ? 0 : 4,
