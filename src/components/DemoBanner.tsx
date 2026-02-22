@@ -7,6 +7,8 @@ export function DemoBanner() {
 
   if (!isDemoAccount) return null;
 
+  if (__DEV__) return null; // Don't show in development mode
+
   return (
     <View
       className="absolute -right-[30px] z-[9999] w-[150px] rotate-45 top-[34px]"
