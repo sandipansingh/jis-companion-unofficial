@@ -3,12 +3,8 @@
  * Format: URL-safe encoded string combining facCode, subCode, and secId
  * Example: NIT/0123-R25_M101-1 becomes NIT_0123-R25_M101-1
  */
-export function createFacultyId(
-  facCode: string,
-  subCode: string,
-  secId: number
-): string {
-  const safeFacCode = facCode.replace(/\//g, "_");
+export function createFacultyId(facCode: string, subCode: string, secId: number): string {
+  const safeFacCode = facCode.replace(/\//g, '_');
   return `${safeFacCode}-${subCode}-${secId}`;
 }
 
@@ -22,7 +18,7 @@ export function parseFacultyId(id: string): {
   subCode: string;
   secId: number;
 } | null {
-  const parts = id.split("-");
+  const parts = id.split('-');
 
   if (parts.length < 3) {
     return null;
@@ -41,12 +37,12 @@ export function parseFacultyId(id: string): {
   }
 
   // Everything before subCode is facCode (may contain hyphens)
-  const encodedFacCode = parts.slice(0, -2).join("-");
+  const encodedFacCode = parts.slice(0, -2).join('-');
   if (!encodedFacCode) {
     return null;
   }
 
-  const facCode = encodedFacCode.replace(/_/g, "/");
+  const facCode = encodedFacCode.replace(/_/g, '/');
 
   return { facCode, subCode, secId };
 }

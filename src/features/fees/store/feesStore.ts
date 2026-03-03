@@ -1,7 +1,9 @@
-import { useAuthStore } from "@/src/features/auth/store/authStore";
-import { syncFeeData } from "@/src/services/sync";
-import { create } from "zustand";
-import { FeeLedgerEntry } from "../types";
+import { create } from 'zustand';
+
+import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { syncFeeData } from '@/src/services/sync';
+
+import { FeeLedgerEntry } from '../types';
 
 interface FeesStore {
   feeData: FeeLedgerEntry[];
@@ -26,12 +28,12 @@ export const useFeesStore = create<FeesStore>((set, get) => ({
 
     const { studentId, loginData } = useAuthStore.getState();
     if (!studentId || !loginData) {
-      set({ error: "User not authenticated", loading: false });
+      set({ error: 'User not authenticated', loading: false });
       return;
     }
 
     try {
-      const { getFeeData } = await import("@/src/services/database");
+      const { getFeeData } = await import('@/src/services/database');
       const cached = await getFeeData(studentId);
       if (cached) {
         set({ feeData: cached, fromCache: true, error: null });
@@ -46,7 +48,7 @@ export const useFeesStore = create<FeesStore>((set, get) => ({
       const result = await syncFeeData(studentId, loginData.branch_id);
 
       console.log(
-        `Fetched ${result.feeData.length} fee records (fromCache: ${result.fromCache})`
+        `Fetched ${result.feeData.length} fee records (fromCache: ${result.fromCache})`,
       );
 
       set({
@@ -57,13 +59,13 @@ export const useFeesStore = create<FeesStore>((set, get) => ({
         error: null,
       });
     } catch (error: any) {
-      console.error("Failed to fetch fee data:", error);
+      console.error('Failed to fetch fee data:', error);
       const { feeData } = get();
       if (feeData.length > 0) {
         set({ loading: false, isOnline: false, fromCache: true });
       } else {
         set({
-          error: error.message || "Failed to fetch fee data",
+          error: error.message || 'Failed to fetch fee data',
           loading: false,
         });
       }

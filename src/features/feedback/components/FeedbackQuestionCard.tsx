@@ -1,6 +1,9 @@
-import { Text, View } from "react-native";
-import { FeedbackQuestion } from "../types";
-import { StarRating } from "./StarRating";
+import { Text, View } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
+
+import { FeedbackQuestion } from '../types';
+import { StarRating } from './StarRating';
 
 interface FeedbackQuestionCardProps {
   question: FeedbackQuestion;
@@ -8,12 +11,17 @@ interface FeedbackQuestionCardProps {
   onRatingChange: (value: number) => void;
 }
 
-export function FeedbackQuestionCard({ question, rating, onRatingChange }: FeedbackQuestionCardProps) {
+export function FeedbackQuestionCard({
+  question,
+  rating,
+  onRatingChange,
+}: FeedbackQuestionCardProps) {
+  const { colors } = useTheme();
   return (
     <View
-      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 mb-4"
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-4 mb-4"
       style={{
-        shadowColor: "#0F172A",
+        shadowColor: colors.text,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
@@ -21,14 +29,10 @@ export function FeedbackQuestionCard({ question, rating, onRatingChange }: Feedb
       }}
     >
       <View className="mb-4">
-        <Text
-          className="text-sm text-ink-900 dark:text-white leading-snug mb-1 font-sans-semi"
-        >
+        <Text className="text-sm text-ink-900 dark:text-white leading-snug mb-1 font-sans-semi">
           {question.head}
         </Text>
-        <Text
-          className="text-xs text-ink-500 dark:text-ink-400 font-sans"
-        >
+        <Text className="text-xs text-ink-500 dark:text-ink-400 font-sans">
           {question.subhead}
         </Text>
       </View>

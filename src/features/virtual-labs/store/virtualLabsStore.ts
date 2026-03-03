@@ -1,9 +1,8 @@
-import {
-  syncVirtualLabCourses,
-  syncVirtualLabExperiments,
-} from "@/src/services/sync";
-import { create } from "zustand";
-import { VirtualLabCourse, VirtualLabExperiment } from "../types";
+import { create } from 'zustand';
+
+import { syncVirtualLabCourses, syncVirtualLabExperiments } from '@/src/services/sync';
+
+import { VirtualLabCourse, VirtualLabExperiment } from '../types';
 
 interface VirtualLabsState {
   courses: VirtualLabCourse[];
@@ -15,11 +14,7 @@ interface VirtualLabsState {
   fromCache: boolean;
 
   fetchCourses: () => Promise<void>;
-  fetchExperiments: (
-    course: string,
-    stream: string,
-    semester: string
-  ) => Promise<void>;
+  fetchExperiments: (course: string, stream: string, semester: string) => Promise<void>;
   setSelectedCourse: (course: VirtualLabCourse | null) => void;
   clearError: () => void;
   clearVirtualLabsData: () => void;
@@ -46,17 +41,13 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
       });
     } catch (error: any) {
       set({
-        error: error.message || "Failed to fetch courses",
+        error: error.message || 'Failed to fetch courses',
         loading: false,
       });
     }
   },
 
-  fetchExperiments: async (
-    course: string,
-    stream: string,
-    semester: string
-  ) => {
+  fetchExperiments: async (course: string, stream: string, semester: string) => {
     set({ loading: true, error: null });
     try {
       const result = await syncVirtualLabExperiments(course, stream, semester);
@@ -68,7 +59,7 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
       });
     } catch (error: any) {
       set({
-        error: error.message || "Failed to fetch experiments",
+        error: error.message || 'Failed to fetch experiments',
         loading: false,
       });
     }

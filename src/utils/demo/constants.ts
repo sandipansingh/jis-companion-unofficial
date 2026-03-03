@@ -4,30 +4,30 @@
  */
 
 export const DEMO_CREDENTIALS = {
-  username: "NIT/0000/0000",
-  password: "SandipanSingh_Dev_2025",
+  username: 'NIT/0000/0000',
+  password: 'SandipanSingh_Dev_2025',
 };
 
 export const DEMO_STUDENT = {
   id: 999999,
-  code: "NIT/0000/0000",
-  name: "Demo Student",
-  batch: "CSE AI & ML [2025-2029]",
+  code: 'NIT/0000/0000',
+  name: 'Demo Student',
+  batch: 'CSE AI & ML [2025-2029]',
   sem: 1,
-  roll: "2511999999",
-  reg: "211999999999",
+  roll: '2511999999',
+  reg: '211999999999',
 };
 
 export const DEMO_COLLEGE = {
   id: 2,
-  name: "Narula Institute of Technology",
-  shortName: "NIT",
+  name: 'Narula Institute of Technology',
+  shortName: 'NIT',
   branchId: 3,
 };
 
 export const DEMO_COURSE = {
-  code: "C001",
-  streamCode: "C009",
+  code: 'C001',
+  streamCode: 'C009',
   batchId: 1,
   semId: 1,
   semNo: 1,

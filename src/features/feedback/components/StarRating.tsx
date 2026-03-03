@@ -1,15 +1,24 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { Star } from "lucide-react-native";
-import { memo, useRef } from "react";
-import { Animated, TouchableOpacity, View } from "react-native";
+import { Star } from 'lucide-react-native';
+import { memo, useRef } from 'react';
+import { Animated, TouchableOpacity, View } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface StarRatingProps {
   value: number;
   onChange: (value: number) => void;
 }
 
-function StarButton({ num, value, onChange }: { num: number; value: number; onChange: (val: number) => void }) {
-  const { isDark } = useTheme();
+function StarButton({
+  num,
+  value,
+  onChange,
+}: {
+  num: number;
+  value: number;
+  onChange: (val: number) => void;
+}) {
+  const { colors } = useTheme();
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
@@ -21,7 +30,7 @@ function StarButton({ num, value, onChange }: { num: number; value: number; onCh
   };
 
   const isFilled = num <= value;
-  const emptyColor = isDark ? "#475569" : "#CBD5E1";
+  const emptyColor = colors.textTertiary;
 
   return (
     <TouchableOpacity
@@ -33,7 +42,11 @@ function StarButton({ num, value, onChange }: { num: number; value: number; onCh
       accessibilityState={{ selected: isFilled }}
     >
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Star size={28} color={isFilled ? "#F59E0B" : emptyColor} fill={isFilled ? "#F59E0B" : "transparent"} />
+        <Star
+          size={28}
+          color={isFilled ? colors.warning : emptyColor}
+          fill={isFilled ? colors.warning : 'transparent'}
+        />
       </Animated.View>
     </TouchableOpacity>
   );

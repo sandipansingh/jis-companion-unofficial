@@ -1,1 +1,1 @@
-export { DataDeletionScreen as default } from "@/src/features/legal";
+export { DataDeletionScreen as default } from '@/src/features/legal';

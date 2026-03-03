@@ -1,1 +1,1 @@
-export * from "./connectStore";
+export * from './connectStore';

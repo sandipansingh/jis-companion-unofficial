@@ -1,5 +1,6 @@
-import { getMonthName } from "@/src/utils/dateHelpers";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from 'react-native';
+
+import { getMonthName } from '@/src/utils/dateHelpers';
 
 interface MonthHeaderProps {
   month: number;
@@ -17,9 +18,7 @@ export function MonthHeader({
   return (
     <View className="flex-row items-center justify-between mb-3">
       <TouchableOpacity onPress={onMonthYearPress} activeOpacity={0.7}>
-        <Text
-          className="text-base text-ink-950 dark:text-white font-display"
-        >
+        <Text className="text-base text-ink-950 dark:text-white font-display">
           {getMonthName(month)}, {year}
         </Text>
       </TouchableOpacity>
@@ -28,9 +27,7 @@ export function MonthHeader({
         activeOpacity={0.7}
         className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-xl px-3 py-1"
       >
-        <Text
-          className="text-xs text-cobalt-600 dark:text-cobalt-300 font-sans-semi"
-        >
+        <Text className="text-xs text-cobalt-600 dark:text-cobalt-300 font-sans-semi">
           Today
         </Text>
       </TouchableOpacity>

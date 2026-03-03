@@ -1,10 +1,13 @@
-import { ActivityIndicator, View } from "react-native";
-import { AttendanceLegend } from "./AttendanceLegend";
-import { CalendarStrip } from "./CalendarStrip";
-import { MonthHeader } from "./MonthHeader";
-import { WeekNavigator } from "./WeekNavigator";
+import { ActivityIndicator, View } from 'react-native';
 
-type AttendanceStatus = "present" | "absent" | "partial" | "holiday";
+import { useTheme } from '@/src/contexts/ThemeContext';
+
+import { AttendanceLegend } from './AttendanceLegend';
+import { CalendarStrip } from './CalendarStrip';
+import { MonthHeader } from './MonthHeader';
+import { WeekNavigator } from './WeekNavigator';
+
+type AttendanceStatus = 'present' | 'absent' | 'partial' | 'holiday';
 
 interface AttendanceData {
   rtDate: string;
@@ -40,11 +43,12 @@ export function AttendanceCalendar({
   getAttendanceStatus,
   getAttendanceWithFallback,
 }: AttendanceCalendarProps) {
+  const { colors } = useTheme();
   return (
     <View
       className="bg-surface rounded-2xl p-4 mb-6 border border-border"
       style={{
-        shadowColor: "#0F172A",
+        shadowColor: colors.text,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 10,
@@ -60,8 +64,8 @@ export function AttendanceCalendar({
 
       <WeekNavigator
         weekPeriod={`${weekDates[0].getDate()} – ${weekDates[6].getDate()} ${weekDates[6].toLocaleString(
-          "default",
-          { month: "long" }
+          'default',
+          { month: 'long' },
         )}`}
         onPrevious={onPreviousWeek}
         onNext={onNextWeek}
@@ -69,7 +73,7 @@ export function AttendanceCalendar({
 
       {loading ? (
         <View className="h-20 items-center justify-center">
-          <ActivityIndicator size="small" color="#2B5BDB" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       ) : (
         <>

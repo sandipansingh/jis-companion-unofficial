@@ -1,13 +1,14 @@
-import { useAuthStore } from "@/src/features/auth/store/authStore";
-import { useConnectStore } from "@/src/features/connect/store/connectStore";
-import { decryptPayload } from "@/src/features/connect/utils/payload";
-import { useAlertStore } from "@/src/store/alertStore";
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { router } from "expo-router";
-import { ArrowLeft } from "lucide-react-native";
-import React, { useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { router } from 'expo-router';
+import { ArrowLeft } from 'lucide-react-native';
+import React, { useRef } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { useConnectStore } from '@/src/features/connect/store/connectStore';
+import { decryptPayload } from '@/src/features/connect/utils/payload';
+import { useAlertStore } from '@/src/store/alertStore';
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -37,13 +38,7 @@ export default function ScanScreen() {
     );
   }
 
-  const handleBarCodeScanned = async ({
-    type,
-    data,
-  }: {
-    type: string;
-    data: string;
-  }) => {
+  const handleBarCodeScanned = async ({ data }: { type: string; data: string }) => {
     if (isScanning.current) return;
     isScanning.current = true;
 
@@ -53,7 +48,7 @@ export default function ScanScreen() {
         if (studentId) {
           await addScannedContact(studentId, payload);
           showAlert({
-            title: "Success",
+            title: 'Success',
             message: `Added ${payload.fullName} to your contacts!`,
             onConfirm: () => {
               setTimeout(() => {
@@ -64,8 +59,8 @@ export default function ScanScreen() {
         }
       } else {
         showAlert({
-          title: "Invalid QR Code",
-          message: "This QR code is not a valid JIS Companion profile.",
+          title: 'Invalid QR Code',
+          message: 'This QR code is not a valid JIS Companion profile.',
           isDestructive: true,
           onConfirm: () => {
             setTimeout(() => {
@@ -75,14 +70,14 @@ export default function ScanScreen() {
         });
       }
     } catch (error: any) {
-      console.error("Scan error:", error);
+      console.error('Scan error:', error);
       showAlert({
-        title: "Error",
-        message: error.message || "Failed to read QR code.",
+        title: 'Error',
+        message: error.message || 'Failed to read QR code.',
         isDestructive: true,
         onConfirm: () => {
           setTimeout(() => {
-             isScanning.current = false;
+            isScanning.current = false;
           }, 1000);
         },
       });
@@ -105,11 +100,11 @@ export default function ScanScreen() {
       </View>
 
       <CameraView
-        style={StyleSheet.absoluteFillObject}
+        className="absolute inset-0"
         facing="back"
         onBarcodeScanned={handleBarCodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
+          barcodeTypes: ['qr'],
         }}
       />
 

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { useFeedbackStore } from "../store";
+import { useCallback, useEffect, useState } from 'react';
+
+import { useFeedbackStore } from '../store';
 
 export function useFeedbackData() {
   const {
@@ -15,11 +16,7 @@ export function useFeedbackData() {
   const [initializing, setInitializing] = useState(true);
   const [submittingFinal, setSubmittingFinal] = useState(false);
 
-  useEffect(() => {
-    initializeFeedback();
-  }, []);
-
-  const initializeFeedback = async () => {
+  const initializeFeedback = useCallback(async () => {
     try {
       setInitializing(true);
       const isUnlocked = await checkLockStatus();
@@ -27,11 +24,15 @@ export function useFeedbackData() {
         await fetchFacultyList();
       }
     } catch (error) {
-      console.error("Failed to initialize feedback:", error);
+      console.error('Failed to initialize feedback:', error);
     } finally {
       setInitializing(false);
     }
-  };
+  }, [checkLockStatus, fetchFacultyList]);
+
+  useEffect(() => {
+    initializeFeedback();
+  }, [initializeFeedback]);
 
   const refreshFeedback = async () => {
     await initializeFeedback();
@@ -39,17 +40,10 @@ export function useFeedbackData() {
 
   const getProgressStats = () => {
     const totalCount = facultyList.length;
-    const submittedCount = facultyList.filter(
-      (f) => (f.totalRating ?? 0) > 0,
-    ).length;
-    const notOptedCount = facultyList.filter(
-      (f) => f.totalRating === -10,
-    ).length;
+    const submittedCount = facultyList.filter((f) => (f.totalRating ?? 0) > 0).length;
+    const notOptedCount = facultyList.filter((f) => f.totalRating === -10).length;
     const pendingCount = facultyList.filter(
-      (f) =>
-        f.totalRating === 0 ||
-        f.totalRating === null ||
-        f.totalRating === undefined,
+      (f) => f.totalRating === 0 || f.totalRating === null || f.totalRating === undefined,
     ).length;
 
     const completedCount = submittedCount + notOptedCount;
@@ -73,13 +67,13 @@ export function useFeedbackData() {
     return !isFeedbackLocked && pendingCount === 0;
   };
 
-  const getFacultyByStatus = (status: "pending" | "submitted" | "notOpted") => {
+  const getFacultyByStatus = (status: 'pending' | 'submitted' | 'notOpted') => {
     switch (status) {
-      case "pending":
+      case 'pending':
         return facultyList.filter((f) => f.totalRating === 0);
-      case "submitted":
+      case 'submitted':
         return facultyList.filter((f) => f.totalRating === 100);
-      case "notOpted":
+      case 'notOpted':
         return facultyList.filter((f) => f.totalRating === -10);
       default:
         return [];
@@ -94,7 +88,7 @@ export function useFeedbackData() {
     } catch (error: any) {
       return {
         success: false,
-        error: error.message || "Failed to finalize feedback",
+        error: error.message || 'Failed to finalize feedback',
       };
     } finally {
       setSubmittingFinal(false);

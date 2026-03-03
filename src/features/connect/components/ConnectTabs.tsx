@@ -1,8 +1,8 @@
+import React from 'react';
 
-import { SegmentedControl, SegmentedControlTab } from "@/src/components/SegmentedControl";
-import React from "react";
+import { SegmentedControl, SegmentedControlTab } from '@/src/components/SegmentedControl';
 
-type TabType = "my-qr" | "scanned";
+type TabType = 'my-qr' | 'scanned';
 
 interface ConnectTabsProps {
   activeTab: TabType;
@@ -10,16 +10,10 @@ interface ConnectTabsProps {
 }
 
 const TABS: SegmentedControlTab<TabType>[] = [
-  { key: "my-qr", label: "MY QR" },
-  { key: "scanned", label: "SCANNED" },
+  { key: 'my-qr', label: 'MY QR' },
+  { key: 'scanned', label: 'SCANNED' },
 ];
 
 export function ConnectTabs({ activeTab, onTabChange }: ConnectTabsProps) {
-  return (
-    <SegmentedControl
-      tabs={TABS}
-      activeTab={activeTab}
-      onTabChange={onTabChange}
-    />
-  );
+  return <SegmentedControl tabs={TABS} activeTab={activeTab} onTabChange={onTabChange} />;
 }

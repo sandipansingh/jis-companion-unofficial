@@ -1,7 +1,9 @@
-import { TextInput } from "@/src/components";
-import React from "react";
-import { View } from "react-native";
-import { SocialPlatform, formatSocialInput } from "../utils/social";
+import React from 'react';
+import { View } from 'react-native';
+
+import { TextInput } from '@/src/components';
+
+import { formatSocialInput, SocialPlatform } from '../utils/social';
 
 interface SocialInputProps {
   platform: SocialPlatform;
@@ -11,22 +13,24 @@ interface SocialInputProps {
   placeholder: string;
 }
 
-export const SocialInput = React.memo(({ platform, label, value, onChange, placeholder }: SocialInputProps) => {
-  const handleChange = (text: string) => {
-    const formatted = formatSocialInput(platform, text);
-    onChange(formatted);
-  };
+export const SocialInput = React.memo(
+  ({ platform, label, value, onChange, placeholder }: SocialInputProps) => {
+    const handleChange = (text: string) => {
+      const formatted = formatSocialInput(platform, text);
+      onChange(formatted);
+    };
 
-  return (
-    <View>
-      <TextInput
-        label={label}
-        value={value}
-        onChangeText={handleChange}
-        placeholder={placeholder}
-        autoCapitalize="none"
-        keyboardType={platform === 'portfolio' ? 'url' : 'default'}
-      />
-    </View>
-  );
-});
+    return (
+      <View>
+        <TextInput
+          label={label}
+          value={value}
+          onChangeText={handleChange}
+          placeholder={placeholder}
+          autoCapitalize="none"
+          keyboardType={platform === 'portfolio' ? 'url' : 'default'}
+        />
+      </View>
+    );
+  },
+);

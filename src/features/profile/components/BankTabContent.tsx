@@ -1,6 +1,7 @@
-import { InfoRow } from "@/src/components";
-import { CreditCard, FileText, Landmark, MapPin } from "lucide-react-native";
-import { View } from "react-native";
+import { CreditCard, FileText, Landmark, MapPin } from 'lucide-react-native';
+import { View } from 'react-native';
+
+import { InfoRow } from '@/src/components';
 
 interface BankTabContentProps {
   accountNumber?: string;

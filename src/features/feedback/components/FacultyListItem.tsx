@@ -1,7 +1,10 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import { FacultyFeedbackItem } from "../types";
-import { FacultyAvatar } from "./FacultyAvatar";
-import { FeedbackStatusBadge } from "./FeedbackStatusBadge";
+import { Text, TouchableOpacity, View } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
+
+import { FacultyFeedbackItem } from '../types';
+import { FacultyAvatar } from './FacultyAvatar';
+import { FeedbackStatusBadge } from './FeedbackStatusBadge';
 
 interface FacultyListItemProps {
   faculty: FacultyFeedbackItem;
@@ -9,11 +12,12 @@ interface FacultyListItemProps {
 }
 
 export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
-      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 flex-row items-center gap-4"
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-4 flex-row items-center gap-4"
       style={{
-        shadowColor: "#0F172A",
+        shadowColor: colors.text,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
@@ -22,7 +26,11 @@ export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
       onPress={() => onPress(faculty)}
       activeOpacity={0.8}
     >
-      <FacultyAvatar imageUrl={faculty.fac_image} shortName={faculty.fac_sht_name} size={48} />
+      <FacultyAvatar
+        imageUrl={faculty.fac_image}
+        shortName={faculty.fac_sht_name}
+        size={48}
+      />
 
       <View className="flex-1 gap-0.5">
         <Text
@@ -38,9 +46,7 @@ export function FacultyListItem({ faculty, onPress }: FacultyListItemProps) {
           {faculty.sub_name}
         </Text>
         <View className="bg-ink-100 dark:bg-ink-800 rounded-full px-2 py-0.5 self-start mt-1">
-          <Text
-            className="text-[10px] text-ink-500 dark:text-ink-300 font-sans-md"
-          >
+          <Text className="text-[10px] text-ink-500 dark:text-ink-300 font-sans-md">
             {faculty.sub_code}
           </Text>
         </View>

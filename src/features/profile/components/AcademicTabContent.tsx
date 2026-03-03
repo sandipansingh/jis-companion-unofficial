@@ -1,10 +1,12 @@
-import { Text, View } from "@/src/components";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import type { UserProfileData } from "@/src/features/auth/types";
-import { Award, Briefcase, Calculator } from "lucide-react-native";
-import { AcademicCard } from "./AcademicCard";
-import { SemesterRow } from "./SemesterRow";
-import { SubjectRow } from "./SubjectRow";
+import { Award, Briefcase, Calculator } from 'lucide-react-native';
+
+import { Text, View } from '@/src/components';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import type { UserProfileData } from '@/src/features/auth/types';
+
+import { AcademicCard } from './AcademicCard';
+import { SemesterRow } from './SemesterRow';
+import { SubjectRow } from './SubjectRow';
 
 interface AcademicTabContentProps {
   userData?: UserProfileData;
@@ -21,17 +23,14 @@ export function AcademicTabContent({
   hasSubjectMarks,
   getSemesterResults,
 }: AcademicTabContentProps) {
-  const { isDark } = useTheme();
+  const { colors } = useTheme();
   return (
     <View>
-      {/* Academic History Section */}
       {hasAcademicHistoryData() && (
         <View className="mt-1 mb-4">
           <View className="flex-row items-center gap-2 mb-2 pb-1">
-            <Briefcase size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
-            <Text
-              className="text-sm text-ink-900 dark:text-white font-sans-bold"
-            >
+            <Briefcase size={16} color={colors.primary} />
+            <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
               Academic History
             </Text>
           </View>
@@ -55,20 +54,15 @@ export function AcademicTabContent({
         </View>
       )}
 
-      {/* Subject Marks Section */}
       {hasSubjectMarks() && (
         <View className="mt-1 mb-4">
           <View className="flex-row items-center gap-2 mb-2 pb-1">
-            <Calculator size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
-            <Text
-              className="text-sm text-ink-900 dark:text-white font-sans-bold"
-            >
+            <Calculator size={16} color={colors.primary} />
+            <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
               Class XII Marks
             </Text>
           </View>
-          <View
-            className="rounded-xl p-4 gap-1 mb-4 border border-border"
-          >
+          <View className="rounded-xl p-4 gap-1 mb-4 border border-border bg-surface dark:bg-elevated">
             {hasValidMarks(userData?.std_student_master_physics_obt_marks) && (
               <SubjectRow
                 subject="Physics"
@@ -101,23 +95,16 @@ export function AcademicTabContent({
         </View>
       )}
 
-      {/* Semester Results Section */}
       <View className="mt-1">
         <View className="flex-row items-center gap-2 mb-2 pb-1">
-          <Award size={16} color={isDark ? "#60A5FA" : "#2B5BDB"} />
-          <Text
-            className="text-sm text-ink-900 dark:text-white font-sans-bold"
-          >
+          <Award size={16} color={colors.primary} />
+          <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
             Semester Results
           </Text>
         </View>
         <View className="gap-3">
           {getSemesterResults().map((result) => (
-            <SemesterRow
-              key={result.sem}
-              semester={result.sem}
-              sgpa={result.sgpa}
-            />
+            <SemesterRow key={result.sem} semester={result.sem} sgpa={result.sgpa} />
           ))}
         </View>
       </View>

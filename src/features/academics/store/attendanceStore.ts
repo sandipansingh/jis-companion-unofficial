@@ -1,8 +1,10 @@
-import { useAuthStore } from "@/src/features/auth/store/authStore";
-import { syncAttendanceData } from "@/src/services/sync";
-import { getMonthKey as getMonthKeyHelper } from "@/src/utils/dateHelpers";
-import { create } from "zustand";
-import { DateWiseAttendance, SubjectWiseAttendance } from "../types";
+import { create } from 'zustand';
+
+import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { syncAttendanceData } from '@/src/services/sync';
+import { getMonthKey as getMonthKeyHelper } from '@/src/utils/dateHelpers';
+
+import { DateWiseAttendance, SubjectWiseAttendance } from '../types';
 
 interface MonthAttendanceData {
   subjectWiseAttendance: SubjectWiseAttendance[];
@@ -22,15 +24,12 @@ interface AttendanceStore {
   selectedClass: SubjectWiseAttendance | null;
   fetchMonthAttendance: (year: number, month: number) => Promise<void>;
   getMonthData: (year: number, month: number) => MonthAttendanceData | null;
-  getSubjectWiseData: (
-    year: number,
-    month: number
-  ) => SubjectWiseAttendance[] | null;
+  getSubjectWiseData: (year: number, month: number) => SubjectWiseAttendance[] | null;
   getDateWiseData: (year: number, month: number) => DateWiseAttendance[] | null;
   getClassByIdentifier: (
     date: string,
     empCode: string,
-    periodName: string
+    periodName: string,
   ) => SubjectWiseAttendance | null;
   setSelectedClass: (classData: SubjectWiseAttendance | null) => void;
   clearAttendanceData: () => void;
@@ -56,10 +55,10 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
       const { studentId, loginData } = useAuthStore.getState();
 
       if (!studentId || !loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
-      
-      const { getAttendanceData } = await import("@/src/services/database");
+
+      const { getAttendanceData } = await import('@/src/services/database');
       const cached = await getAttendanceData(studentId, monthKey);
 
       if (cached) {
@@ -84,7 +83,7 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
         loginData.branch_id,
         year,
         month,
-        monthKey
+        monthKey,
       );
 
       set((state) => ({
@@ -104,9 +103,7 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
       set((state) => {
         const hasData = !!state.monthlyData[monthKey];
         return {
-          error: hasData
-            ? null
-            : error.message || "Failed to fetch attendance data",
+          error: hasData ? null : error.message || 'Failed to fetch attendance data',
           loading: false,
         };
       });
@@ -138,15 +135,15 @@ export const useAttendanceStore = create<AttendanceStore>((set, get) => ({
     if (!subjectWiseData) return null;
 
     // Extract period number for comparison
-    const periodNumber = periodName.split(" ")[0];
+    const periodNumber = periodName.split(' ')[0];
 
     // Find matching class
     return (
       subjectWiseData.find((classItem) => {
-        const classDate = classItem.date1.split("T")[0];
-        const classPeriod = classItem.Period_name.split(" ")[0];
+        const classDate = classItem.date1.split('T')[0];
+        const classPeriod = classItem.Period_name.split(' ')[0];
         return (
-          classDate === date.split("T")[0] &&
+          classDate === date.split('T')[0] &&
           classItem.emp_code === empCode &&
           classPeriod === periodNumber
         );

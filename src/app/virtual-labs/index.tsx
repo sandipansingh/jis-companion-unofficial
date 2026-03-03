@@ -1,1 +1,1 @@
-export { CourseSelection as default } from "@/src/features/virtual-labs";
+export { CourseSelection as default } from '@/src/features/virtual-labs';

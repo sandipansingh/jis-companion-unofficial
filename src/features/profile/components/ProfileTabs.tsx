@@ -1,7 +1,8 @@
-import { SegmentedControl, SegmentedControlTab } from "@/src/components/SegmentedControl";
-import React from "react";
+import React from 'react';
 
-type TabType = "personal" | "guardian" | "bank" | "academic";
+import { SegmentedControl, SegmentedControlTab } from '@/src/components/SegmentedControl';
+
+type TabType = 'personal' | 'guardian' | 'bank' | 'academic';
 
 interface ProfileTabsProps {
   activeTab: TabType;
@@ -9,18 +10,12 @@ interface ProfileTabsProps {
 }
 
 const TABS: SegmentedControlTab<TabType>[] = [
-  { key: "personal", label: "PERSONAL" },
-  { key: "guardian", label: "GUARDIAN" },
-  { key: "bank", label: "BANK" },
-  { key: "academic", label: "ACADEMIC" },
+  { key: 'personal', label: 'PERSONAL' },
+  { key: 'guardian', label: 'GUARDIAN' },
+  { key: 'bank', label: 'BANK' },
+  { key: 'academic', label: 'ACADEMIC' },
 ];
 
 export function ProfileTabs({ activeTab, onTabChange }: ProfileTabsProps) {
-  return (
-    <SegmentedControl
-      tabs={TABS}
-      activeTab={activeTab}
-      onTabChange={onTabChange}
-    />
-  );
+  return <SegmentedControl tabs={TABS} activeTab={activeTab} onTabChange={onTabChange} />;
 }

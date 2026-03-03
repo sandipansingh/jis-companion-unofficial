@@ -1,12 +1,13 @@
-import { create } from "zustand";
+import { create } from 'zustand';
+
 import {
   deleteScannedContact,
   getScannedContacts,
   getSocialProfile,
   saveScannedContact,
   saveSocialProfile,
-} from "../api";
-import { QRPayload, ScannedContact, SocialProfile } from "../types";
+} from '../api';
+import { QRPayload, ScannedContact, SocialProfile } from '../types';
 
 interface ConnectState {
   socialProfile: SocialProfile | null;
@@ -16,10 +17,7 @@ interface ConnectState {
   isContactsLoading: boolean;
   error: string | null;
   fetchSocialProfile: (studentId: string) => Promise<void>;
-  updateSocialProfile: (
-    studentId: string,
-    profile: SocialProfile
-  ) => Promise<void>;
+  updateSocialProfile: (studentId: string, profile: SocialProfile) => Promise<void>;
   fetchScannedContacts: (studentId: string) => Promise<void>;
   addScannedContact: (studentId: string, payload: QRPayload) => Promise<void>;
   removeScannedContact: (id: number, studentId: string) => Promise<void>;
@@ -37,9 +35,17 @@ export const useConnectStore = create<ConnectState>((set) => ({
     set({ isProfileLoading: true, error: null });
     try {
       const profile = await getSocialProfile(studentId);
-      set({ socialProfile: profile, isProfileLoading: false, hasFetchedSocialProfile: true });
+      set({
+        socialProfile: profile,
+        isProfileLoading: false,
+        hasFetchedSocialProfile: true,
+      });
     } catch (error: any) {
-      set({ error: error.message, isProfileLoading: false, hasFetchedSocialProfile: true });
+      set({
+        error: error.message,
+        isProfileLoading: false,
+        hasFetchedSocialProfile: true,
+      });
     }
   },
 

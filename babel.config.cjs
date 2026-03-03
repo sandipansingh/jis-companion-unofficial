@@ -3,19 +3,19 @@ module.exports = function (api) {
   return {
     presets: [
       [
-        "babel-preset-expo",
+        'babel-preset-expo',
         {
-          jsxImportSource: "nativewind",
+          jsxImportSource: 'nativewind',
           unstable_transformImportMeta: true,
         },
       ],
-      "nativewind/babel",
+      'nativewind/babel',
     ],
     plugins: [
       [
-        "transform-remove-console",
+        'transform-remove-console',
         {
-          exclude: ["error", "warn"], // Keep console.error and console.warn
+          exclude: ['error', 'warn'], // Keep console.error and console.warn
         },
       ],
     ],
@@ -23,9 +23,9 @@ module.exports = function (api) {
       production: {
         plugins: [
           [
-            "transform-remove-console",
+            'transform-remove-console',
             {
-              exclude: ["error"], // In production, only keep console.error
+              exclude: ['error'], // In production, only keep console.error
             },
           ],
         ],

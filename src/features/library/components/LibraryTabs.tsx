@@ -1,7 +1,8 @@
-import { SegmentedControl, SegmentedControlTab } from "@/src/components/SegmentedControl";
-import React from "react";
+import React from 'react';
 
-type FilterType = "1" | "2";
+import { SegmentedControl, SegmentedControlTab } from '@/src/components/SegmentedControl';
+
+type FilterType = '1' | '2';
 
 interface LibraryTabsProps {
   activeTab: string;
@@ -9,8 +10,8 @@ interface LibraryTabsProps {
 }
 
 const TABS: SegmentedControlTab<FilterType>[] = [
-  { key: "1", label: "ALL BOOKS" },
-  { key: "2", label: "TO RETURN" },
+  { key: '1', label: 'ALL BOOKS' },
+  { key: '2', label: 'TO RETURN' },
 ];
 
 export function LibraryTabs({ activeTab, onTabChange }: LibraryTabsProps) {

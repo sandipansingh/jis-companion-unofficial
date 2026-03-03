@@ -1,57 +1,60 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { Check, Clock, X } from "lucide-react-native";
-import { Text, View } from "react-native";
+import { Check, Clock, X } from 'lucide-react-native';
+import { StyleProp, Text, View, ViewStyle } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface AttendanceStatusCardProps {
   status: string;
+  style?: StyleProp<ViewStyle>;
 }
 
-export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
-  const { isDark } = useTheme();
-  const isPresent = status.toLowerCase() === "present";
-  const isNotYetAvailable = status.toLowerCase() === "not yet available";
+export function AttendanceStatusCard({ status, style }: AttendanceStatusCardProps) {
+  const { colors } = useTheme();
+  const isPresent = status.toLowerCase() === 'present';
+  const isNotYetAvailable = status.toLowerCase() === 'not yet available';
 
   const config = isPresent
     ? {
-        bg: isDark ? "#064E3B" : "#ECFDF5",
-        iconBg: isDark ? "#059669" : "#059669",
-        text: isDark ? "#A7F3D0" : "#065F46",
-        subtext: isDark ? "#34D399" : "#10B981",
-        message: "You attended this class",
-        icon: <Check size={22} color="#FFFFFF" />,
+        bg: colors.successBg,
+        iconBg: colors.successStrong,
+        text: colors.successText,
+        subtext: colors.success,
+        message: 'You attended this class',
+        icon: <Check size={22} color="white" />,
       }
     : isNotYetAvailable
-    ? {
-        bg: isDark ? "#1F2937" : "#F8FAFC",
-        iconBg: isDark ? "#4B5563" : "#94A3B8",
-        text: isDark ? "#E5E7EB" : "#1E2235",
-        subtext: isDark ? "#9CA3AF" : "#94A3B8",
-        message: "",
-        icon: <Clock size={22} color="#FFFFFF" />,
-      }
-    : {
-        bg: isDark ? "#500707" : "#FEF2F2",
-        iconBg: isDark ? "#991B1B" : "#DC2626",
-        text: isDark ? "#FECACA" : "#991B1B",
-        subtext: isDark ? "#F87171" : "#EF4444",
-        message: "You missed this class",
-        icon: <X size={22} color="#FFFFFF" />,
-      };
+      ? {
+          bg: colors.elevated,
+          iconBg: colors.textTertiary,
+          text: colors.text,
+          subtext: colors.textTertiary,
+          message: '',
+          icon: <Clock size={22} color="white" />,
+        }
+      : {
+          bg: colors.dangerBg,
+          iconBg: colors.dangerStrong,
+          text: colors.dangerText,
+          subtext: colors.danger,
+          message: 'You missed this class',
+          icon: <X size={22} color="white" />,
+        };
 
   return (
     <View
-      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 mb-4"
-      style={{
-        shadowColor: "#0F172A",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-      }}
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-4 mb-4"
+      style={[
+        {
+          shadowColor: colors.text,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 8,
+          elevation: 2,
+        },
+        style,
+      ]}
     >
-      <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5 font-sans-semi"
-      >
+      <Text className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-2.5 font-sans-semi">
         Attendance Status
       </Text>
       <View
@@ -66,17 +69,11 @@ export function AttendanceStatusCard({ status }: AttendanceStatusCardProps) {
             {config.icon}
           </View>
           <View>
-            <Text
-              className="text-lg font-display"
-              style={{ color: config.text }}
-            >
+            <Text className="text-lg font-display" style={{ color: config.text }}>
               {status}
             </Text>
-            {config.message !== "" && (
-              <Text
-                className="text-sm font-sans"
-                style={{ color: config.subtext }}
-              >
+            {config.message !== '' && (
+              <Text className="text-sm font-sans" style={{ color: config.subtext }}>
                 {config.message}
               </Text>
             )}

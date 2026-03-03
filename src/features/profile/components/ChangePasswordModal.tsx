@@ -1,15 +1,16 @@
-import { Button, TextInput } from "@/src/components";
-import { useAlertStore } from "@/src/store/alertStore";
-import { Lock } from "lucide-react-native";
-import React, { useState } from "react";
+import { Lock } from 'lucide-react-native';
+import React, { useState } from 'react';
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import { Button, TextInput } from '@/src/components';
+import { useAlertStore } from '@/src/store/alertStore';
 
 interface ChangePasswordModalProps {
   visible: boolean;
@@ -22,9 +23,9 @@ export default function ChangePasswordModal({
   onClose,
   onSubmit,
 }: ChangePasswordModalProps) {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{
     currentPassword?: string;
@@ -32,7 +33,7 @@ export default function ChangePasswordModal({
     confirmPassword?: string;
   }>({});
   const { showAlert } = useAlertStore();
-  const isWeb = Platform.OS === "web";
+  const isWeb = Platform.OS === 'web';
 
   const validatePasswords = (): boolean => {
     const newErrors: {
@@ -42,13 +43,13 @@ export default function ChangePasswordModal({
     } = {};
 
     if (isWeb && !currentPassword.trim()) {
-      newErrors.currentPassword = "Current password is required";
+      newErrors.currentPassword = 'Current password is required';
     }
     if (newPassword.length < 8) {
-      newErrors.newPassword = "Password must be at least 8 characters";
+      newErrors.newPassword = 'Password must be at least 8 characters';
     }
     if (newPassword !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -61,15 +62,15 @@ export default function ChangePasswordModal({
     setIsLoading(true);
     try {
       await onSubmit(newPassword, isWeb ? currentPassword : undefined);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
       setErrors({});
       onClose();
     } catch (error: any) {
-      const errorMessage = error.message || "Failed to change password";
+      const errorMessage = error.message || 'Failed to change password';
       showAlert({
-        title: "Error",
+        title: 'Error',
         message: `${errorMessage}\n\nPlease try logging out of other phone and web, then try again after 15 minutes.`,
       });
     } finally {
@@ -78,9 +79,9 @@ export default function ChangePasswordModal({
   };
 
   const handleClose = () => {
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
     setErrors({});
     onClose();
   };
@@ -93,44 +94,36 @@ export default function ChangePasswordModal({
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
       >
         <TouchableOpacity
-          className="flex-1 justify-center items-center px-5"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+          className="flex-1 justify-center items-center px-5 bg-black/50"
           activeOpacity={1}
           onPress={handleClose}
         >
           <TouchableOpacity
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
-            className="w-full"
-            style={{ maxWidth: 500 }}
+            className="w-full max-w-[500px]"
           >
             <View
               className="w-full bg-surface rounded-2xl p-6 mb-5"
               style={{
-                shadowColor: "#000",
+                shadowColor: '#000',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
                 elevation: 8,
               }}
             >
-              {/* Header */}
-              <Text
-                className="text-xl text-ink-900 mb-6 font-display"
-              >
+              <Text className="text-xl text-ink-900 dark:text-white mb-6 font-display">
                 Change Password
               </Text>
 
-              {/* Current Password — web only */}
               {isWeb && (
                 <View className="mb-5">
-                  <Text
-                    className="text-sm text-ink-500 mb-2 font-sans-semi"
-                  >
+                  <Text className="text-sm text-ink-500 mb-2 font-sans-semi">
                     Current Password
                   </Text>
                   <TextInput
@@ -146,20 +139,15 @@ export default function ChangePasswordModal({
                     editable={!isLoading}
                   />
                   {errors.currentPassword && (
-                    <Text
-                      className="text-xs text-danger mt-1 ml-1 font-sans"
-                    >
+                    <Text className="text-xs text-danger mt-1 ml-1 font-sans">
                       {errors.currentPassword}
                     </Text>
                   )}
                 </View>
               )}
 
-              {/* New Password */}
               <View className="mb-5">
-                <Text
-                  className="text-sm text-ink-500 mb-2 font-sans-semi"
-                >
+                <Text className="text-sm text-ink-500 mb-2 font-sans-semi">
                   New Password
                 </Text>
                 <TextInput
@@ -176,19 +164,14 @@ export default function ChangePasswordModal({
                   editable={!isLoading}
                 />
                 {errors.newPassword && (
-                  <Text
-                    className="text-xs text-danger mt-1 ml-1 font-sans"
-                  >
+                  <Text className="text-xs text-danger mt-1 ml-1 font-sans">
                     {errors.newPassword}
                   </Text>
                 )}
               </View>
 
-              {/* Confirm Password */}
               <View className="mb-5">
-                <Text
-                  className="text-sm text-ink-500 mb-2 font-sans-semi"
-                >
+                <Text className="text-sm text-ink-500 mb-2 font-sans-semi">
                   Confirm New Password
                 </Text>
                 <TextInput
@@ -204,15 +187,12 @@ export default function ChangePasswordModal({
                   editable={!isLoading}
                 />
                 {errors.confirmPassword && (
-                  <Text
-                    className="text-xs text-danger mt-1 ml-1 font-sans"
-                  >
+                  <Text className="text-xs text-danger mt-1 ml-1 font-sans">
                     {errors.confirmPassword}
                   </Text>
                 )}
               </View>
 
-              {/* Buttons */}
               <Button
                 title="Change Password"
                 onPress={handleSubmit}
@@ -225,8 +205,7 @@ export default function ChangePasswordModal({
                 variant="secondary"
                 onPress={handleClose}
                 disabled={isLoading}
-                style={{ marginTop: 12, backgroundColor: "#FAFAFA", height: 50 }}
-                textStyle={{ color: "#64748B" }}
+                style={{ marginTop: 12, height: 50 }}
               />
             </View>
           </TouchableOpacity>

@@ -1,6 +1,8 @@
-import { getMonthName, isSameDay } from "@/src/utils/dateHelpers";
-import { Text, View } from "react-native";
-import { RoutineTimelineItem } from "./RoutineTimelineItem";
+import { Text, View } from 'react-native';
+
+import { getMonthName, isSameDay } from '@/src/utils/dateHelpers';
+
+import { RoutineTimelineItem } from './RoutineTimelineItem';
 
 interface ClassRoutineSectionProps {
   selectedDate: Date;
@@ -27,16 +29,12 @@ export function ClassRoutineSection({
   return (
     <View>
       <View className="flex-row items-center gap-2 mb-4">
-        <Text
-          className="text-base text-ink-950 dark:text-white font-display"
-        >
+        <Text className="text-base text-ink-950 dark:text-white font-display">
           {dateLabel}
         </Text>
         {isFallbackData && (
-          <View className="bg-ink-100 dark:bg-ink-900 rounded-full px-2.5 py-0.5">
-            <Text
-              className="text-[10px] text-ink-500 dark:text-ink-400 font-sans-md"
-            >
+          <View className="bg-ink-100 dark:bg-elevated rounded-full px-2.5 py-0.5">
+            <Text className="text-[10px] text-ink-500 dark:text-ink-400 font-sans-md">
               Based on previous week
             </Text>
           </View>
@@ -44,7 +42,7 @@ export function ClassRoutineSection({
       </View>
       <View className="gap-0">
         {routine.map((classItem, index) => {
-          const hasFacultyData = !!classItem.emp_code && classItem.emp_code.trim() !== "";
+          const hasFacultyData = !!classItem.emp_code && classItem.emp_code.trim() !== '';
           return (
             <RoutineTimelineItem
               key={index}

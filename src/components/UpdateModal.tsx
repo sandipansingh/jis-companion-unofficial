@@ -1,12 +1,14 @@
-import { AppInfo } from "@/src/api/appInfo";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { useAlertStore } from "@/src/store/alertStore";
-import { UpdateType } from "@/src/utils/versionHelpers";
-import { ArrowRight, Bug, Rocket, Sparkles } from "lucide-react-native";
-import React from "react";
-import { Linking, Modal, processColor, ScrollView, View } from "react-native";
-import { Button } from "./Button";
-import { Text } from "./Themed";
+import { ArrowRight, Bug, Rocket, Sparkles } from 'lucide-react-native';
+import React from 'react';
+import { Linking, Modal, ScrollView, View } from 'react-native';
+
+import { AppInfo } from '@/src/api/appInfo';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { useAlertStore } from '@/src/store/alertStore';
+import { UpdateType } from '@/src/utils/versionHelpers';
+
+import { Button } from './Button';
+import { Text } from './Themed';
 
 interface UpdateModalProps {
   visible: boolean;
@@ -14,25 +16,6 @@ interface UpdateModalProps {
   currentVersion: string;
   appInfo: AppInfo;
   onDismiss: () => void;
-}
-
-function withOpacity(color: string, opacity: number): string {
-  try {
-    const processed = processColor(color);
-    if (typeof processed !== "number") {
-      return "transparent";
-    }
-
-    const colorInt = processed >>> 0;
-    const red = (colorInt >> 16) & 255;
-    const green = (colorInt >> 8) & 255;
-    const blue = colorInt & 255;
-    const clampedOpacity = Math.max(0, Math.min(1, opacity));
-
-    return `rgba(${red}, ${green}, ${blue}, ${clampedOpacity})`;
-  } catch {
-    return "transparent";
-  }
 }
 
 export function UpdateModal({
@@ -44,7 +27,6 @@ export function UpdateModal({
 }: UpdateModalProps) {
   const { colors } = useTheme();
   const { showAlert } = useAlertStore();
-  const mutedSurface = withOpacity(colors.text, 0.06);
 
   const handleOpenStore = async () => {
     try {
@@ -53,57 +35,61 @@ export function UpdateModal({
         await Linking.openURL(appInfo.url);
       } else {
         showAlert({
-          title: "Error",
-          message: "Unable to open Play Store",
+          title: 'Error',
+          message: 'Unable to open Play Store',
         });
       }
-    } catch (error) {
+    } catch {
       showAlert({
-        title: "Error",
-        message: "Unable to open Play Store",
+        title: 'Error',
+        message: 'Unable to open Play Store',
       });
     }
   };
 
   const getHeaderAttributes = () => {
     switch (updateType) {
-      case "major":
+      case 'major':
         return {
           Icon: Rocket,
           iconColor: colors.primary,
-          title: "Critical Update",
+          title: 'Critical Update',
         };
-      case "minor":
+      case 'minor':
         return {
           Icon: Sparkles,
           iconColor: colors.primary,
-          title: "New Features!",
+          title: 'New Features!',
         };
-      case "patch":
+      case 'patch':
       default:
         return {
           Icon: Bug,
           iconColor: colors.success,
-          title: "Bug Fixes & Polish",
+          title: 'Bug Fixes & Polish',
         };
     }
   };
 
   const getMessage = () => {
     switch (updateType) {
-      case "major":
+      case 'major':
         return "Ideally, we wouldn't force this, but this update includes critical changes required for the app to function properly.";
-      case "minor":
+      case 'minor':
         return "We've added some cool new features! Update now to verify them out.";
-      case "patch":
+      case 'patch':
         return "We've squashed some bugs and improved performance.";
       default:
-        return "A new version is available.";
+        return 'A new version is available.';
     }
   };
 
   const { Icon, iconColor, title } = getHeaderAttributes();
-  const canDismiss = updateType !== "major";
+  const canDismiss = updateType !== 'major';
+
+  // Dynamic classes based on update type
+  const iconBgClass =
+    updateType === 'patch' ? 'bg-success/[0.125]' : 'bg-primary/[0.125]';
 
   return (
     <Modal
@@ -114,63 +100,33 @@ export function UpdateModal({
       onRequestClose={canDismiss ? onDismiss : undefined}
     >
       <View className="flex-1 bg-black/60 justify-center items-center p-6">
-        <View
-          className="w-full max-w-[400px] max-h-[85%] rounded-[24px]"
-          style={{
-            backgroundColor: colors.surface,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.2,
-            shadowRadius: 20,
-            elevation: 10,
-          }}
-        >
+        <View className="w-full max-w-[400px] max-h-[85%] rounded-[24px] bg-surface shadow-lg shadow-black/20 elevation-10">
           <ScrollView
-            contentContainerStyle={{ padding: 24, alignItems: "center" }}
+            contentContainerClassName="p-6 items-center"
             showsVerticalScrollIndicator={true}
           >
-            {/* Header Icon */}
             <View className="mb-5">
               <View
-                className="w-20 h-20 rounded-full justify-center items-center"
-                style={{ backgroundColor: withOpacity(iconColor, 0.125) }}
+                className={`w-20 h-20 rounded-full justify-center items-center ${iconBgClass}`}
               >
                 <Icon size={40} color={iconColor} strokeWidth={1.5} />
               </View>
             </View>
 
-            {/* Title */}
-            <Text
-              className="text-2xl font-bold text-center mb-3 font-display-bold"
-              style={{ color: colors.text }}
-            >
+            <Text className="text-2xl font-bold text-center mb-3 font-display-bold text-text">
               {title}
             </Text>
 
-            {/* Message */}
-            <Text
-              className="text-base text-center mb-6 leading-6 px-2 font-sans"
-              style={{ color: colors.textSecondary }}
-            >
+            <Text className="text-base text-center mb-6 leading-6 px-2 font-sans text-ink-700 dark:text-ink-400">
               {getMessage()}
             </Text>
 
-            {/* Version Info */}
-            <View
-              className="flex-row items-center justify-between w-full py-3 px-6 rounded-2xl mb-6"
-              style={{ backgroundColor: mutedSurface }}
-            >
+            <View className="flex-row items-center justify-between w-full py-3 px-6 rounded-2xl mb-6 bg-text/6">
               <View className="items-center flex-1">
-                <Text
-                  className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md"
-                  style={{ color: colors.textTertiary }}
-                >
+                <Text className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md text-ink-500">
                   Current
                 </Text>
-                <Text
-                  className="text-base font-bold font-display"
-                  style={{ color: colors.text }}
-                >
+                <Text className="text-base font-bold font-display text-text">
                   {currentVersion}
                 </Text>
               </View>
@@ -183,56 +139,39 @@ export function UpdateModal({
               />
 
               <View className="items-center flex-1">
-                <Text
-                  className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md"
-                  style={{ color: colors.textTertiary }}
-                >
+                <Text className="text-xs mb-1 font-semibold uppercase tracking-wider font-sans-md text-ink-500">
                   Latest
                 </Text>
-                <Text
-                  className="text-base font-bold font-display"
-                  style={{ color: colors.primary }}
-                >
+                <Text className="text-base font-bold font-display text-primary">
                   v{appInfo.version}
                 </Text>
               </View>
             </View>
 
-            {/* Release Notes */}
             {appInfo.releaseNotes && (
-              <View
-                className="w-full mb-6 p-4 rounded-xl"
-                style={{ backgroundColor: mutedSurface }}
-              >
-                <Text
-                  className="text-sm font-sans-semi mb-2 uppercase"
-                  style={{ color: colors.text }}
-                >
+              <View className="w-full mb-6 p-4 rounded-xl bg-text/6">
+                <Text className="text-sm font-sans-semi mb-2 uppercase text-text">
                   What's New
                 </Text>
-                <Text
-                  className="text-sm leading-5 font-sans"
-                  style={{ color: colors.textSecondary }}
-                >
+                <Text className="text-sm leading-5 font-sans text-ink-700 dark:text-ink-400">
                   {appInfo.releaseNotes
-                    .replace(/<br\s*\/?>/gi, "\n")
-                    .replace(/<\/p>/gi, "\n\n")
-                    .replace(/<p>/gi, "")
-                    .replace(/<\/?strong>/gi, "")
-                    .replace(/<\/?b>/gi, "")
-                    .replace(/<\/?em>/gi, "")
-                    .replace(/<\/?i>/gi, "")
-                    .replace(/&nbsp;/gi, " ")
-                    .replace(/&amp;/gi, "&")
-                    .replace(/&lt;/gi, "<")
-                    .replace(/&gt;/gi, ">")
+                    .replace(/<br\s*\/?>/gi, '\n')
+                    .replace(/<\/p>/gi, '\n\n')
+                    .replace(/<p>/gi, '')
+                    .replace(/<\/?strong>/gi, '')
+                    .replace(/<\/?b>/gi, '')
+                    .replace(/<\/?em>/gi, '')
+                    .replace(/<\/?i>/gi, '')
+                    .replace(/&nbsp;/gi, ' ')
+                    .replace(/&amp;/gi, '&')
+                    .replace(/&lt;/gi, '<')
+                    .replace(/&gt;/gi, '>')
                     .replace(/&quot;/gi, '"')
                     .trim()}
                 </Text>
               </View>
             )}
 
-            {/* Buttons */}
             <View className="w-full gap-3">
               <Button
                 title="Update Now"
@@ -242,14 +181,13 @@ export function UpdateModal({
                 textClassName="text-base"
               />
 
-              {updateType !== "major" && (
+              {updateType !== 'major' && (
                 <Button
                   title="Maybe Later"
                   onPress={onDismiss}
                   variant="secondary"
                   className="h-[50px] rounded-xl border-0 bg-transparent"
-                  textClassName="text-base"
-                  textStyle={{ color: colors.textSecondary }}
+                  textClassName="text-base text-ink-700 dark:text-ink-400"
                 />
               )}
             </View>
@@ -259,4 +197,3 @@ export function UpdateModal({
     </Modal>
   );
 }
-

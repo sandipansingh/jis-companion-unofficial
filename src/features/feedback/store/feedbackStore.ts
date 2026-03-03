@@ -1,18 +1,16 @@
-import { useAuthStore } from "@/src/features/auth";
-import { create } from "zustand";
+import { create } from 'zustand';
+
+import { useAuthStore } from '@/src/features/auth';
+
 import {
-    finalSaveFeedback,
-    getFacultyList,
-    getFeedbackLockStatus,
-    getFeedbackQuestions,
-    markFacultyNotOpted,
-    saveFeedback,
-} from "../api";
-import {
-    FacultyFeedbackItem,
-    FeedbackLockStatus,
-    FeedbackQuestion,
-} from "../types";
+  finalSaveFeedback,
+  getFacultyList,
+  getFeedbackLockStatus,
+  getFeedbackQuestions,
+  markFacultyNotOpted,
+  saveFeedback,
+} from '../api';
+import { FacultyFeedbackItem, FeedbackLockStatus, FeedbackQuestion } from '../types';
 
 interface FeedbackStore {
   lockStatus: FeedbackLockStatus | null;
@@ -26,15 +24,13 @@ interface FeedbackStore {
   getFacultyById: (
     facCode: string,
     subCode: string,
-    secId: number
+    secId: number,
   ) => FacultyFeedbackItem | null;
   setSelectedFaculty: (faculty: FacultyFeedbackItem | null) => void;
-  getFeedbackForFaculty: (
-    faculty: FacultyFeedbackItem
-  ) => Promise<FeedbackQuestion[]>;
+  getFeedbackForFaculty: (faculty: FacultyFeedbackItem) => Promise<FeedbackQuestion[]>;
   submitFeedback: (
     faculty: FacultyFeedbackItem,
-    questions: FeedbackQuestion[]
+    questions: FeedbackQuestion[],
   ) => Promise<void>;
   markNotOpted: (faculty: FacultyFeedbackItem) => Promise<void>;
   finalSubmit: () => Promise<void>;
@@ -55,23 +51,23 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
       const { loginData } = useAuthStore.getState();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const status = await getFeedbackLockStatus(
         loginData.college_id,
         loginData.std_id,
-        loginData.branch_id
+        loginData.branch_id,
       );
 
       set({ lockStatus: status, loading: false });
 
       return status.locStatus === 0;
     } catch (error: any) {
-      console.error("Failed to check lock status:", error);
-      const userMessage = error.message?.includes("authenticated")
-        ? "Please log in again"
-        : error.message || "Failed to check feedback status. Please try again.";
+      console.error('Failed to check lock status:', error);
+      const userMessage = error.message?.includes('authenticated')
+        ? 'Please log in again'
+        : error.message || 'Failed to check feedback status. Please try again.';
       set({
         error: userMessage,
         loading: false,
@@ -84,7 +80,7 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
     const { facultyList, loading } = get();
 
     if (facultyList.length > 0 || loading) {
-      console.log("Faculty list already loaded or loading in progress");
+      console.log('Faculty list already loaded or loading in progress');
       return;
     }
 
@@ -94,13 +90,13 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
       const { loginData } = useAuthStore.getState();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const faculties = await getFacultyList(
         loginData.college_id,
         loginData.std_id,
-        loginData.branch_id
+        loginData.branch_id,
       );
 
       console.log(`Fetched ${faculties.length} faculty records`);
@@ -111,10 +107,10 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
         error: null,
       });
     } catch (error: any) {
-      console.error("Failed to fetch faculty list:", error);
-      const userMessage = error.message?.includes("authenticated")
-        ? "Please log in again"
-        : error.message || "Failed to load feedback data. Please try again.";
+      console.error('Failed to fetch faculty list:', error);
+      const userMessage = error.message?.includes('authenticated')
+        ? 'Please log in again'
+        : error.message || 'Failed to load feedback data. Please try again.';
       set({
         error: userMessage,
         loading: false,
@@ -136,8 +132,7 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
 
     return (
       facultyList.find(
-        (f) =>
-          f.fac_code === facCode && f.sub_code === subCode && f.sec_id === secId
+        (f) => f.fac_code === facCode && f.sub_code === subCode && f.sec_id === secId,
       ) || null
     );
   },
@@ -151,32 +146,29 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
       const { loginData } = useAuthStore.getState();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const questions = await getFeedbackQuestions(
         loginData.college_id,
         loginData.std_id,
         loginData.branch_id,
-        faculty
+        faculty,
       );
 
       return questions;
     } catch (error: any) {
-      console.error("Failed to fetch feedback questions:", error);
+      console.error('Failed to fetch feedback questions:', error);
       throw error;
     }
   },
 
-  submitFeedback: async (
-    faculty: FacultyFeedbackItem,
-    questions: FeedbackQuestion[]
-  ) => {
+  submitFeedback: async (faculty: FacultyFeedbackItem, questions: FeedbackQuestion[]) => {
     try {
       const { loginData } = useAuthStore.getState();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const result = await saveFeedback(
@@ -184,11 +176,11 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
         loginData.std_id,
         loginData.branch_id,
         faculty,
-        questions
+        questions,
       );
 
       if (result.err_no !== 0) {
-        throw new Error(result.err_mesg || "Failed to save feedback");
+        throw new Error(result.err_mesg || 'Failed to save feedback');
       }
 
       const { facultyList } = get();
@@ -205,7 +197,7 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
 
       set({ facultyList: updatedList });
     } catch (error: any) {
-      console.error("Failed to submit feedback:", error);
+      console.error('Failed to submit feedback:', error);
       throw error;
     }
   },
@@ -215,20 +207,18 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
       const { loginData } = useAuthStore.getState();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const result = await markFacultyNotOpted(
         loginData.college_id,
         loginData.std_id,
         loginData.branch_id,
-        faculty
+        faculty,
       );
 
       if (result.err_no !== 0) {
-        throw new Error(
-          result.err_mesg || "Failed to mark faculty as not opted"
-        );
+        throw new Error(result.err_mesg || 'Failed to mark faculty as not opted');
       }
 
       const { facultyList } = get();
@@ -245,7 +235,7 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
 
       set({ facultyList: updatedList });
     } catch (error: any) {
-      console.error("Failed to mark faculty as not opted:", error);
+      console.error('Failed to mark faculty as not opted:', error);
       throw error;
     }
   },
@@ -256,11 +246,11 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
       const { facultyList } = get();
 
       if (!loginData) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       if (facultyList.length === 0) {
-        throw new Error("No faculty data available");
+        throw new Error('No faculty data available');
       }
 
       const firstFaculty = facultyList[0];
@@ -274,11 +264,11 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
         firstFaculty.sem_id,
         firstFaculty.course_id,
         firstFaculty.stream_id,
-        firstFaculty.sec_id
+        firstFaculty.sec_id,
       );
 
       if (result.err_no !== 0) {
-        throw new Error(result.err_mesg || "Failed to finalize feedback");
+        throw new Error(result.err_mesg || 'Failed to finalize feedback');
       }
 
       set({
@@ -286,7 +276,7 @@ export const useFeedbackStore = create<FeedbackStore>((set, get) => ({
         facultyList: [],
       });
     } catch (error: any) {
-      console.error("Failed to finalize feedback:", error);
+      console.error('Failed to finalize feedback:', error);
       throw error;
     }
   },

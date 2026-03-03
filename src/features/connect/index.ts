@@ -1,11 +1,11 @@
 // Types
-export * from "./types";
+export * from './types';
 
 // API
-export * from "./api";
+export * from './api';
 
 // Screens
-export * from "./screens";
+export * from './screens';
 
 // Store
-export { useConnectStore } from "./store/connectStore";
+export { useConnectStore } from './store/connectStore';

@@ -1,6 +1,7 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { FileText } from "lucide-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FileText } from 'lucide-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface Resource {
   filename: string;
@@ -13,24 +14,22 @@ interface ResourcesCardProps {
 }
 
 export function ResourcesCard({ resources, onResourcePress }: ResourcesCardProps) {
-  const { isDark } = useTheme();
+  const { colors } = useTheme();
 
   if (resources.length === 0) return null;
 
   return (
     <View
-      className="bg-surface dark:bg-ink-900 rounded-2xl border border-border p-4 mb-4"
+      className="bg-surface dark:bg-surface rounded-2xl border border-border p-4 mb-4"
       style={{
-        shadowColor: "#0F172A",
+        shadowColor: colors.text,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 8,
         elevation: 2,
       }}
     >
-      <Text
-        className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-3 font-sans-semi"
-      >
+      <Text className="text-[10px] text-ink-500 dark:text-ink-400 uppercase tracking-widest mb-3 font-sans-semi">
         Resources
       </Text>
       <View className="gap-3">
@@ -42,7 +41,7 @@ export function ResourcesCard({ resources, onResourcePress }: ResourcesCardProps
             activeOpacity={0.7}
           >
             <View className="w-10 h-10 rounded-xl bg-danger-light dark:bg-red-900/30 items-center justify-center">
-              <FileText size={18} color={isDark ? "#F87171" : "#DC2626"} />
+              <FileText size={18} color={colors.danger} />
             </View>
             <Text
               className="flex-1 text-sm text-ink-900 dark:text-white font-sans-md"

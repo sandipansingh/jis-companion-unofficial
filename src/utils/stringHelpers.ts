@@ -6,8 +6,8 @@
  * getFileName("https://example.com/files/report.pdf") // "report.pdf"
  */
 export const getFileName = (url: string): string => {
-  if (!url) return "";
-  const parts = url.split("/");
+  if (!url) return '';
+  const parts = url.split('/');
   return parts[parts.length - 1];
 };
 
@@ -24,13 +24,11 @@ export const getFileName = (url: string): string => {
  * parseSubjectName("Data Structures")
  * // { code: "Data Structures", name: "Data Structures" }
  */
-export const parseSubjectName = (
-  fullName: string,
-): { code: string; name: string } => {
-  if (!fullName) return { code: "", name: "" };
-  const parts = fullName.split(" - ");
+export const parseSubjectName = (fullName: string): { code: string; name: string } => {
+  if (!fullName) return { code: '', name: '' };
+  const parts = fullName.split(' - ');
   return {
-    code: parts[0]?.trim() || "",
+    code: parts[0]?.trim() || '',
     name: parts[1]?.trim() || fullName,
   };
 };
@@ -45,13 +43,13 @@ export const parseSubjectName = (
  * normalizeStudentId("NIT/2025/0000") // "NIT/2025/0000"
  */
 export const normalizeStudentId = (studentId: string): string => {
-  if (!studentId) return "";
+  if (!studentId) return '';
 
   const trimmed = studentId.trim();
 
   // If already in correct format (contains slashes), return as-is with uppercase prefix
-  if (trimmed.includes("/")) {
-    const parts = trimmed.split("/");
+  if (trimmed.includes('/')) {
+    const parts = trimmed.split('/');
     if (parts.length === 3) {
       return `${parts[0].toUpperCase()}/${parts[1]}/${parts[2]}`;
     }
@@ -64,7 +62,7 @@ export const normalizeStudentId = (studentId: string): string => {
 
   if (match) {
     const [, prefix, year, number] = match;
-    return `${prefix.toUpperCase()}/${year}/${number.padStart(4, "0")}`;
+    return `${prefix.toUpperCase()}/${year}/${number.padStart(4, '0')}`;
   }
 
   // If format doesn't match, return as-is
@@ -72,9 +70,9 @@ export const normalizeStudentId = (studentId: string): string => {
 };
 
 export const getInitials = (name: string): string => {
-  if (!name) return "";
+  if (!name) return '';
   const parts = name.trim().split(/\s+/);
-  if (parts.length === 0) return "";
+  if (parts.length === 0) return '';
   if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };

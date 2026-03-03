@@ -1,25 +1,24 @@
-import apiClient, {
-  StandardApiResponse,
-  unofficialApiClient,
-} from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
+import * as Crypto from 'expo-crypto';
+import * as Device from 'expo-device';
+import { ulid } from 'ulid';
+
+import apiClient, { StandardApiResponse, unofficialApiClient } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
 import {
   DEMO_CREDENTIALS,
   DEMO_USER_PROFILE,
   getDemoLoginData,
   isDemoAccount,
-} from "@/src/utils/demo";
-import * as SecureStore from "@/src/utils/secureStore";
-import * as Crypto from "expo-crypto";
-import * as Device from "expo-device";
-import { ulid } from "ulid";
-import { LoginParams, LoginResponse, UserProfileData } from "../types";
+} from '@/src/utils/demo';
+import * as SecureStore from '@/src/utils/secureStore';
+
+import { LoginParams, LoginResponse, UserProfileData } from '../types';
 
 // ulid on Android workaround
-if (typeof global.crypto !== "object") {
+if (typeof global.crypto !== 'object') {
   global.crypto = {} as any;
 }
-if (typeof global.crypto.getRandomValues !== "function") {
+if (typeof global.crypto.getRandomValues !== 'function') {
   global.crypto.getRandomValues = ((array: any) => {
     const randomBytes = Crypto.getRandomBytes(array.length);
     array.set(randomBytes);
@@ -44,42 +43,42 @@ export async function login({
 }: LoginParams): Promise<LoginResponse> {
   try {
     if (isDemoAccount(studentId, password)) {
-      await SecureStore.setItemAsync("student_id", studentId);
-      await SecureStore.setItemAsync("student_password", password);
-      await SecureStore.setItemAsync("is_demo_account", "true");
+      await SecureStore.setItemAsync('student_id', studentId);
+      await SecureStore.setItemAsync('student_password', password);
+      await SecureStore.setItemAsync('is_demo_account', 'true');
 
       return getDemoLoginData();
     }
 
-    await SecureStore.deleteItemAsync("is_demo_account");
+    await SecureStore.deleteItemAsync('is_demo_account');
 
-    const brandName = Device.brand || "unknown";
-    const deviceId = Device.modelId || "unknown";
+    const brandName = Device.brand || 'unknown';
+    const deviceId = Device.modelId || 'unknown';
 
-    let uniqueId = await SecureStore.getItemAsync("device_unique_id");
+    let uniqueId = await SecureStore.getItemAsync('device_unique_id');
     if (!uniqueId) {
       uniqueId = ulid();
-      await SecureStore.setItemAsync("device_unique_id", uniqueId);
+      await SecureStore.setItemAsync('device_unique_id', uniqueId);
     }
 
     const body = {
       parameters: [
-        "@p_user_id",
-        "@p_pass_word",
-        "@p_brand_name",
-        "@p_token",
-        "@p_deviceId",
-        "@p_uniqueId",
+        '@p_user_id',
+        '@p_pass_word',
+        '@p_brand_name',
+        '@p_token',
+        '@p_deviceId',
+        '@p_uniqueId',
       ],
-      values: [studentId, password, brandName, "", deviceId, uniqueId],
-      function: "Proc_App_Student_Login_Academic",
-      branch_id: "0",
+      values: [studentId, password, brandName, '', deviceId, uniqueId],
+      function: 'Proc_App_Student_Login_Academic',
+      branch_id: '0',
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Login failed");
+      throw new Error(response.data.message || 'Login failed');
     }
 
     const parsedData = parseApiResponse<LoginResponse>(
@@ -88,13 +87,13 @@ export async function login({
     );
 
     if (parsedData.is_valid === 1) {
-      await SecureStore.setItemAsync("student_id", studentId);
-      await SecureStore.setItemAsync("student_password", password);
+      await SecureStore.setItemAsync('student_id', studentId);
+      await SecureStore.setItemAsync('student_password', password);
     }
 
     return parsedData;
   } catch (error) {
-    handleApiError(error, "Login");
+    handleApiError(error, 'Login');
   }
 }
 
@@ -110,20 +109,20 @@ export async function getStoredCredentials(): Promise<{
 } | null> {
   try {
     const [studentId, password, isDemoFlag] = await Promise.all([
-      SecureStore.getItemAsync("student_id"),
-      SecureStore.getItemAsync("student_password"),
-      SecureStore.getItemAsync("is_demo_account"),
+      SecureStore.getItemAsync('student_id'),
+      SecureStore.getItemAsync('student_password'),
+      SecureStore.getItemAsync('is_demo_account'),
     ]);
 
     if (studentId && password) {
       return {
         studentId,
         password,
-        isDemoAccount: isDemoFlag === "true",
+        isDemoAccount: isDemoFlag === 'true',
       };
     }
 
-    if (studentId && isDemoFlag === "true") {
+    if (studentId && isDemoFlag === 'true') {
       return {
         studentId,
         password: DEMO_CREDENTIALS.password,
@@ -133,7 +132,7 @@ export async function getStoredCredentials(): Promise<{
 
     return null;
   } catch (error) {
-    console.error("Error getting stored credentials:", error);
+    console.error('Error getting stored credentials:', error);
     return null;
   }
 }
@@ -151,22 +150,22 @@ export async function fetchUserProfile(
   stdId: string,
 ): Promise<UserProfileData> {
   try {
-    const isDemoFlag = await SecureStore.getItemAsync("is_demo_account");
-    if (isDemoFlag === "true") {
+    const isDemoFlag = await SecureStore.getItemAsync('is_demo_account');
+    if (isDemoFlag === 'true') {
       return DEMO_USER_PROFILE;
     }
 
     const body = {
-      parameters: ["@p_branch_id", "@p_StudentId", "@p_is_jeson"],
-      values: [branchId, stdId, "1"],
-      function: "Proc_Get_Student_Registration_Data",
+      parameters: ['@p_branch_id', '@p_StudentId', '@p_is_jeson'],
+      values: [branchId, stdId, '1'],
+      function: 'Proc_Get_Student_Registration_Data',
       branch_id: branchId,
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch user profile");
+      throw new Error(response.data.message || 'Failed to fetch user profile');
     }
 
     return parseApiResponse<UserProfileData>(
@@ -174,7 +173,7 @@ export async function fetchUserProfile(
       {} as UserProfileData,
     );
   } catch (error) {
-    handleApiError(error, "Fetch user profile");
+    handleApiError(error, 'Fetch user profile');
   }
 }
 
@@ -202,19 +201,16 @@ export async function changePassword(
       newPassword,
     };
 
-    const response = await unofficialApiClient.post(
-      "/auth/change-password",
-      body,
-    );
+    const response = await unofficialApiClient.post('/auth/change-password', body);
 
     if (response.data?.success) {
-      await SecureStore.setItemAsync("student_password", newPassword);
+      await SecureStore.setItemAsync('student_password', newPassword);
       return response.data;
     } else {
-      throw new Error(response.data?.message || "Failed to change password");
+      throw new Error(response.data?.message || 'Failed to change password');
     }
   } catch (error) {
-    handleApiError(error, "Change password");
+    handleApiError(error, 'Change password');
   }
 }
 
@@ -225,11 +221,11 @@ export async function changePassword(
 export async function clearUserData(): Promise<void> {
   try {
     await Promise.all([
-      SecureStore.deleteItemAsync("student_id"),
-      SecureStore.deleteItemAsync("student_password"),
-      SecureStore.deleteItemAsync("is_demo_account"),
+      SecureStore.deleteItemAsync('student_id'),
+      SecureStore.deleteItemAsync('student_password'),
+      SecureStore.deleteItemAsync('is_demo_account'),
     ]);
   } catch (error) {
-    console.error("Error clearing user data:", error);
+    console.error('Error clearing user data:', error);
   }
 }

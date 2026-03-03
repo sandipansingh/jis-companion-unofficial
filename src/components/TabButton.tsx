@@ -1,4 +1,6 @@
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface TabButtonProps {
   label: string;
@@ -7,15 +9,16 @@ interface TabButtonProps {
 }
 
 export function TabButton({ label, isActive, onPress }: TabButtonProps) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       className={`flex-1 items-center justify-center rounded-xl py-2.5 min-h-[40px] ${
-        isActive ? "bg-cobalt-500" : "bg-transparent"
+        isActive ? 'bg-cobalt-500' : 'bg-transparent'
       }`}
       style={
         isActive
           ? {
-              shadowColor: "#2B5BDB",
+              shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 3 },
               shadowOpacity: 0.25,
               shadowRadius: 6,
@@ -28,7 +31,7 @@ export function TabButton({ label, isActive, onPress }: TabButtonProps) {
     >
       <Text
         className={`text-[11px] text-center tracking-widest uppercase font-sans-semi ${
-          isActive ? "text-white" : "text-ink-500 dark:text-ink-400"
+          isActive ? 'text-white' : 'text-ink-500 dark:text-ink-400'
         }`}
       >
         {label}

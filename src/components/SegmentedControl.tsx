@@ -1,13 +1,7 @@
-import { getTabIndicatorColor, getTabLabelColor, getTabVisualConfig } from "@/src/constants/tabColors";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { BlurView } from "expo-blur";
-import React, { useEffect, useState } from "react";
-import { LayoutChangeEvent, Platform, Pressable, Text, View } from "react-native";
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-} from "react-native-reanimated";
+import { useEffect, useRef, useState } from 'react';
+import { Animated, LayoutRectangle, Platform, Pressable, Text, View } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 export interface SegmentedControlTab<T extends string> {
   key: T;
@@ -20,118 +14,123 @@ interface SegmentedControlProps<T extends string> {
   onTabChange: (tab: T) => void;
 }
 
-export function SegmentedControl<T extends string>({ tabs, activeTab, onTabChange }: SegmentedControlProps<T>) {
-  const { isDark } = useTheme();
-  const isAndroid = Platform.OS === "android";
-  const isIOS = Platform.OS === "ios";
-  const isWeb = Platform.OS === "web";
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 55 });
-  const translateX = useSharedValue(0);
-  const indicatorColor = getTabIndicatorColor(isDark);
-  const tabVisuals = getTabVisualConfig({
-    isDark,
-    isAndroid,
-    isIOS,
-    variant: "segmented",
-  });
+export function SegmentedControl<T extends string>({
+  tabs,
+  activeTab,
+  onTabChange,
+}: SegmentedControlProps<T>) {
+  const { colors, isDark } = useTheme();
 
-  const availableWidth = containerSize.width;
-  const tabWidth = availableWidth > 0 ? availableWidth / tabs.length : 0;
-  const indicatorInset = isWeb ? 8 : 5;
-  const indicatorVerticalInset = isWeb ? 7 : 5;
-  const indicatorHeight = Math.max(0, containerSize.height - indicatorVerticalInset * 2);
+  const activeIndex = tabs.findIndex((t) => t.key === activeTab);
+  const [layouts, setLayouts] = useState<(LayoutRectangle | null)[]>(() =>
+    tabs.map(() => null),
+  );
+
+  const translateX = useRef(new Animated.Value(0)).current;
+  const indicatorWidth = useRef(new Animated.Value(0)).current;
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (tabWidth > 0) {
-      const activeIndex = tabs.findIndex((tab) => tab.key === activeTab);
-      if (activeIndex !== -1) {
-          translateX.value = withSpring(activeIndex * tabWidth, {
-            damping: 20,
-            stiffness: 180,
-          });
-      }
+    const layout = layouts[activeIndex];
+    if (!layout) return;
+
+    const toX = layout.x;
+    const toW = layout.width;
+
+    if (isFirstRender.current) {
+      translateX.setValue(toX);
+      indicatorWidth.setValue(toW);
+      isFirstRender.current = false;
+      return;
     }
-  }, [activeTab, tabWidth, tabs]); 
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: translateX.value }],
-    };
-  });
-
-  const onLayout = (e: LayoutChangeEvent) => {
-    setContainerSize({
-      width: e.nativeEvent.layout.width,
-      height: e.nativeEvent.layout.height,
-    });
-  };
+    Animated.parallel([
+      Animated.spring(translateX, {
+        toValue: toX,
+        useNativeDriver: false,
+        damping: 20,
+        stiffness: 200,
+        mass: 0.8,
+      }),
+      Animated.spring(indicatorWidth, {
+        toValue: toW,
+        useNativeDriver: false,
+        damping: 20,
+        stiffness: 200,
+        mass: 0.8,
+      }),
+    ]).start();
+  }, [activeIndex, layouts, indicatorWidth, translateX]);
 
   return (
     <View
-      className={`h-[55px] rounded-[35px] bg-transparent overflow-hidden w-full ${
-        isWeb ? "max-w-[560px] self-center" : ""
-      }`}
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: tabVisuals.shadowOpacity,
-        shadowRadius: 12,
-        elevation: tabVisuals.elevation,
-      }}
+      className="flex-row rounded-xl p-1 self-stretch"
+      style={{ backgroundColor: isDark ? colors.elevated : colors.overlay }}
     >
-      <BlurView
-        intensity={tabVisuals.blurIntensity}
-        tint={tabVisuals.tint}
-        className="flex-1 rounded-[35px]"
+      <Animated.View
+        pointerEvents="none"
         style={{
-          backgroundColor: tabVisuals.backgroundColor,
-          borderWidth: tabVisuals.borderWidth,
-          borderColor: tabVisuals.borderColor,
+          position: 'absolute',
+          top: 4,
+          bottom: 4,
+          left: 0,
+          width: indicatorWidth,
+          transform: [{ translateX }],
+          borderRadius: 9,
+          backgroundColor: colors.surface,
+          ...(Platform.OS === 'web'
+            ? { boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }
+            : {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: isDark ? 0.25 : 0.12,
+                shadowRadius: 2,
+                elevation: 2,
+              }),
         }}
-      >
-        <View className="flex-1 flex-row items-center" onLayout={onLayout}>
-          {/* Animated Indicator Background */}
-          {tabWidth > 0 && (
-            <Animated.View
-              className="absolute"
-              style={[
-                {
-                  position: "absolute",
-                  width: tabWidth - indicatorInset * 2,
-                  left: indicatorInset,
-                  height: indicatorHeight,
-                  top: indicatorVerticalInset,
-                  borderRadius: indicatorHeight / 2,
-                  backgroundColor: indicatorColor,
-                },
-                animatedStyle,
-              ]}
-            />
-          )}
+      />
 
-          {/* Tab Buttons */}
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.key;
-            return (
-              <Pressable
-                key={tab.key}
-                onPress={() => onTabChange(tab.key)}
-                className="flex-1 justify-center items-center h-full z-10"
-                accessibilityRole="tab"
-                accessibilityLabel={tab.label}
-                accessibilityState={{ selected: isActive }}
-              >
-                <Text
-                  className="text-[10px] sm:text-[11px] text-center tracking-widest uppercase font-sans-semi"
-                  style={{ color: getTabLabelColor(isDark, isActive) }}
-                >
-                  {tab.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </BlurView>
+      {tabs.map((tab, index) => {
+        const isActive = activeTab === tab.key;
+        return (
+          <Pressable
+            key={tab.key}
+            onPress={() => onTabChange(tab.key)}
+            accessibilityRole="tab"
+            accessibilityLabel={tab.label}
+            accessibilityState={{ selected: isActive }}
+            onLayout={(e) => {
+              const layout = e.nativeEvent.layout;
+              setLayouts((prev) => {
+                const next = [...prev];
+                next[index] = layout;
+                return next;
+              });
+            }}
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: 8,
+              paddingVertical: 7,
+              overflow: 'hidden',
+              ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
+            }}
+          >
+            <Text
+              numberOfLines={1}
+              className="text-[13px] font-sans"
+              style={{
+                color: isActive ? colors.text : colors.textTertiary,
+                fontWeight: isActive ? '600' : '400',
+                flexShrink: 1,
+              }}
+            >
+              {tab.label}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }

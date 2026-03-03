@@ -1,25 +1,25 @@
-import { execSync } from "child_process";
-import fs from "fs";
+import { execSync } from 'child_process';
+import fs from 'fs';
 
-const type = process.argv[2] || "patch";
+const type = process.argv[2] || 'patch';
 
 const run = (cmd, opts = {}) => {
   console.log(`→ ${cmd}`);
-  execSync(cmd, { stdio: "inherit", ...opts });
+  execSync(cmd, { stdio: 'inherit', ...opts });
 };
 
 const execOut = (cmd) => {
   try {
-    return execSync(cmd, { encoding: "utf8" }).toString().trim();
+    return execSync(cmd, { encoding: 'utf8' }).toString().trim();
   } catch {
-    return "";
+    return '';
   }
 };
 
 function getDirtyFiles() {
-  const modified = execOut("git diff --name-only");
-  const untracked = execOut("git ls-files --others --exclude-standard");
-  const files = [...modified.split("\n"), ...untracked.split("\n")]
+  const modified = execOut('git diff --name-only');
+  const untracked = execOut('git ls-files --others --exclude-standard');
+  const files = [...modified.split('\n'), ...untracked.split('\n')]
     .map((f) => f.trim())
     .filter(Boolean);
   return [...new Set(files)];
@@ -27,7 +27,7 @@ function getDirtyFiles() {
 
 function tagExists(tag) {
   try {
-    execSync(`git rev-parse --verify refs/tags/${tag}`, { stdio: "ignore" });
+    execSync(`git rev-parse --verify refs/tags/${tag}`, { stdio: 'ignore' });
     return true;
   } catch {
     return false;
@@ -36,19 +36,17 @@ function tagExists(tag) {
 
 try {
   const dirtyFiles = getDirtyFiles();
-  const allowed = new Set(["package.json", "app.json"]);
+  const allowed = new Set(['package.json', 'app.json']);
 
   if (dirtyFiles.length > 0) {
     const onlyAllowed = dirtyFiles.every((f) => allowed.has(f));
     if (onlyAllowed) {
-      console.log(
-        "Working tree has only version files changed — staging them."
-      );
-      run("git add package.json app.json");
+      console.log('Working tree has only version files changed — staging them.');
+      run('git add package.json app.json');
     } else {
       console.error(
-        "❌ Working tree not clean. Commit or stash your changes first.\nFiles:",
-        dirtyFiles.join(", ")
+        '❌ Working tree not clean. Commit or stash your changes first.\nFiles:',
+        dirtyFiles.join(', '),
       );
       process.exit(1);
     }
@@ -56,19 +54,19 @@ try {
 
   run(`node scripts/bump-version.mjs ${type}`);
 
-  const pkg = JSON.parse(fs.readFileSync("./package.json", "utf8"));
+  const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
   const version = pkg.version;
   const tag = `v${version}`;
 
-  run("git add package.json app.json");
-  const diff = execOut("git diff --cached --name-only");
+  run('git add package.json app.json');
+  const diff = execOut('git diff --cached --name-only');
   if (diff) {
     run(`git commit -m "chore(release): v${version}"`);
   } else {
-    console.log("ℹ No staged changes to commit.");
+    console.log('ℹ No staged changes to commit.');
   }
 
-  run("git push origin HEAD");
+  run('git push origin HEAD');
   console.log(`Pushed commit for v${version}`);
 
   if (!tagExists(tag)) {
@@ -81,6 +79,6 @@ try {
 
   console.log(`\nReleased v${version} successfully`);
 } catch (err) {
-  console.error("\n❌ Release failed:", err.message || err);
+  console.error('\n❌ Release failed:', err.message || err);
   process.exit(1);
 }

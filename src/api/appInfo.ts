@@ -1,4 +1,4 @@
-import { unofficialApiClient } from "./client";
+import { unofficialApiClient } from './client';
 
 export interface AppInfo {
   platform: string;
@@ -43,6 +43,6 @@ export interface AppInfoResponse {
  * Fetches app information including latest version from unofficial API
  */
 export const getAppInfo = async (): Promise<AppInfo> => {
-  const response = await unofficialApiClient.get<AppInfoResponse>("/app-info");
+  const response = await unofficialApiClient.get<AppInfoResponse>('/app-info');
   return response.data.data.android;
 };

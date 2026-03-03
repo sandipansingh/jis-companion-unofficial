@@ -1,5 +1,5 @@
 // Screens
-export * from "./screens";
+export * from './screens';
 
 // Stores
-export * from "./store";
+export * from './store';

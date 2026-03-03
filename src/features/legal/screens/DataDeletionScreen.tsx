@@ -1,5 +1,6 @@
 import { Linking, Pressable } from 'react-native';
-import { LegalPageLayout, LegalSection, LegalText } from "../components";
+
+import { LegalPageLayout, LegalSection, LegalText } from '../components';
 
 export default function DataDeletionScreen() {
   const openSupportEmail = () => {
@@ -16,33 +17,43 @@ export default function DataDeletionScreen() {
 
       <LegalSection title="No App-Managed Accounts">
         <LegalText>
-          This app does not create or manage institutional user accounts. Your institutional account is managed by official systems of institutions under JIS Group.
+          This app does not create or manage institutional user accounts. Your
+          institutional account is managed by official systems of institutions under JIS
+          Group.
         </LegalText>
       </LegalSection>
 
       <LegalSection title="Where Data Is Stored">
         <LegalText>
-          App data used for convenience and offline access is stored locally on your device (including local SQLite storage).
+          App data used for convenience and offline access is stored locally on your
+          device (including local SQLite storage).
         </LegalText>
         <LegalText>
-          The app does not maintain a custom backend database or cloud storage for your personal academic records.
+          The app does not maintain a custom backend database or cloud storage for your
+          personal academic records.
         </LegalText>
       </LegalSection>
 
       <LegalSection title="How to Delete App Data">
         <LegalText variant="bullet">• Uninstall the app from your device</LegalText>
-        <LegalText variant="bullet">• Or clear the app's storage/data from device settings</LegalText>
+        <LegalText variant="bullet">
+          • Or clear the app's storage/data from device settings
+        </LegalText>
         <LegalText>
-          Either action removes locally stored app data from your device, subject to your device and operating system behavior.
+          Either action removes locally stored app data from your device, subject to your
+          device and operating system behavior.
         </LegalText>
       </LegalSection>
 
       <LegalSection title="Institutional Record Deletion">
         <LegalText>
-          If you want to delete or modify institutional records held by JIS Group or any institution under JIS Group, you must contact the relevant institution directly through official channels.
+          If you want to delete or modify institutional records held by JIS Group or any
+          institution under JIS Group, you must contact the relevant institution directly
+          through official channels.
         </LegalText>
         <LegalText>
-          This app cannot delete, alter, or request deletion of records stored by official systems of institutions under JIS Group.
+          This app cannot delete, alter, or request deletion of records stored by official
+          systems of institutions under JIS Group.
         </LegalText>
       </LegalSection>
 

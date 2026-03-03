@@ -1,17 +1,15 @@
-import { hasInternetConnection } from "@/src/services/network";
+import { create } from 'zustand';
+
+import { hasInternetConnection } from '@/src/services/network';
 import {
   backgroundSyncUserData,
   checkAuthWithOfflineSupport,
   cleanupUserData,
   syncLoginData,
-} from "@/src/services/sync";
-import { create } from "zustand";
-import {
-  changePassword as apiChangePassword,
-  fetchUserProfile,
-  getStoredCredentials,
-} from "../api/auth";
-import { LoginResponse, UserProfileData } from "../types";
+} from '@/src/services/sync';
+
+import { changePassword as apiChangePassword, getStoredCredentials } from '../api/auth';
+import { LoginResponse, UserProfileData } from '../types';
 
 interface AttendancePercentageCache {
   total_class: number;
@@ -24,6 +22,8 @@ interface AuthState {
   studentId: string | null;
   loginData: LoginResponse | null;
   userData: UserProfileData | null;
+  authVersion: number;
+  isLoggingOut: boolean;
   isOnline: boolean;
   fromCache: boolean;
   isDemoAccount: boolean;
@@ -31,11 +31,7 @@ interface AuthState {
   checkAuthStatus: () => Promise<void>;
   login: (studentId: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
-  loadUserProfile: () => Promise<void>;
-  changePassword: (
-    newPassword: string,
-    currentPassword?: string
-  ) => Promise<void>;
+  changePassword: (newPassword: string, currentPassword?: string) => Promise<void>;
   syncDataInBackground: () => Promise<void>;
 }
 
@@ -44,19 +40,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   studentId: null,
   loginData: null,
   userData: null,
+  authVersion: 0,
+  isLoggingOut: false,
   isOnline: true,
   fromCache: false,
   isDemoAccount: false,
   cachedAttendancePercentage: null,
 
   checkAuthStatus: async () => {
+    if (get().isLoggingOut) {
+      return;
+    }
+
+    const authVersionAtStart = get().authVersion;
+
     const clearAuthState = async () => {
       const { studentId } = get();
       if (studentId) {
         try {
           await cleanupUserData(studentId);
         } catch (error) {
-          console.error("Error clearing auth state:", error);
+          console.error('Error clearing auth state:', error);
         }
       }
 
@@ -80,14 +84,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       let cachedAttendancePercentage: AttendancePercentageCache | null = null;
       try {
-        const { getAttendancePercentage } = await import(
-          "@/src/services/database"
-        );
-        cachedAttendancePercentage = await getAttendancePercentage(
-          authStatus.studentId!
-        );
-      } catch (e) {
+        const { getAttendancePercentage } = await import('@/src/services/database');
+        cachedAttendancePercentage = await getAttendancePercentage(authStatus.studentId!);
+      } catch {
         // ignore
+      }
+
+      if (get().authVersion !== authVersionAtStart) {
+        return;
       }
 
       set({
@@ -101,36 +105,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         cachedAttendancePercentage,
       });
 
-      if (
-        authStatus.isOnline &&
-        authStatus.fromCache &&
-        !authStatus.isDemoAccount
-      ) {
+      if (authStatus.isOnline && authStatus.fromCache && !authStatus.isDemoAccount) {
         const credentials = await getStoredCredentials();
         if (credentials) {
           setTimeout(() => {
-            backgroundSyncUserData(
-              credentials.studentId,
-              credentials.password
-            ).then((success) => {
-              if (success) {
-                console.log("Background sync successful, updating state");
-                get().checkAuthStatus();
-              }
-            });
+            backgroundSyncUserData(credentials.studentId, credentials.password).then(
+              (success) => {
+                if (success) {
+                  get().checkAuthStatus();
+                }
+              },
+            );
           }, 2000);
         }
       }
-    } catch (error: any) {
-      console.error("Error checking auth status:", error);
+    } catch (error: unknown) {
+      console.error('Error checking auth status:', error);
       await clearAuthState();
-      if (error.message === "INVALID_CREDENTIALS") {
+      const message = error instanceof Error ? error.message : '';
+      if (message === 'INVALID_CREDENTIALS') {
         throw error;
       }
     }
   },
 
   login: async (studentId: string, password: string) => {
+    const authVersionAtStart = get().authVersion;
+
     try {
       const credentials = await getStoredCredentials();
       const isDemoLogin = credentials?.isDemoAccount || false;
@@ -141,6 +142,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const result = await syncLoginData(studentId, password);
 
         if (result.loginData) {
+          if (get().authVersion !== authVersionAtStart) {
+            return false;
+          }
+
           set({
             isLoggedIn: true,
             studentId,
@@ -152,13 +157,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           });
           return true;
         } else {
-          throw new Error("No cached login data. Please connect to internet.");
+          throw new Error('No cached login data. Please connect to internet.');
         }
       }
 
       const result = await syncLoginData(studentId, password);
 
       if (!result.loginData || result.loginData.is_valid !== 1) {
+        return false;
+      }
+
+      if (get().authVersion !== authVersionAtStart) {
         return false;
       }
 
@@ -174,89 +183,54 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       return true;
     } catch (error) {
-      console.error("Error during login:", error);
+      console.error('Error during login:', error);
       return false;
     }
   },
 
-  loadUserProfile: async () => {
-    try {
-      const { studentId, loginData } = get();
-      if (!studentId || !loginData) {
-        throw new Error("User not logged in");
-      }
-
-      const isOnline = await hasInternetConnection();
-
-      if (isOnline) {
-        const userData = await fetchUserProfile(
-          loginData.branch_id.toString(),
-          studentId
-        );
-
-        const { saveUserData } = await import("@/src/services/database");
-        await saveUserData(studentId, userData);
-
-        set({ userData, fromCache: false });
-      } else {
-        const { getUserData } = await import("@/src/services/database");
-        const userData = await getUserData(studentId);
-
-        if (userData) {
-          set({ userData, fromCache: true });
-        } else {
-          throw new Error("No cached user profile available");
-        }
-      }
-    } catch (error) {
-      console.error("Error loading user profile:", error);
-      throw error;
-    }
-  },
-
   logout: async () => {
+    const { studentId } = get();
+    const nextAuthVersion = get().authVersion + 1;
+
+    set({
+      isLoggedIn: false,
+      studentId: null,
+      loginData: null,
+      userData: null,
+      authVersion: nextAuthVersion,
+      isLoggingOut: true,
+      isOnline: true,
+      fromCache: false,
+      isDemoAccount: false,
+    });
+
     try {
-      const { studentId } = get();
-      if (studentId) {
-        await cleanupUserData(studentId);
-      }
+      const [
+        { useAttendanceStore },
+        { useFeesStore },
+        { useVirtualLabsStore },
+        { useLibraryStore },
+        { useFeedbackStore },
+      ] = await Promise.all([
+        import('@/src/features/academics/store/attendanceStore'),
+        import('@/src/features/fees/store/feesStore'),
+        import('@/src/features/virtual-labs/store/virtualLabsStore'),
+        import('@/src/features/library/store/libraryStore'),
+        import('@/src/features/feedback/store/feedbackStore'),
+      ]);
 
-      const { useAttendanceStore } = await import(
-        "@/src/features/academics/store/attendanceStore"
-      );
-      useAttendanceStore.getState().clearAttendanceData();
-
-      const { useFeesStore } = await import(
-        "@/src/features/fees/store/feesStore"
-      );
-      useFeesStore.getState().clearFeeData();
-
-      const { useVirtualLabsStore } = await import(
-        "@/src/features/virtual-labs/store/virtualLabsStore"
-      );
-      useVirtualLabsStore.getState().clearVirtualLabsData();
-
-      const { useLibraryStore } = await import(
-        "@/src/features/library/store/libraryStore"
-      );
-      useLibraryStore.getState().clearBooks();
-
-      const { useFeedbackStore } = await import(
-        "@/src/features/feedback/store/feedbackStore"
-      );
-      useFeedbackStore.getState().clearFeedbackData();
-
-      set({
-        isLoggedIn: false,
-        studentId: null,
-        loginData: null,
-        userData: null,
-        isOnline: true,
-        fromCache: false,
-        isDemoAccount: false,
-      });
+      await Promise.all([
+        studentId ? cleanupUserData(studentId) : Promise.resolve(),
+        useAttendanceStore.getState().clearAttendanceData(),
+        useFeesStore.getState().clearFeeData(),
+        useVirtualLabsStore.getState().clearVirtualLabsData(),
+        useLibraryStore.getState().clearBooks(),
+        useFeedbackStore.getState().clearFeedbackData(),
+      ]);
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error('Error during logout cleanup:', error);
+    } finally {
+      set({ isLoggingOut: false });
     }
   },
 
@@ -264,7 +238,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const { studentId } = get();
       if (!studentId) {
-        throw new Error("User not logged in");
+        throw new Error('User not logged in');
       }
 
       let oldPassword = currentPassword;
@@ -273,7 +247,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const credentials = await getStoredCredentials();
         if (!credentials) {
           throw new Error(
-            "Current password not provided and unable to retrieve stored credentials."
+            'Current password not provided and unable to retrieve stored credentials.',
           );
         }
         oldPassword = credentials.password;
@@ -281,12 +255,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       await apiChangePassword(studentId, oldPassword, newPassword);
     } catch (error) {
-      console.error("Error changing password:", error);
+      console.error('Error changing password:', error);
       throw error;
     }
   },
 
   syncDataInBackground: async () => {
+    const authVersionAtStart = get().authVersion;
+
     try {
       const { studentId, isOnline } = get();
       if (!studentId || !isOnline) {
@@ -300,14 +276,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const success = await backgroundSyncUserData(
         credentials.studentId,
-        credentials.password
+        credentials.password,
       );
 
-      if (success) {
+      if (success && get().authVersion === authVersionAtStart) {
         await get().checkAuthStatus();
       }
     } catch (error) {
-      console.error("Error in background sync:", error);
+      console.error('Error in background sync:', error);
     }
   },
 }));

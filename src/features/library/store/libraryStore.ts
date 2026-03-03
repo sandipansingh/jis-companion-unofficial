@@ -1,16 +1,15 @@
-import { useAuthStore } from "@/src/features/auth/store/authStore";
-import { syncLibraryBooks } from "@/src/services/sync";
-import { create } from "zustand";
+import { create } from 'zustand';
+
+import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { syncLibraryBooks } from '@/src/services/sync';
+
+import { reserveLibraryBook, searchLibraryBooks } from '../api/library';
 import {
-    reserveLibraryBook,
-    searchLibraryBooks,
-} from "../api/library";
-import {
-    LibraryBook,
-    LibraryFilterType,
-    LibrarySearchField,
-    LibrarySearchResult,
-} from "../types";
+  LibraryBook,
+  LibraryFilterType,
+  LibrarySearchField,
+  LibrarySearchResult,
+} from '../types';
 
 interface LibraryState {
   books: LibraryBook[];
@@ -37,7 +36,7 @@ interface LibraryState {
 
 export const useLibraryStore = create<LibraryState>((set, get) => ({
   books: [],
-  filterType: "1",
+  filterType: '1',
   loading: false,
   error: null,
   isOnline: true,
@@ -45,11 +44,11 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   searchResults: [],
   searchLoading: false,
   searchError: null,
-  searchQuery: "",
+  searchQuery: '',
 
   fetchBooks: async (readerCode: string, type: LibraryFilterType) => {
     try {
-      const { getLibraryBooks } = await import("@/src/services/database");
+      const { getLibraryBooks } = await import('@/src/services/database');
       const cached = await getLibraryBooks(readerCode, type);
       if (cached) {
         set({ books: cached, filterType: type, fromCache: true, error: null });
@@ -64,7 +63,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
       const result = await syncLibraryBooks(readerCode, type);
 
       console.log(
-        `Fetched ${result.books.length} library books (fromCache: ${result.fromCache})`
+        `Fetched ${result.books.length} library books (fromCache: ${result.fromCache})`,
       );
 
       set({
@@ -76,13 +75,13 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
         error: null,
       });
     } catch (error: any) {
-      console.error("Failed to fetch library books:", error);
+      console.error('Failed to fetch library books:', error);
       const { books } = get();
       if (books.length > 0) {
         set({ loading: false, isOnline: false, fromCache: true });
       } else {
         set({
-          error: error.message || "Failed to fetch library books",
+          error: error.message || 'Failed to fetch library books',
           loading: false,
         });
       }
@@ -109,7 +108,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   searchBooks: async (field: LibrarySearchField, query: string) => {
     const { studentId } = useAuthStore.getState();
     if (!studentId) {
-      set({ searchError: "Student ID not found" });
+      set({ searchError: 'Student ID not found' });
       return;
     }
 
@@ -126,14 +125,10 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   reserveBook: async (book: LibrarySearchResult) => {
     const { studentId } = useAuthStore.getState();
     if (!studentId) {
-      throw new Error("Student ID not found");
+      throw new Error('Student ID not found');
     }
 
-    const result = await reserveLibraryBook(
-      studentId,
-      book.acc_title,
-      book.acc_author
-    );
+    const result = await reserveLibraryBook(studentId, book.acc_title, book.acc_author);
 
     if (result.error !== 0) {
       throw new Error(result.message);

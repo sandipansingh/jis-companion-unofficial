@@ -1,5 +1,5 @@
 // Hooks
-export { useProfileData } from "./hooks";
+export { useProfileData } from './hooks';
 
 // Screens
-export * from "./screens";
+export * from './screens';

@@ -1,15 +1,13 @@
-import apiClient, { StandardApiResponse } from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import {
-  getDemoLibraryBooks,
-  getDemoLibrarySearchResults,
-} from "@/src/utils/demo";
+import apiClient, { StandardApiResponse } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { getDemoLibraryBooks, getDemoLibrarySearchResults } from '@/src/utils/demo';
+
 import {
   LibraryBook,
   LibraryFilterType,
   LibrarySearchField,
   LibrarySearchResult,
-} from "../types";
+} from '../types';
 
 /**
  * Fetch library books issued to a reader.
@@ -23,37 +21,36 @@ export const fetchLibraryBooks = async (
   type: LibraryFilterType,
 ): Promise<LibraryBook[]> => {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       const allBooks = getDemoLibraryBooks();
 
       // Filter based on type: "1" for all books, "2" for pending only
-      if (type === "2") {
+      if (type === '2') {
         return allBooks.filter((book) => book.return_id === 0);
       }
       return allBooks;
     }
 
-    const response = await apiClient.post<StandardApiResponse>("", {
-      parameters: ["@p_reader_code", "@p_type"],
+    const response = await apiClient.post<StandardApiResponse>('', {
+      parameters: ['@p_reader_code', '@p_type'],
       values: [readerCode, type],
-      function: "PROC_APP_GET_READER_WISE_ACC_ISSUE",
-      branch_id: "998",
+      function: 'PROC_APP_GET_READER_WISE_ACC_ISSUE',
+      branch_id: '998',
     });
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch library books");
+      throw new Error(response.data.message || 'Failed to fetch library books');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<LibraryBook[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch library books");
+    handleApiError(error, 'Fetch library books');
   }
 };
 
@@ -70,33 +67,30 @@ export const searchLibraryBooks = async (
   query: string,
 ): Promise<LibrarySearchResult[]> => {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return getDemoLibrarySearchResults();
     }
 
-    const response = await apiClient.post<StandardApiResponse>("", {
-      parameters: ["@p_reader_code", "@p_rptfldname", "@p_name"],
+    const response = await apiClient.post<StandardApiResponse>('', {
+      parameters: ['@p_reader_code', '@p_rptfldname', '@p_name'],
       values: [readerCode, field, `%${query}%`],
-      function: "PROC_APP_GET_OPAC_SEARCH",
-      branch_id: "998",
+      function: 'PROC_APP_GET_OPAC_SEARCH',
+      branch_id: '998',
     });
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to search library books",
-      );
+      throw new Error(response.data.message || 'Failed to search library books');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<LibrarySearchResult[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Search library books");
+    handleApiError(error, 'Search library books');
   }
 };
 
@@ -113,26 +107,26 @@ export const reserveLibraryBook = async (
   author: string,
 ): Promise<{ message: string; error: number }> => {
   try {
-    const response = await apiClient.post<StandardApiResponse>("", {
-      parameters: ["@p_reader_code", "@p_title", "@p_author"],
+    const response = await apiClient.post<StandardApiResponse>('', {
+      parameters: ['@p_reader_code', '@p_title', '@p_author'],
       values: [readerCode, title, author],
-      function: "Proc_App_Save_Booking_Req",
-      branch_id: "998",
+      function: 'Proc_App_Save_Booking_Req',
+      branch_id: '998',
     });
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to reserve book");
+      throw new Error(response.data.message || 'Failed to reserve book');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
-      throw new Error("Empty response from server");
+    if (dataString === '') {
+      throw new Error('Empty response from server');
     }
 
     const parsed = parseApiResponse<any[]>(dataString, []);
     const result = parsed[0];
     return { message: result.err_mesg, error: result.err_no };
   } catch (error) {
-    handleApiError(error, "Reserve library book");
+    handleApiError(error, 'Reserve library book');
   }
 };

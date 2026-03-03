@@ -2,8 +2,9 @@ import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/features/academics/types";
-import { DEMO_FACULTY_LIST } from "./feedback";
+} from '@/src/features/academics/types';
+
+import { DEMO_FACULTY_LIST } from './feedback';
 
 /**
  * Generate a list of recent ISO dates (YYYY-MM-DD), skipping Sundays.
@@ -21,7 +22,7 @@ function getRecentDates(count: number = 10): string[] {
 
     // Skip Sundays
     if (date.getDay() !== 0) {
-      dates.push(date.toISOString().split("T")[0]);
+      dates.push(date.toISOString().split('T')[0]);
       daysAdded++;
     }
   }
@@ -34,14 +35,14 @@ function getRecentDates(count: number = 10): string[] {
  */
 function getTimePeriod(periodNum: number): string {
   const periods: { [key: number]: string } = {
-    1: "1 (09.00-09.40)",
-    2: "2 (09.40-10.20)",
-    3: "3 (10.20-11.00)",
-    4: "4 (11.00-11.40)",
-    5: "5 (11.40-12.20)",
-    6: "6 (12.20-01.00)",
-    7: "7 (01.00-01.40)",
-    8: "8 (01.40-02.20)",
+    1: '1 (09.00-09.40)',
+    2: '2 (09.40-10.20)',
+    3: '3 (10.20-11.00)',
+    4: '4 (11.00-11.40)',
+    5: '5 (11.40-12.20)',
+    6: '6 (12.20-01.00)',
+    7: '7 (01.00-01.40)',
+    8: '8 (01.40-02.20)',
   };
   return periods[periodNum] || `${periodNum} (09.00-09.40)`;
 }
@@ -96,13 +97,13 @@ export function getDemoSubjectAttendance(): SubjectWiseAttendance[] {
         is_app: 1,
         present1: presentCount,
         absent1: absentCount,
-        concat_data: "",
-        stat: isAbsent ? "Absent" : "Present",
-        upload1: "",
-        upload2: "",
-        upload3: "",
-        upload4: "",
-        upload5: "",
+        concat_data: '',
+        stat: isAbsent ? 'Absent' : 'Present',
+        upload1: '',
+        upload2: '',
+        upload3: '',
+        upload4: '',
+        upload5: '',
         assignment_id: 0,
         assignment_status: 0,
         assignment_marks: 0,
@@ -136,13 +137,13 @@ export function getDemoSubjectAttendance(): SubjectWiseAttendance[] {
         is_app: 1,
         present1: 43,
         absent1: 2,
-        concat_data: "",
-        stat: dateIdx % 5 === 4 ? "Absent" : "Present",
-        upload1: "",
-        upload2: "",
-        upload3: "",
-        upload4: "",
-        upload5: "",
+        concat_data: '',
+        stat: dateIdx % 5 === 4 ? 'Absent' : 'Present',
+        upload1: '',
+        upload2: '',
+        upload3: '',
+        upload4: '',
+        upload5: '',
         assignment_id: 0,
         assignment_status: 0,
         assignment_marks: 0,

@@ -1,2 +1,2 @@
-export * from "./payload";
-export * from "./social";
+export * from './payload';
+export * from './social';

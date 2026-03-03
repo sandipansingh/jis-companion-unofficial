@@ -1,1 +1,1 @@
-export { Academics as default } from "@/src/features/academics";
+export { Academics as default } from '@/src/features/academics';

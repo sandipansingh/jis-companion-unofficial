@@ -1,14 +1,14 @@
 // Hooks
-export { useCourseSelectionData, useExperimentsData } from "./hooks";
+export { useCourseSelectionData, useExperimentsData } from './hooks';
 
 // Store
-export { useVirtualLabsStore } from "./store";
+export { useVirtualLabsStore } from './store';
 
 // API
-export * from "./api";
+export * from './api';
 
 // Types
-export * from "./types";
+export * from './types';
 
 // Screens
-export * from "./screens";
+export * from './screens';

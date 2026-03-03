@@ -1,8 +1,9 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { getDayName, isSameDay } from "@/src/utils/dateHelpers";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from 'react-native';
 
-type AttendanceStatus = "present" | "absent" | "partial" | "holiday";
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { getDayName, isSameDay } from '@/src/utils/dateHelpers';
+
+type AttendanceStatus = 'present' | 'absent' | 'partial' | 'holiday';
 
 interface AttendanceData {
   rtDate: string;
@@ -26,34 +27,34 @@ export function CalendarStrip({
   getAttendanceStatus,
   getAttendanceWithFallback,
 }: CalendarStripProps) {
-  const { isDark } = useTheme();
+  const { isDark, colors } = useTheme();
 
   const getStatusStyles = (status: AttendanceStatus) => {
     switch (status) {
-      case "present":
+      case 'present':
         return {
-          bg: isDark ? "#064E3B" : "#ECFDF5",
-          border: isDark ? "#059669" : "#059669",
-          text: isDark ? "#A7F3D0" : "#059669",
+          bg: colors.successBg,
+          border: colors.successStrong,
+          text: colors.successText,
         };
-      case "absent":
+      case 'absent':
         return {
-          bg: isDark ? "#500707" : "#FEF2F2",
-          border: isDark ? "#991B1B" : "#DC2626",
-          text: isDark ? "#FECACA" : "#DC2626",
+          bg: colors.dangerBg,
+          border: colors.dangerStrong,
+          text: colors.dangerText,
         };
-      case "partial":
+      case 'partial':
         return {
-          bg: isDark ? "#451a03" : "#FFFBEB",
-          border: isDark ? "#D97706" : "#D97706",
-          text: isDark ? "#fbbf24" : "#D97706", // Fixed yellow color syntax
+          bg: colors.warningBg,
+          border: colors.warningStrong,
+          text: colors.warningText,
         };
-      case "holiday":
+      case 'holiday':
       default:
         return {
-          bg: isDark ? "#1e293b" : "#F1F5F9",
-          border: isDark ? "#334155" : "#CBD5E1",
-          text: isDark ? "#94a3b8" : "#94A3B8",
+          bg: colors.elevated,
+          border: colors.border,
+          text: colors.textTertiary,
         };
     }
   };
@@ -75,9 +76,9 @@ export function CalendarStrip({
           >
             {/* Day label */}
             <Text
-              className="text-[10px] uppercase tracking-wider text-ink-500 dark:text-ink-400"
+              className="text-[10px] uppercase tracking-wider font-sans-semi"
               style={{
-                fontFamily: "GeneralSans-Semibold",
+                color: isSelected ? colors.textSecondary : colors.textTertiary,
               }}
             >
               {getDayName(date)}
@@ -85,24 +86,18 @@ export function CalendarStrip({
 
             {/* Date circle */}
             <View
+              className="w-[38px] h-[38px] rounded-full items-center justify-center"
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: 19,
                 backgroundColor: s.bg,
-                borderWidth: isSelected ? 2.5 : 1.5,
-                borderColor: isSelected ? (isDark ? "#60A5FA" : "#2B5BDB") : s.border,
-                alignItems: "center",
-                justifyContent: "center",
+                borderWidth: 1.5,
+                borderColor: isSelected ? (isDark ? '#94A3B8' : '#64748B') : s.border,
               }}
             >
               <Text
                 style={{
-                  fontFamily: isSelected
-                    ? "ClashDisplay-Semibold"
-                    : "GeneralSans-Medium",
+                  fontFamily: isSelected ? 'Inter_700Bold' : 'Inter_500Medium',
                   fontSize: 14,
-                  color: isSelected ? (isDark ? "#FFFFFF" : "#2B5BDB") : s.text,
+                  color: isSelected ? colors.text : s.text,
                 }}
               >
                 {date.getDate()}
@@ -112,9 +107,8 @@ export function CalendarStrip({
             {/* Class count */}
             {attendance && attendance.rtCount > 0 && (
               <Text
-                className="text-[9px] text-ink-500 dark:text-ink-500"
+                className="text-[9px] text-ink-500 dark:text-ink-500 font-sans"
                 style={{
-                  fontFamily: "GeneralSans-Regular",
                   opacity: (attendance as any)._isFallback ? 0.6 : 1,
                 }}
               >

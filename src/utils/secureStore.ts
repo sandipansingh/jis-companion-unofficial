@@ -1,8 +1,8 @@
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
-const isWeb = Platform.OS === "web";
-const sensitiveKeywords = ["_password"];
+const isWeb = Platform.OS === 'web';
+const sensitiveKeywords = ['_password'];
 
 /**
  * Persist a key–value pair securely across platforms.
@@ -18,7 +18,7 @@ const sensitiveKeywords = ["_password"];
  */
 export async function setItemAsync(key: string, value: string): Promise<void> {
   const isSensitive = sensitiveKeywords.some((keyword) =>
-    key.toLowerCase().includes(keyword)
+    key.toLowerCase().includes(keyword),
   );
 
   // If running on web and this key is sensitive, skip storing.
@@ -30,13 +30,13 @@ export async function setItemAsync(key: string, value: string): Promise<void> {
     try {
       localStorage.setItem(key, value);
     } catch (e) {
-      console.error("Local storage is not available:", e);
+      console.error('Local storage is not available:', e);
     }
   } else {
     try {
       await SecureStore.setItemAsync(key, value);
     } catch (e) {
-      console.error("SecureStore.setItemAsync failed:", e);
+      console.error('SecureStore.setItemAsync failed:', e);
     }
   }
 }
@@ -52,7 +52,7 @@ export async function setItemAsync(key: string, value: string): Promise<void> {
  */
 export async function getItemAsync(key: string): Promise<string | null> {
   const isSensitive = sensitiveKeywords.some((keyword) =>
-    key.toLowerCase().includes(keyword)
+    key.toLowerCase().includes(keyword),
   );
 
   // If running on web and this key is sensitive, don't attempt to read it.
@@ -64,14 +64,14 @@ export async function getItemAsync(key: string): Promise<string | null> {
     try {
       return localStorage.getItem(key);
     } catch (e) {
-      console.error("Local storage is not available:", e);
+      console.error('Local storage is not available:', e);
       return null;
     }
   } else {
     try {
       return await SecureStore.getItemAsync(key);
     } catch (e) {
-      console.error("SecureStore.getItemAsync failed:", e);
+      console.error('SecureStore.getItemAsync failed:', e);
       return null;
     }
   }
@@ -87,7 +87,7 @@ export async function getItemAsync(key: string): Promise<string | null> {
  */
 export async function deleteItemAsync(key: string): Promise<void> {
   const isSensitive = sensitiveKeywords.some((keyword) =>
-    key.toLowerCase().includes(keyword)
+    key.toLowerCase().includes(keyword),
   );
 
   // If running on web and this key is sensitive, nothing to delete.
@@ -99,13 +99,13 @@ export async function deleteItemAsync(key: string): Promise<void> {
     try {
       localStorage.removeItem(key);
     } catch (e) {
-      console.error("Local storage is not available:", e);
+      console.error('Local storage is not available:', e);
     }
   } else {
     try {
       await SecureStore.deleteItemAsync(key);
     } catch (e) {
-      console.error("SecureStore.deleteItemAsync failed:", e);
+      console.error('SecureStore.deleteItemAsync failed:', e);
     }
   }
 }

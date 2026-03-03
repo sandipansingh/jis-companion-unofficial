@@ -1,13 +1,7 @@
-import { Button, InfoRow } from "@/src/components";
-import {
-  Calendar,
-  Droplet,
-  Lock,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react-native";
-import { View } from "react-native";
+import { Calendar, Droplet, Lock, Mail, MapPin, Phone } from 'lucide-react-native';
+import { View } from 'react-native';
+
+import { Button, InfoRow } from '@/src/components';
 
 interface PersonalTabContentProps {
   email?: string;
@@ -47,9 +41,7 @@ export function PersonalTabContent({
       <InfoRow
         label="PRESENT ADDRESS"
         value={
-          presentAddress
-            ? `${presentAddress}, ${presentCity} - ${presentPin}`
-            : undefined
+          presentAddress ? `${presentAddress}, ${presentCity} - ${presentPin}` : undefined
         }
         icon={MapPin}
       />
@@ -68,7 +60,7 @@ export function PersonalTabContent({
         title="Change Password"
         onPress={onChangePassword}
         disabled={isDemoAccount}
-        icon={<Lock size={16} color="#FFFFFF" />}
+        icon={<Lock size={16} color="white" />}
         iconPosition="left"
         style={{ marginTop: 24, height: 50 }}
         textStyle={{ fontSize: 14 }}

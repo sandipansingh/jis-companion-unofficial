@@ -1,12 +1,13 @@
-import apiClient, { StandardApiResponse } from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import { DEMO_FACULTY_LIST, getDemoFeedbackQuestions } from "@/src/utils/demo";
+import apiClient, { StandardApiResponse } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { DEMO_FACULTY_LIST, getDemoFeedbackQuestions } from '@/src/utils/demo';
+
 import {
   FacultyFeedbackItem,
   FeedbackLockStatus,
   FeedbackQuestion,
   FeedbackSaveResponse,
-} from "../types";
+} from '../types';
 
 /**
  * Check if feedback is locked or unlocked for the student
@@ -20,32 +21,29 @@ export async function getFeedbackLockStatus(
   branchId: number,
 ): Promise<FeedbackLockStatus> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return { locStatus: 0 }; // Unlocked for demo
     }
 
     const body = {
-      parameters: ["@p_college_id", "@p_student_id"],
+      parameters: ['@p_college_id', '@p_student_id'],
       values: [collegeId.toString(), stdtId.toString()],
-      function: "Proc_App_Get_Fac_Feedback_Status",
+      function: 'Proc_App_Get_Fac_Feedback_Status',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to load feedback status",
-      );
+      throw new Error(response.data.message || 'Failed to load feedback status');
     }
 
     return parseApiResponse<FeedbackLockStatus>(response.data.data.data, {
       locStatus: 1,
     });
   } catch (error) {
-    handleApiError(error, "Get feedback lock status");
+    handleApiError(error, 'Get feedback lock status');
   }
 }
 
@@ -61,32 +59,28 @@ export async function getFacultyList(
   branchId: number,
 ): Promise<FacultyFeedbackItem[]> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return DEMO_FACULTY_LIST;
     }
 
     const body = {
-      parameters: ["@p_college_id", "@p_student_id"],
+      parameters: ['@p_college_id', '@p_student_id'],
       values: [collegeId.toString(), stdtId.toString()],
-      function: "Proc_App_Get_Data_For_Fac_Feedback",
+      function: 'Proc_App_Get_Data_For_Fac_Feedback',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to load faculty list");
+      throw new Error(response.data.message || 'Failed to load faculty list');
     }
 
-    const parsed = parseApiResponse<FacultyFeedbackItem[]>(
-      response.data.data.data,
-      [],
-    );
+    const parsed = parseApiResponse<FacultyFeedbackItem[]>(response.data.data.data, []);
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
-    handleApiError(error, "Get faculty list");
+    handleApiError(error, 'Get faculty list');
   }
 }
 
@@ -104,25 +98,24 @@ export async function getFeedbackQuestions(
   facultyItem: FacultyFeedbackItem,
 ): Promise<FeedbackQuestion[]> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return getDemoFeedbackQuestions();
     }
 
     const body = {
       parameters: [
-        "@p_college_id",
-        "@p_student_id",
-        "@p_session_id",
-        "@p_batch_id",
-        "@p_sem_id",
-        "@p_course_id",
-        "@p_stream_id",
-        "@p_sub_id",
-        "@p_sec_id",
-        "@p_fac_code",
-        "@p_name",
+        '@p_college_id',
+        '@p_student_id',
+        '@p_session_id',
+        '@p_batch_id',
+        '@p_sem_id',
+        '@p_course_id',
+        '@p_stream_id',
+        '@p_sub_id',
+        '@p_sec_id',
+        '@p_fac_code',
+        '@p_name',
       ],
       values: [
         collegeId.toString(),
@@ -135,23 +128,21 @@ export async function getFeedbackQuestions(
         facultyItem.sub_id.toString(),
         facultyItem.sec_id.toString(),
         facultyItem.fac_code,
-        "%",
+        '%',
       ],
-      function: "Proc_App_Get_Feedback",
+      function: 'Proc_App_Get_Feedback',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to load feedback questions",
-      );
+      throw new Error(response.data.message || 'Failed to load feedback questions');
     }
 
     return parseApiResponse<FeedbackQuestion[]>(response.data.data.data, []);
   } catch (error) {
-    handleApiError(error, "Get feedback questions");
+    handleApiError(error, 'Get feedback questions');
   }
 }
 
@@ -171,30 +162,29 @@ export async function saveFeedback(
   questions: FeedbackQuestion[],
 ): Promise<FeedbackSaveResponse> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return {
-        err_mesg: "Feedback saved successfully (Demo Mode)",
+        err_mesg: 'Feedback saved successfully (Demo Mode)',
         err_no: 0,
-        doc_no: "DEMO-FB-001",
+        doc_no: 'DEMO-FB-001',
         doc_id: 1,
       };
     }
 
     const body = {
       parameters: [
-        "@p_college_id",
-        "@p_student_id",
-        "@p_session_id",
-        "@p_batch_id",
-        "@p_sem_id",
-        "@p_course_id",
-        "@p_stream_id",
-        "@p_sub_id",
-        "@p_sec_id",
-        "@p_fac_code",
-        "@p_json",
+        '@p_college_id',
+        '@p_student_id',
+        '@p_session_id',
+        '@p_batch_id',
+        '@p_sem_id',
+        '@p_course_id',
+        '@p_stream_id',
+        '@p_sub_id',
+        '@p_sec_id',
+        '@p_fac_code',
+        '@p_json',
       ],
       values: [
         collegeId.toString(),
@@ -209,23 +199,20 @@ export async function saveFeedback(
         facultyItem.fac_code,
         JSON.stringify(questions),
       ],
-      function: "Proc_App_Save_Student_Feedback",
+      function: 'Proc_App_Save_Student_Feedback',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to save feedback");
+      throw new Error(response.data.message || 'Failed to save feedback');
     }
 
-    const parsed = parseApiResponse<FeedbackSaveResponse[]>(
-      response.data.data.data,
-      [],
-    );
+    const parsed = parseApiResponse<FeedbackSaveResponse[]>(response.data.data.data, []);
     return parsed[0];
   } catch (error) {
-    handleApiError(error, "Save feedback");
+    handleApiError(error, 'Save feedback');
   }
 }
 
@@ -243,29 +230,28 @@ export async function markFacultyNotOpted(
   facultyItem: FacultyFeedbackItem,
 ): Promise<FeedbackSaveResponse> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return {
-        err_mesg: "Faculty marked as not opted (Demo Mode)",
+        err_mesg: 'Faculty marked as not opted (Demo Mode)',
         err_no: 0,
-        doc_no: "DEMO-FB-NO-001",
+        doc_no: 'DEMO-FB-NO-001',
         doc_id: 1,
       };
     }
 
     const body = {
       parameters: [
-        "@p_college_id",
-        "@p_student_id",
-        "@p_session_id",
-        "@p_batch_id",
-        "@p_sem_id",
-        "@p_course_id",
-        "@p_stream_id",
-        "@p_sub_id",
-        "@p_sec_id",
-        "@p_fac_code",
+        '@p_college_id',
+        '@p_student_id',
+        '@p_session_id',
+        '@p_batch_id',
+        '@p_sem_id',
+        '@p_course_id',
+        '@p_stream_id',
+        '@p_sub_id',
+        '@p_sec_id',
+        '@p_fac_code',
       ],
       values: [
         collegeId.toString(),
@@ -279,25 +265,20 @@ export async function markFacultyNotOpted(
         facultyItem.sec_id.toString(),
         facultyItem.fac_code,
       ],
-      function: "Proc_App_Save_Student_Feedback_For_NotOpted",
+      function: 'Proc_App_Save_Student_Feedback_For_NotOpted',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to skip faculty feedback",
-      );
+      throw new Error(response.data.message || 'Failed to skip faculty feedback');
     }
 
-    const parsed = parseApiResponse<FeedbackSaveResponse[]>(
-      response.data.data.data,
-      [],
-    );
+    const parsed = parseApiResponse<FeedbackSaveResponse[]>(response.data.data.data, []);
     return parsed[0];
   } catch (error) {
-    handleApiError(error, "Mark faculty not opted");
+    handleApiError(error, 'Mark faculty not opted');
   }
 }
 
@@ -325,28 +306,26 @@ export async function finalSaveFeedback(
   secId: number,
 ): Promise<FeedbackSaveResponse> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return {
-        err_mesg:
-          "All feedback submitted successfully (Demo Mode - No data saved)",
+        err_mesg: 'All feedback submitted successfully (Demo Mode - No data saved)',
         err_no: 0,
-        doc_no: "DEMO-FB-FINAL-001",
+        doc_no: 'DEMO-FB-FINAL-001',
         doc_id: 1,
       };
     }
 
     const body = {
       parameters: [
-        "@p_college_id",
-        "@p_student_id",
-        "@p_session_id",
-        "@p_batch_id",
-        "@p_sem_id",
-        "@p_course_id",
-        "@p_stream_id",
-        "@p_sec_id",
+        '@p_college_id',
+        '@p_student_id',
+        '@p_session_id',
+        '@p_batch_id',
+        '@p_sem_id',
+        '@p_course_id',
+        '@p_stream_id',
+        '@p_sec_id',
       ],
       values: [
         collegeId.toString(),
@@ -358,22 +337,19 @@ export async function finalSaveFeedback(
         streamId.toString(),
         secId.toString(),
       ],
-      function: "Proc_App_Save_Student_Feedback_Final",
+      function: 'Proc_App_Save_Student_Feedback_Final',
       branch_id: branchId.toString(),
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to submit all feedback");
+      throw new Error(response.data.message || 'Failed to submit all feedback');
     }
 
-    const parsed = parseApiResponse<FeedbackSaveResponse[]>(
-      response.data.data.data,
-      [],
-    );
+    const parsed = parseApiResponse<FeedbackSaveResponse[]>(response.data.data.data, []);
     return parsed[0];
   } catch (error) {
-    handleApiError(error, "Final save feedback");
+    handleApiError(error, 'Final save feedback');
   }
 }

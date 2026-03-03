@@ -1,5 +1,6 @@
-import { Image } from "expo-image";
-import { Platform, Text, View } from "react-native";
+import { Image, Platform, Text, View } from 'react-native';
+
+import { securityImage } from '@/src/constants/images';
 
 export function LoginLogo() {
   return (
@@ -11,19 +12,15 @@ export function LoginLogo() {
       }}
     >
       <Image
-        source={require("@/assets/images/security.png")}
-        style={{ width: 120, height: 120 }}
-        contentFit="contain"
+        source={securityImage}
+        className="w-[120px] h-[120px]"
+        resizeMode="contain"
         accessible={false}
       />
-      <Text
-        className="text-[32px] text-ink-950 dark:text-ink-500 mt-6 tracking-tight font-display-bold"
-      >
+      <Text className="text-[32px] text-ink-950 dark:text-ink-500 mt-6 tracking-tight font-display-bold">
         Companion
       </Text>
-      <Text
-        className="text-sm text-ink-500 mt-1.5 tracking-wide font-sans"
-      >
+      <Text className="text-sm text-ink-500 mt-1.5 tracking-wide font-sans">
         Your student dashboard
       </Text>
     </View>

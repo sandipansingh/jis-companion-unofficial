@@ -1,7 +1,9 @@
-import { useAlertStore } from "@/src/store/alertStore";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { useVirtualLabsStore } from "../store/virtualLabsStore";
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+
+import { useAlertStore } from '@/src/store/alertStore';
+
+import { useVirtualLabsStore } from '../store/virtualLabsStore';
 
 interface DropdownOption {
   label: string;
@@ -11,18 +13,12 @@ interface DropdownOption {
 export function useCourseSelectionData() {
   const router = useRouter();
   const { showAlert } = useAlertStore();
-  const {
-    courses,
-    loading,
-    error,
-    fetchCourses,
-    fetchExperiments,
-    clearError,
-  } = useVirtualLabsStore();
+  const { courses, loading, error, fetchCourses, fetchExperiments, clearError } =
+    useVirtualLabsStore();
 
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
-  const [selectedStream, setSelectedStream] = useState<string>("");
-  const [selectedSemester, setSelectedSemester] = useState<string>("");
+  const [selectedCourse, setSelectedCourse] = useState<string>('');
+  const [selectedStream, setSelectedStream] = useState<string>('');
+  const [selectedSemester, setSelectedSemester] = useState<string>('');
 
   const [courseDropdownVisible, setCourseDropdownVisible] = useState(false);
   const [streamDropdownVisible, setStreamDropdownVisible] = useState(false);
@@ -30,22 +26,22 @@ export function useCourseSelectionData() {
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [fetchCourses]);
 
   useEffect(() => {
     if (error) {
       showAlert({
-        title: "Error",
+        title: 'Error',
         message: error,
         onConfirm: () => {
           clearError();
         },
       });
     }
-  }, [error]);
+  }, [error, clearError, showAlert]);
 
   const courseOptions: DropdownOption[] = Array.from(
-    new Set(courses.map((c) => c.course_name))
+    new Set(courses.map((c) => c.course_name)),
   ).map((name) => ({
     label: name,
     value: name,
@@ -56,8 +52,8 @@ export function useCourseSelectionData() {
         new Set(
           courses
             .filter((c) => c.course_name === selectedCourse)
-            .map((c) => c.stream_name)
-        )
+            .map((c) => c.stream_name),
+        ),
       ).map((name) => ({
         label: name,
         value: name,
@@ -71,11 +67,10 @@ export function useCourseSelectionData() {
             courses
               .filter(
                 (c) =>
-                  c.course_name === selectedCourse &&
-                  c.stream_name === selectedStream
+                  c.course_name === selectedCourse && c.stream_name === selectedStream,
               )
-              .map((c) => c.sem_no)
-          )
+              .map((c) => c.sem_no),
+          ),
         )
           .sort((a, b) => parseInt(a) - parseInt(b))
           .map((sem) => ({
@@ -86,14 +81,14 @@ export function useCourseSelectionData() {
 
   const handleCourseSelect = (value: string) => {
     setSelectedCourse(value);
-    setSelectedStream("");
-    setSelectedSemester("");
+    setSelectedStream('');
+    setSelectedSemester('');
     setCourseDropdownVisible(false);
   };
 
   const handleStreamSelect = (value: string) => {
     setSelectedStream(value);
-    setSelectedSemester("");
+    setSelectedSemester('');
     setStreamDropdownVisible(false);
   };
 
@@ -108,7 +103,7 @@ export function useCourseSelectionData() {
 
   const handleProceed = () => {
     fetchExperiments(selectedCourse, selectedStream, selectedSemester);
-    router.push("/virtual-labs/experiments");
+    router.push('/virtual-labs/experiments');
   };
 
   return {

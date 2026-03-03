@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { useFeedbackStore } from "../store";
-import { FacultyFeedbackItem, FeedbackQuestion } from "../types";
+import { useCallback, useEffect, useState } from 'react';
+
+import { useFeedbackStore } from '../store';
+import { FacultyFeedbackItem, FeedbackQuestion } from '../types';
 
 interface UseFacultyRatingParams {
   facCode: string | null;
@@ -17,22 +18,31 @@ export function useFacultyRating({
   onSuccess,
   onError,
 }: UseFacultyRatingParams) {
-  const {
-    getFacultyById,
-    getFeedbackForFaculty,
-    submitFeedback,
-    markNotOpted,
-  } = useFeedbackStore();
+  const { getFacultyById, getFeedbackForFaculty, submitFeedback, markNotOpted } =
+    useFeedbackStore();
 
   const [faculty, setFaculty] = useState<FacultyFeedbackItem | null>(null);
-  const [feedbackQuestions, setFeedbackQuestions] = useState<
-    FeedbackQuestion[]
-  >([]);
+  const [feedbackQuestions, setFeedbackQuestions] = useState<FeedbackQuestion[]>([]);
   const [ratings, setRatings] = useState<{ [key: number]: number }>({});
   const [loadingFaculty, setLoadingFaculty] = useState(true);
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [skippingFeedback, setSkippingFeedback] = useState(false);
+
+  const loadFeedbackQuestions = useCallback(
+    async (facultyData: FacultyFeedbackItem) => {
+      setLoadingQuestions(true);
+      try {
+        const questions = await getFeedbackForFaculty(facultyData);
+        setFeedbackQuestions(questions);
+      } catch (error: any) {
+        onError?.(error.message || 'Failed to load feedback questions');
+      } finally {
+        setLoadingQuestions(false);
+      }
+    },
+    [getFeedbackForFaculty, onError],
+  );
 
   useEffect(() => {
     if (facCode && subCode && secId !== null) {
@@ -42,11 +52,11 @@ export function useFacultyRating({
         setFaculty(facultyData);
         loadFeedbackQuestions(facultyData);
       } else {
-        onError?.("Failed to load faculty information");
+        onError?.('Failed to load faculty information');
       }
       setLoadingFaculty(false);
     }
-  }, [facCode, subCode, secId]);
+  }, [facCode, subCode, secId, getFacultyById, loadFeedbackQuestions, onError]);
 
   useEffect(() => {
     if (feedbackQuestions.length > 0) {
@@ -58,31 +68,17 @@ export function useFacultyRating({
     }
   }, [feedbackQuestions]);
 
-  const loadFeedbackQuestions = async (facultyData: FacultyFeedbackItem) => {
-    setLoadingQuestions(true);
-    try {
-      const questions = await getFeedbackForFaculty(facultyData);
-      setFeedbackQuestions(questions);
-    } catch (error: any) {
-      onError?.(error.message || "Failed to load feedback questions");
-    } finally {
-      setLoadingQuestions(false);
-    }
-  };
-
   const validateRatings = (): boolean => {
-    return feedbackQuestions.every(
-      (q) => ratings[q.id] >= 1 && ratings[q.id] <= 10
-    );
+    return feedbackQuestions.every((q) => ratings[q.id] >= 1 && ratings[q.id] <= 10);
   };
 
   const handleSubmitFeedback = async () => {
-    if (!faculty) return { success: false, error: "Faculty data not loaded" };
+    if (!faculty) return { success: false, error: 'Faculty data not loaded' };
 
     if (!validateRatings()) {
       return {
         success: false,
-        error: "Please rate all criteria before submitting.",
+        error: 'Please rate all criteria before submitting.',
       };
     }
 
@@ -97,7 +93,7 @@ export function useFacultyRating({
       onSuccess?.();
       return { success: true };
     } catch (error: any) {
-      const errorMessage = error.message || "Failed to submit feedback";
+      const errorMessage = error.message || 'Failed to submit feedback';
       onError?.(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -106,7 +102,7 @@ export function useFacultyRating({
   };
 
   const handleSkipFeedback = async () => {
-    if (!faculty) return { success: false, error: "Faculty data not loaded" };
+    if (!faculty) return { success: false, error: 'Faculty data not loaded' };
 
     setSkippingFeedback(true);
     try {
@@ -114,7 +110,7 @@ export function useFacultyRating({
       onSuccess?.();
       return { success: true };
     } catch (error: any) {
-      const errorMessage = error.message || "Failed to skip feedback!";
+      const errorMessage = error.message || 'Failed to skip feedback!';
       onError?.(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

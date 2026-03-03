@@ -4,31 +4,32 @@ import {
   getSocialProfile as getSocialProfileDb,
   saveScannedContact as saveScannedContactDb,
   saveSocialProfile as saveSocialProfileDb,
-} from "@/src/services/database";
-import { QRPayload, ScannedContact, SocialProfile } from "../types";
+} from '@/src/services/database';
+
+import { QRPayload, ScannedContact, SocialProfile } from '../types';
 
 export const saveSocialProfile = async (
   studentId: string,
-  profile: SocialProfile
+  profile: SocialProfile,
 ): Promise<void> => {
   return saveSocialProfileDb(studentId, profile);
 };
 
 export const getSocialProfile = async (
-  studentId: string
+  studentId: string,
 ): Promise<SocialProfile | null> => {
   return getSocialProfileDb(studentId);
 };
 
 export const saveScannedContact = async (
   scannedBy: string,
-  payload: QRPayload
+  payload: QRPayload,
 ): Promise<void> => {
   return saveScannedContactDb(scannedBy, payload);
 };
 
 export const getScannedContacts = async (
-  scannedBy: string
+  scannedBy: string,
 ): Promise<ScannedContact[]> => {
   return getScannedContactsDb(scannedBy);
 };

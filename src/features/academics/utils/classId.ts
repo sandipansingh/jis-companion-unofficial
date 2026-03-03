@@ -5,24 +5,20 @@
  *
  * Example: "2026-01-14-NIT_0112-6"
  */
-export function createClassId(
-  date: string,
-  empCode: string,
-  periodName: string
-): string {
+export function createClassId(date: string, empCode: string, periodName: string): string {
   // Extract date (YYYY-MM-DD) from ISO string
-  const dateOnly = date.split("T")[0];
+  const dateOnly = date.split('T')[0];
 
   // Extract period number from format "6 (12.20-13.00)"
-  const periodNumber = periodName?.split(" ")[0] || "1";
+  const periodNumber = periodName?.split(' ')[0] || '1';
 
   if (!empCode) {
-    console.warn("createClassId: empCode is undefined or null");
+    console.warn('createClassId: empCode is undefined or null');
     return `${dateOnly}-unknown-${periodNumber}`;
   }
 
   // Replace / with _ for URL safety
-  const safeEmpCode = empCode.replace(/\//g, "_");
+  const safeEmpCode = empCode.replace(/\//g, '_');
 
   return `${dateOnly}-${safeEmpCode}-${periodNumber}`;
 }
@@ -38,7 +34,7 @@ export function parseClassId(classId: string): {
   periodName: string;
 } | null {
   // Split by hyphen, but need to handle the date portion which has hyphens
-  const parts = classId.split("-");
+  const parts = classId.split('-');
 
   if (parts.length < 5) {
     return null;

@@ -1,7 +1,8 @@
-import apiClient, { StandardApiResponse } from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import { getDemoFeeData } from "@/src/utils/demo";
-import { FeeLedgerEntry } from "../types";
+import apiClient, { StandardApiResponse } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { getDemoFeeData } from '@/src/utils/demo';
+
+import { FeeLedgerEntry } from '../types';
 
 /**
  * Fetch the student's fee ledger summary.
@@ -16,38 +17,37 @@ export async function fetchStudentFeeLedger(
   branchId: number,
 ): Promise<FeeLedgerEntry[]> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return getDemoFeeData();
     }
 
-    if (!studentId || studentId.trim() === "" || !branchId) {
+    if (!studentId || studentId.trim() === '' || !branchId) {
       return [];
     }
 
     const branchIdStr = branchId?.toString();
 
     const body = {
-      parameters: ["@p_branch_id", "@p_student_code"],
+      parameters: ['@p_branch_id', '@p_student_code'],
       values: [branchIdStr, studentId],
-      function: "Proc_App_Disp_Student_Ledger_Summ",
+      function: 'Proc_App_Disp_Student_Ledger_Summ',
       branch_id: branchIdStr,
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to load fee ledger");
+      throw new Error(response.data.message || 'Failed to load fee ledger');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<FeeLedgerEntry[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch fee ledger");
+    handleApiError(error, 'Fetch fee ledger');
   }
 }

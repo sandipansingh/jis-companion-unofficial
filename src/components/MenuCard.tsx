@@ -1,24 +1,8 @@
-import { ChevronRight, LucideIcon } from "lucide-react-native";
-import { processColor, Text, TouchableOpacity, useColorScheme, View } from "react-native";
+import { ChevronRight, LucideIcon } from 'lucide-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-function applyAlpha(color: string, alpha: number): string {
-  try {
-    const processed = processColor(color);
-    if (typeof processed !== "number") {
-      return "transparent";
-    }
-
-    const colorInt = processed >>> 0;
-    const red = (colorInt >> 16) & 255;
-    const green = (colorInt >> 8) & 255;
-    const blue = colorInt & 255;
-    const clampedAlpha = Math.max(0, Math.min(1, alpha));
-
-    return `rgba(${red}, ${green}, ${blue}, ${clampedAlpha})`;
-  } catch {
-    return "transparent";
-  }
-}
+import { useTheme } from '../contexts/ThemeContext';
+import { withAlpha } from '../utils/colorHelpers';
 
 interface MenuCardProps {
   title: string;
@@ -37,17 +21,17 @@ export function MenuCard({
   onPress,
   disabled = false,
 }: MenuCardProps) {
-  const colorScheme = useColorScheme();
-  const chevronColor = colorScheme === "dark" ? "#94A3B8" : "#64748B";
+  const { colors } = useTheme();
+  const chevronColor = colors.textTertiary;
 
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.75}
       disabled={disabled}
-      className={`flex-row items-center bg-surface dark:bg-ink-900 rounded-2xl p-5 mb-3 border border-border ${disabled ? "opacity-40" : ""}`}
+      className={`flex-row items-center bg-surface dark:bg-surface rounded-2xl p-5 mb-3 border border-border ${disabled ? 'opacity-40' : ''}`}
       style={{
-        shadowColor: "#0F172A",
+        shadowColor: colors.text,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 8,
@@ -56,19 +40,15 @@ export function MenuCard({
     >
       <View
         className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
-        style={{ backgroundColor: applyAlpha(iconColor, 0.09) }}
+        style={{ backgroundColor: withAlpha(iconColor, 0.09) }}
       >
         <Icon size={24} color={iconColor} />
       </View>
       <View className="flex-1 gap-0.5">
-        <Text
-          className="text-base text-ink-900 dark:text-white font-sans-semi"
-        >
+        <Text className="text-base text-ink-900 dark:text-white font-sans-semi">
           {title}
         </Text>
-        <Text
-          className="text-sm text-ink-600 dark:text-ink-400 font-sans"
-        >
+        <Text className="text-sm text-ink-600 dark:text-ink-400 font-sans">
           {description}
         </Text>
       </View>

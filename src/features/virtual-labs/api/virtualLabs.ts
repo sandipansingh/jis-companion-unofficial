@@ -1,6 +1,7 @@
-import apiClient, { StandardApiResponse } from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import { VirtualLabCourse, VirtualLabExperiment } from "../types";
+import apiClient, { StandardApiResponse } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+
+import { VirtualLabCourse, VirtualLabExperiment } from '../types';
 
 /**
  * Fetch available virtual lab courses/streams.
@@ -9,25 +10,25 @@ import { VirtualLabCourse, VirtualLabExperiment } from "../types";
  */
 export const fetchVirtualLabCourses = async (): Promise<VirtualLabCourse[]> => {
   try {
-    const response = await apiClient.post<StandardApiResponse>("", {
-      parameters: ["@p_course"],
-      values: ["%"],
-      function: "Proc_Get_Virtual_Lab_Course_Stream",
-      branch_id: "0",
+    const response = await apiClient.post<StandardApiResponse>('', {
+      parameters: ['@p_course'],
+      values: ['%'],
+      function: 'Proc_Get_Virtual_Lab_Course_Stream',
+      branch_id: '0',
     });
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch courses");
+      throw new Error(response.data.message || 'Failed to fetch courses');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<VirtualLabCourse[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch virtual lab courses");
+    handleApiError(error, 'Fetch virtual lab courses');
   }
 };
 
@@ -42,23 +43,23 @@ export const fetchVirtualLabCourses = async (): Promise<VirtualLabCourse[]> => {
 export const fetchVirtualLabExperiments = async (
   course: string,
   stream: string,
-  semester: string
+  semester: string,
 ): Promise<VirtualLabExperiment[]> => {
   try {
-    const response = await apiClient.post<StandardApiResponse>("", {
-      parameters: ["@p_course", "@p_stream", "@p_sem"],
+    const response = await apiClient.post<StandardApiResponse>('', {
+      parameters: ['@p_course', '@p_stream', '@p_sem'],
       values: [course, stream, semester],
-      function: "Proc_Get_Virtual_Lab_Subject_Wise_Experiment",
-      branch_id: "0",
+      function: 'Proc_Get_Virtual_Lab_Subject_Wise_Experiment',
+      branch_id: '0',
     });
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch experiments");
+      throw new Error(response.data.message || 'Failed to fetch experiments');
     }
 
     const dataString = response.data.data.data;
     return parseApiResponse<VirtualLabExperiment[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch virtual lab experiments");
+    handleApiError(error, 'Fetch virtual lab experiments');
   }
 };

@@ -1,11 +1,10 @@
-import { useAuthStore } from "@/src/features/auth";
-import {
-  LibrarySearchField,
-  LibrarySearchResult,
-} from "@/src/features/library/types";
-import { useAlertStore } from "@/src/store/alertStore";
-import { useEffect, useState } from "react";
-import { useLibraryStore } from "../store";
+import { useEffect, useState } from 'react';
+
+import { useAuthStore } from '@/src/features/auth';
+import { LibrarySearchField, LibrarySearchResult } from '@/src/features/library/types';
+import { useAlertStore } from '@/src/store/alertStore';
+
+import { useLibraryStore } from '../store';
 
 export function useSearchReserveData() {
   const { showAlert } = useAlertStore();
@@ -22,20 +21,19 @@ export function useSearchReserveData() {
     setSearchQuery,
   } = useLibraryStore();
 
-  const [searchField, setSearchField] =
-    useState<LibrarySearchField>("acc_title");
+  const [searchField, setSearchField] = useState<LibrarySearchField>('acc_title');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     if (searchError) {
       showAlert({
-        title: "Search Error",
+        title: 'Search Error',
         message: searchError,
         onConfirm: clearSearchError,
       });
     }
-  }, [searchError]);
+  }, [searchError, clearSearchError, showAlert]);
 
   const handleSearch = () => {
     if (!searchQuery.trim()) {
@@ -49,18 +47,18 @@ export function useSearchReserveData() {
 
   const handleReserve = async (book: LibrarySearchResult) => {
     showAlert({
-      title: "Confirm Reservation",
+      title: 'Confirm Reservation',
       message: `Do you want to reserve "${book.acc_title}"?`,
       showCancel: true,
       onConfirm: async () => {
         try {
           const message = await reserveBook(book);
           showAlert({
-            title: "Success",
-            message: message || "Reservation request sent successfully",
+            title: 'Success',
+            message: message || 'Reservation request sent successfully',
           });
         } catch (e: any) {
-          showAlert({ title: "Reservation Failed", message: e.message });
+          showAlert({ title: 'Reservation Failed', message: e.message });
         }
       },
     });
@@ -68,12 +66,12 @@ export function useSearchReserveData() {
 
   const getSearchFieldLabel = (field: LibrarySearchField) => {
     const labels: Record<LibrarySearchField, string> = {
-      acc_title: "Title",
-      acc_author_name: "Author",
-      acc_call: "Call No",
-      acc_isbn: "ISBN",
+      acc_title: 'Title',
+      acc_author_name: 'Author',
+      acc_call: 'Call No',
+      acc_isbn: 'ISBN',
     };
-    return labels[field] || "Title";
+    return labels[field] || 'Title';
   };
 
   return {

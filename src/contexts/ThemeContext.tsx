@@ -1,9 +1,10 @@
-import { useColorScheme as useNativeWindColorScheme } from "nativewind";
-import { createContext, ReactNode, useContext, useEffect } from "react";
-import Colors from "../constants/Colors";
-import { useSettingsStore } from "../features/settings/store/settingsStore";
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
+import { createContext, ReactNode, useContext, useEffect } from 'react';
 
-type ColorScheme = "light" | "dark";
+import Colors from '../constants/Colors';
+import { useSettingsStore } from '../features/settings/store/settingsStore';
+
+type ColorScheme = 'light' | 'dark';
 
 interface ThemeContextType {
   colorScheme: ColorScheme;
@@ -29,8 +30,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }, [setColorScheme, theme]);
 
   const toggleTheme = () => {
-    const isCurrentlyDark = theme === "dark";
-    const newScheme: ColorScheme = isCurrentlyDark ? "light" : "dark";
+    const isCurrentlyDark = theme === 'dark';
+    const newScheme: ColorScheme = isCurrentlyDark ? 'light' : 'dark';
 
     setStoredTheme(newScheme);
   };
@@ -39,25 +40,23 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setStoredTheme(theme);
   };
 
-  const activeColorScheme = colorScheme === "dark" ? "dark" : "light";
-  
+  const activeColorScheme = colorScheme === 'dark' ? 'dark' : 'light';
+
   const value: ThemeContextType = {
     colorScheme: activeColorScheme,
     colors: Colors[activeColorScheme],
-    isDark: activeColorScheme === "dark",
+    isDark: activeColorScheme === 'dark',
     toggleTheme,
     setTheme,
   };
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
 }

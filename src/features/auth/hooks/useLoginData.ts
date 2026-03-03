@@ -1,12 +1,14 @@
-import { useAlertStore } from "@/src/store/alertStore";
-import { DEMO_CREDENTIALS } from "@/src/utils/demo";
-import { normalizeStudentId } from "@/src/utils/stringHelpers";
-import { useState } from "react";
-import { useAuthStore } from "../store";
+import { useState } from 'react';
+
+import { useAlertStore } from '@/src/store/alertStore';
+import { DEMO_CREDENTIALS } from '@/src/utils/demo';
+import { normalizeStudentId } from '@/src/utils/stringHelpers';
+
+import { useAuthStore } from '../store';
 
 export function useLoginData() {
-  const [studentId, setStudentId] = useState("");
-  const [password, setPassword] = useState("");
+  const [studentId, setStudentId] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { showAlert } = useAlertStore();
   const login = useAuthStore((state) => state.login);
@@ -14,8 +16,8 @@ export function useLoginData() {
   const handleLogin = async () => {
     if (!studentId.trim() || !password.trim()) {
       showAlert({
-        title: "Error",
-        message: "Please enter both Student ID and Password",
+        title: 'Error',
+        message: 'Please enter both Student ID and Password',
       });
       return;
     }
@@ -26,14 +28,14 @@ export function useLoginData() {
       const success = await login(normalizedStudentId, password.trim());
       if (!success) {
         showAlert({
-          title: "Login Failed",
-          message: "Invalid Student ID or Password. Please try again.",
+          title: 'Login Failed',
+          message: 'Invalid Student ID or Password. Please try again.',
         });
       }
     } catch (error: any) {
       showAlert({
-        title: "Error",
-        message: error.message || "An error occurred during login",
+        title: 'Error',
+        message: error.message || 'An error occurred during login',
       });
     } finally {
       setLoading(false);
@@ -42,10 +44,10 @@ export function useLoginData() {
 
   const showCredits = () => {
     showAlert({
-      title: "Credits",
-      message: "Password icons created by Roundicons Premium - Flaticon",
-      linkText: "View Icon",
-      linkUrl: "https://www.flaticon.com/free-icons/password",
+      title: 'Credits',
+      message: 'Password icons created by Roundicons Premium - Flaticon',
+      linkText: 'View Icon',
+      linkUrl: 'https://www.flaticon.com/free-icons/password',
     });
   };
 
@@ -56,20 +58,17 @@ export function useLoginData() {
     setTimeout(async () => {
       setLoading(true);
       try {
-        const success = await login(
-          DEMO_CREDENTIALS.username,
-          DEMO_CREDENTIALS.password,
-        );
+        const success = await login(DEMO_CREDENTIALS.username, DEMO_CREDENTIALS.password);
         if (!success) {
           showAlert({
-            title: "Login Failed",
-            message: "Demo login failed. Please try again.",
+            title: 'Login Failed',
+            message: 'Demo login failed. Please try again.',
           });
         }
       } catch (error: any) {
         showAlert({
-          title: "Error",
-          message: error.message || "An error occurred during login",
+          title: 'Error',
+          message: error.message || 'An error occurred during login',
         });
       } finally {
         setLoading(false);

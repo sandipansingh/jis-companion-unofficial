@@ -1,2 +1,2 @@
-export { useAcademicsData } from "./useAcademicsData";
-export { useClassDetails } from "./useClassDetails";
+export { useAcademicsData } from './useAcademicsData';
+export { useClassDetails } from './useClassDetails';

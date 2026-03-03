@@ -1,16 +1,13 @@
-import apiClient, { StandardApiResponse } from "@/src/api/client";
-import { handleApiError, parseApiResponse } from "@/src/utils/apiHelpers";
-import { getCurrentDateComponents } from "@/src/utils/dateHelpers";
+import apiClient, { StandardApiResponse } from '@/src/api/client';
+import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { getCurrentDateComponents } from '@/src/utils/dateHelpers';
 import {
   DEMO_ATTENDANCE_DATA,
   getDemoDateAttendance,
   getDemoSubjectAttendance,
-} from "@/src/utils/demo";
-import {
-  AttendanceData,
-  DateWiseAttendance,
-  SubjectWiseAttendance,
-} from "../types";
+} from '@/src/utils/demo';
+
+import { AttendanceData, DateWiseAttendance, SubjectWiseAttendance } from '../types';
 
 /**
  * Fetch attendance percentage for the current month.
@@ -27,44 +24,40 @@ export async function fetchAttendancePercentage(
   branchId: number,
 ): Promise<AttendanceData> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return DEMO_ATTENDANCE_DATA;
     }
 
-    const collegeIdStr = collegeId?.toString() || "2";
-    const branchIdStr = branchId?.toString() || "3";
+    const collegeIdStr = collegeId?.toString() || '2';
+    const branchIdStr = branchId?.toString() || '3';
 
     const { year, month } = getCurrentDateComponents();
     const yearStr = year.toString();
     const monthStr = month.toString();
 
     const body = {
-      parameters: ["@p_COLLEGE_ID", "@P_STUDENT_CODE", "@P_YEAR", "@P_MONTH"],
+      parameters: ['@p_COLLEGE_ID', '@P_STUDENT_CODE', '@P_YEAR', '@P_MONTH'],
       values: [collegeIdStr, studentId, yearStr, monthStr],
-      function: "Proc_App_Get_Attendence_percentage_For_Student",
+      function: 'Proc_App_Get_Attendence_percentage_For_Student',
       branch_id: branchIdStr,
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(response.data.message || "Failed to fetch attendance");
+      throw new Error(response.data.message || 'Failed to fetch attendance');
     }
 
-    const parsedData = parseApiResponse<AttendanceData[]>(
-      response.data.data.data,
-      [],
-    );
+    const parsedData = parseApiResponse<AttendanceData[]>(response.data.data.data, []);
 
     if (!parsedData || parsedData.length === 0) {
-      throw new Error("No attendance data found");
+      throw new Error('No attendance data found');
     }
 
     return parsedData[0];
   } catch (error) {
-    handleApiError(error, "Fetch attendance percentage");
+    handleApiError(error, 'Fetch attendance percentage');
   }
 }
 
@@ -85,41 +78,38 @@ export async function fetchDateWiseAttendance(
   month?: string,
 ): Promise<DateWiseAttendance[]> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return getDemoDateAttendance();
     }
 
-    const branchIdStr = branchId?.toString() || "3";
+    const branchIdStr = branchId?.toString() || '3';
 
     const current = getCurrentDateComponents();
     const targetYear = year || current.year.toString();
     const targetMonth = month || current.month.toString();
 
     const body = {
-      parameters: ["@P_BRANCH_ID", "@P_STUDENT_CODE", "@P_YEAR", "@P_MONTH"],
+      parameters: ['@P_BRANCH_ID', '@P_STUDENT_CODE', '@P_YEAR', '@P_MONTH'],
       values: [branchIdStr, studentId, targetYear, targetMonth],
-      function: "Proc_App_Get_Student_Date_Wise_Schedule_Vs_Attendance",
+      function: 'Proc_App_Get_Student_Date_Wise_Schedule_Vs_Attendance',
       branch_id: branchIdStr,
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to fetch date-wise attendance",
-      );
+      throw new Error(response.data.message || 'Failed to fetch date-wise attendance');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<DateWiseAttendance[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch date-wise attendance");
+    handleApiError(error, 'Fetch date-wise attendance');
   }
 }
 
@@ -142,44 +132,40 @@ export async function fetchSubjectWiseAttendance(
   toDate: string,
 ): Promise<SubjectWiseAttendance[]> {
   try {
-    const { useAuthStore } =
-      await import("@/src/features/auth/store/authStore");
+    const { useAuthStore } = await import('@/src/features/auth/store/authStore');
     if (useAuthStore.getState().isDemoAccount) {
       return getDemoSubjectAttendance();
     }
 
-    const collegeIdStr = collegeId?.toString() || "2";
-    const branchIdStr = branchId?.toString() || "3";
+    const collegeIdStr = collegeId?.toString() || '2';
+    const branchIdStr = branchId?.toString() || '3';
 
     const body = {
       parameters: [
-        "@P_COLLEGE_ID",
-        "@P_STUDENT_CODE",
-        "@P_FROM_DATE",
-        "@P_TO_DATE",
-        "@p_is_json",
+        '@P_COLLEGE_ID',
+        '@P_STUDENT_CODE',
+        '@P_FROM_DATE',
+        '@P_TO_DATE',
+        '@p_is_json',
       ],
-      values: [collegeIdStr, studentId, fromDate, toDate, "1"],
-      function:
-        "Proc_App_Get_Student_Date_Wise_Schedule_Vs_Attendance_With_Subject",
+      values: [collegeIdStr, studentId, fromDate, toDate, '1'],
+      function: 'Proc_App_Get_Student_Date_Wise_Schedule_Vs_Attendance_With_Subject',
       branch_id: branchIdStr,
     };
 
-    const response = await apiClient.post<StandardApiResponse>("", body);
+    const response = await apiClient.post<StandardApiResponse>('', body);
 
     if (response.data.errorCode !== 0) {
-      throw new Error(
-        response.data.message || "Failed to fetch subject-wise attendance",
-      );
+      throw new Error(response.data.message || 'Failed to fetch subject-wise attendance');
     }
 
     const dataString = response.data.data.data;
-    if (dataString === "") {
+    if (dataString === '') {
       return [];
     }
 
     return parseApiResponse<SubjectWiseAttendance[]>(dataString, []);
   } catch (error) {
-    handleApiError(error, "Fetch subject-wise attendance");
+    handleApiError(error, 'Fetch subject-wise attendance');
   }
 }

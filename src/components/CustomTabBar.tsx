@@ -1,14 +1,26 @@
-import { getTabColors, getTabIndicatorColor, getTabVisualConfig } from "@/src/constants/tabColors";
-import { useTheme } from "@/src/contexts/ThemeContext";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { BlurView } from "expo-blur";
-import React, { useEffect, useState } from "react";
-import { LayoutChangeEvent, Platform, Pressable, View } from "react-native";
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { BlurView } from 'expo-blur';
+import React, { useEffect, useState } from 'react';
+import {
+  LayoutChangeEvent,
+  Platform,
+  Pressable,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
+
+import {
+  getTabColors,
+  getTabIndicatorColor,
+  getTabVisualConfig,
+} from '@/src/constants/tabColors';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { BREAKPOINTS } from '@/src/hooks/useBreakpoint';
 
 export default function CustomTabBar({
   state,
@@ -16,9 +28,12 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   const { isDark } = useTheme();
-  const isAndroid = Platform.OS === "android";
-  const isIOS = Platform.OS === "ios";
-  const isWeb = Platform.OS === "web";
+  const isAndroid = Platform.OS === 'android';
+  const isIOS = Platform.OS === 'ios';
+  const isWeb = Platform.OS === 'web';
+  const { width } = useWindowDimensions();
+
+  // All hooks must be declared before any early return (Rules of Hooks).
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const { focusedColor, unfocusedColor } = getTabColors(isDark);
   const indicatorColor = getTabIndicatorColor(isDark);
@@ -26,11 +41,11 @@ export default function CustomTabBar({
     isDark,
     isAndroid,
     isIOS,
-    variant: "bottom",
+    variant: 'bottom',
   });
 
   const visibleRoutes = state.routes.filter(
-    (route) => typeof descriptors[route.key]?.options?.tabBarIcon === "function",
+    (route) => typeof descriptors[route.key]?.options?.tabBarIcon === 'function',
   );
   const routesToRender = visibleRoutes.length > 0 ? visibleRoutes : state.routes;
   const activeRouteKey = state.routes[state.index]?.key;
@@ -44,13 +59,18 @@ export default function CustomTabBar({
       damping: 20,
       stiffness: 180,
     });
-  }, [activeIndex, tabWidth]);
+  }, [activeIndex, tabWidth, translateX]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateX.value }],
     };
   });
+
+  // On desktop web the sidebar replaces the tab bar — render nothing.
+  // This is placed after all hooks to satisfy the Rules of Hooks.
+  const isDesktopWeb = isWeb && width >= BREAKPOINTS.md;
+  if (isDesktopWeb) return null;
 
   const onLayout = (e: LayoutChangeEvent) => {
     setDimensions({
@@ -63,11 +83,11 @@ export default function CustomTabBar({
     <View
       className={
         isWeb
-          ? "absolute bottom-8 h-[65px] rounded-[35px] bg-transparent overflow-hidden self-center w-[92%] max-w-[560px]"
-          : "absolute bottom-8 left-0 right-0 h-[65px] rounded-[35px] bg-transparent overflow-hidden mx-[50px]"
+          ? 'absolute bottom-8 h-[65px] rounded-[35px] bg-transparent overflow-hidden self-center w-[92%] max-w-[560px]'
+          : 'absolute bottom-8 left-0 right-0 h-[65px] rounded-[35px] bg-transparent overflow-hidden mx-[50px]'
       }
       style={{
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: tabVisuals.shadowOpacity,
         shadowRadius: 12,
@@ -84,16 +104,12 @@ export default function CustomTabBar({
           borderColor: tabVisuals.borderColor,
         }}
       >
-        <View
-          className="flex-row h-full items-center"
-          onLayout={onLayout}
-        >
+        <View className="flex-row h-full items-center" onLayout={onLayout}>
           {dimensions.width > 0 && (
             <Animated.View
-              className="absolute"
               style={[
                 {
-                  position: "absolute",
+                  position: 'absolute',
                   width: tabWidth - 20,
                   height: dimensions.height - 20,
                   left: 10,
@@ -112,7 +128,7 @@ export default function CustomTabBar({
 
             const onPress = () => {
               const event = navigation.emit({
-                type: "tabPress",
+                type: 'tabPress',
                 target: route.key,
                 canPreventDefault: true,
               });
@@ -124,7 +140,7 @@ export default function CustomTabBar({
 
             const onLongPress = () => {
               navigation.emit({
-                type: "tabLongPress",
+                type: 'tabLongPress',
                 target: route.key,
               });
             };

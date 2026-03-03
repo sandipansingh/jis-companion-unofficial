@@ -1,1 +1,1 @@
-export { useHomeData } from "./useHomeData";
+export { useHomeData } from './useHomeData';

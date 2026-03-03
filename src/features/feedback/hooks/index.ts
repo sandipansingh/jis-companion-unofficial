@@ -1,2 +1,2 @@
-export { useFacultyRating } from "./useFacultyRating";
-export { useFeedbackData } from "./useFeedbackData";
+export { useFacultyRating } from './useFacultyRating';
+export { useFeedbackData } from './useFeedbackData';

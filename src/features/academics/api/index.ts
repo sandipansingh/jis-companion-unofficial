@@ -1,1 +1,1 @@
-export * from "./academics";
+export * from './academics';

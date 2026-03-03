@@ -1,6 +1,7 @@
-import { useTheme } from "@/src/contexts/ThemeContext";
-import React, { useEffect, useRef } from "react";
-import { Animated, Pressable } from "react-native";
+import React, { useEffect, useRef } from 'react';
+import { Animated, Pressable } from 'react-native';
+
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface SwitchProps {
   value: boolean;
@@ -10,7 +11,7 @@ interface SwitchProps {
 
 export function Switch({ value, onValueChange, disabled = false }: SwitchProps) {
   const { colors, isDark } = useTheme();
-  
+
   const animation = useRef(new Animated.Value(value ? 1 : 0)).current;
 
   useEffect(() => {
@@ -19,26 +20,23 @@ export function Switch({ value, onValueChange, disabled = false }: SwitchProps) 
       duration: 250,
       useNativeDriver: false,
     }).start();
-  }, [value]);
+  }, [value, animation]);
 
   const backgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [
-       isDark ? "#334155" : "#E2E8F0", 
-       colors.primary
-    ],
+    outputRange: [isDark ? colors.overlay : colors.border, colors.primary],
   });
 
   const translateX = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [2, 22],
+    outputRange: [-10, 10],
   });
 
   return (
     <Pressable
       onPress={() => !disabled && onValueChange(!value)}
       disabled={disabled}
-      className={`opacity-${disabled ? '50' : '100'}`}
+      className={disabled ? 'opacity-50' : ''}
       accessibilityRole="switch"
       accessibilityState={{ checked: value, disabled }}
     >
@@ -46,8 +44,9 @@ export function Switch({ value, onValueChange, disabled = false }: SwitchProps) 
         style={{
           width: 44,
           height: 24,
-          borderRadius: 9999,
-          justifyContent: "center",
+          borderRadius: 12,
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor,
         }}
       >
@@ -55,15 +54,12 @@ export function Switch({ value, onValueChange, disabled = false }: SwitchProps) 
           style={{
             width: 20,
             height: 20,
-            borderRadius: 9999,
-            backgroundColor: "white",
-            shadowColor: "#000",
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
+            borderRadius: 10,
+            backgroundColor: '#ffffff',
+            shadowColor: '#000',
             shadowOpacity: 0.2,
-            shadowRadius: 1.41,
+            shadowRadius: 2,
+            shadowOffset: { width: 0, height: 1 },
             elevation: 2,
             transform: [{ translateX }],
           }}
@@ -72,4 +68,3 @@ export function Switch({ value, onValueChange, disabled = false }: SwitchProps) 
     </Pressable>
   );
 }
-

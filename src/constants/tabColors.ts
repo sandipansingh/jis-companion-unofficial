@@ -1,15 +1,15 @@
 export const TAB_COLORS = {
   focused: {
-    dark: "#E2E8F0",
-    light: "#1E2235",
+    dark: '#E2E8F0',
+    light: '#1E2235',
   },
   unfocused: {
-    dark: "#94A3B8",
-    light: "#64748B",
+    dark: '#94A3B8',
+    light: '#64748B',
   },
 } as const;
 
-type TabVariant = "segmented" | "bottom";
+type TabVariant = 'segmented' | 'bottom';
 
 interface TabVisualConfigParams {
   isDark: boolean;
@@ -20,7 +20,7 @@ interface TabVisualConfigParams {
 
 interface TabVisualConfig {
   blurIntensity: number;
-  tint: "light" | "dark";
+  tint: 'light' | 'dark';
   backgroundColor: string;
   borderWidth: number;
   borderColor: string;
@@ -41,7 +41,7 @@ export function getTabLabelColor(isDark: boolean, isFocused: boolean) {
 }
 
 export function getTabIndicatorColor(isDark: boolean) {
-  return isDark ? "rgba(148, 163, 184, 0.18)" : "rgba(148, 163, 184, 0.30)";
+  return isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(148, 163, 184, 0.30)';
 }
 
 export function getTabVisualConfig({
@@ -50,22 +50,20 @@ export function getTabVisualConfig({
   isIOS = false,
   variant,
 }: TabVisualConfigParams): TabVisualConfig {
-  const tint: TabVisualConfig["tint"] = isDark ? "dark" : "light";
-  const borderColor = isDark
-    ? "rgba(148, 163, 184, 0.18)"
-    : "rgba(148, 163, 184, 0.22)";
+  const tint: TabVisualConfig['tint'] = isDark ? 'dark' : 'light';
+  const borderColor = isDark ? 'rgba(48, 54, 61, 0.90)' : 'rgba(148, 163, 184, 0.22)';
 
-  if (variant === "segmented") {
+  if (variant === 'segmented') {
     return {
       blurIntensity: isAndroid ? 28 : 95,
       tint,
       backgroundColor: isAndroid
         ? isDark
-          ? "rgba(2, 6, 23, 0.90)"
-          : "rgba(255, 255, 255, 0.96)"
+          ? 'rgba(28, 33, 40, 0.98)'
+          : 'rgba(255, 255, 255, 0.96)'
         : isDark
-          ? "rgba(0, 0, 0, 0.55)"
-          : "rgba(255, 255, 255, 0.55)",
+          ? 'rgba(28, 33, 40, 0.90)'
+          : 'rgba(255, 255, 255, 0.55)',
       borderWidth: isIOS ? 0 : 1,
       borderColor,
       shadowOpacity: isAndroid ? 0 : 0.1,
@@ -78,11 +76,11 @@ export function getTabVisualConfig({
     tint,
     backgroundColor: isAndroid
       ? isDark
-        ? "rgba(2, 6, 23, 0.78)"
-        : "rgba(255, 255, 255, 0.82)"
+        ? 'rgba(28, 33, 40, 0.98)'
+        : 'rgba(255, 255, 255, 0.82)'
       : isDark
-        ? "rgba(0, 0, 0, 0.65)"
-        : "rgba(255, 255, 255, 0.60)",
+        ? 'rgba(28, 33, 40, 0.90)'
+        : 'rgba(255, 255, 255, 0.60)',
     borderWidth: isIOS ? 0 : 1,
     borderColor,
     shadowOpacity: 0.1,

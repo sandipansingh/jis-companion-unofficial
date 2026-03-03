@@ -33,27 +33,25 @@ export function getCurrentDateComponents() {
 export function formatDate(
   yearOrDate: number | Date,
   month?: number,
-  date?: number
+  date?: number,
 ): string {
   if (yearOrDate instanceof Date) {
     const year = yearOrDate.getFullYear();
     const m = yearOrDate.getMonth() + 1;
     const d = yearOrDate.getDate();
-    return `${year}-${String(m).padStart(2, "0")}-${String(d).padStart(
-      2,
-      "0"
-    )}`;
+    return `${year}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
   }
 
   if (month === undefined || date === undefined) {
     throw new Error(
-      "formatDate: month and date are required when yearOrDate is a number"
+      'formatDate: month and date are required when yearOrDate is a number',
     );
   }
 
-  return `${yearOrDate}-${String(month).padStart(2, "0")}-${String(
-    date
-  ).padStart(2, "0")}`;
+  return `${yearOrDate}-${String(month).padStart(2, '0')}-${String(date).padStart(
+    2,
+    '0',
+  )}`;
 }
 
 /**
@@ -127,7 +125,7 @@ export function getMonthKey(year: number, month: number): string {
  * @returns {string} Date in 'YYYY-MM-DD'. If input doesn't contain 'T', returns the original split[0].
  */
 export function extractDateFromISO(isoString: string): string {
-  return isoString.split("T")[0];
+  return isoString.split('T')[0];
 }
 
 /**
@@ -157,33 +155,32 @@ export function getCurrentMinutes(): number {
 export function formatTime(
   hoursOrTimeString: number | string,
   minutesOrWithSpace?: number | boolean,
-  withSpace?: boolean
+  withSpace?: boolean,
 ): string {
   // Signature 1: formatTime(timeString, withSpace?)
-  if (typeof hoursOrTimeString === "string") {
+  if (typeof hoursOrTimeString === 'string') {
     const parsed = parseTime(hoursOrTimeString);
     if (!parsed) return hoursOrTimeString;
-    const space =
-      typeof minutesOrWithSpace === "boolean" ? minutesOrWithSpace : true;
-    const period = parsed.hours >= 12 ? "PM" : "AM";
+    const space = typeof minutesOrWithSpace === 'boolean' ? minutesOrWithSpace : true;
+    const period = parsed.hours >= 12 ? 'PM' : 'AM';
     const hour12 = parsed.hours % 12 || 12;
-    const timeStr = `${hour12}:${String(parsed.minutes).padStart(2, "0")}`;
-    return `${timeStr}${space ? " " : ""}${period}`;
+    const timeStr = `${hour12}:${String(parsed.minutes).padStart(2, '0')}`;
+    return `${timeStr}${space ? ' ' : ''}${period}`;
   }
 
   // Signature 2: formatTime(hours, minutes, withSpace?)
   const hours = hoursOrTimeString;
   const minutes = minutesOrWithSpace as number;
-  const space = typeof withSpace === "boolean" ? withSpace : true;
+  const space = typeof withSpace === 'boolean' ? withSpace : true;
 
   if (isNaN(hours) || isNaN(minutes)) {
     return `${hours}:${minutes}`;
   }
 
-  const period = hours >= 12 ? "PM" : "AM";
+  const period = hours >= 12 ? 'PM' : 'AM';
   const hour12 = hours % 12 || 12;
-  const timeStr = `${hour12}:${String(minutes).padStart(2, "0")}`;
-  return `${timeStr}${space ? " " : ""}${period}`;
+  const timeStr = `${hour12}:${String(minutes).padStart(2, '0')}`;
+  return `${timeStr}${space ? ' ' : ''}${period}`;
 }
 
 /**
@@ -195,14 +192,12 @@ export function formatTime(
  * - If AM/PM is present it converts to 24-hour format.
  * - Returns null if hours or minutes can't be parsed as numbers.
  */
-export function parseTime(
-  timeStr: string
-): { hours: number; minutes: number } | null {
-  const normalized = timeStr.replace(".", ":").toUpperCase();
-  const isPM = normalized.includes("PM");
-  const isAM = normalized.includes("AM");
-  const cleanTime = normalized.replace(/[AP]M/, "").trim();
-  const [hStr, mStr] = cleanTime.split(":");
+export function parseTime(timeStr: string): { hours: number; minutes: number } | null {
+  const normalized = timeStr.replace('.', ':').toUpperCase();
+  const isPM = normalized.includes('PM');
+  const isAM = normalized.includes('AM');
+  const cleanTime = normalized.replace(/[AP]M/, '').trim();
+  const [hStr, mStr] = cleanTime.split(':');
   let hours = parseInt(hStr, 10);
   const minutes = parseInt(mStr, 10);
 
@@ -251,19 +246,15 @@ export function parsePeriodDetails(periodName: string): {
  * @notes
  * - Tokens can be in 'HH.MM' or 'HH:MM' formats depending on source.
  */
-export function parseTimeSlot(
-  periodName: string
-): { start: string; end: string } | null {
+export function parseTimeSlot(periodName: string): { start: string; end: string } | null {
   // Try standard format first
   const details = parsePeriodDetails(periodName);
   if (details) {
     return {
       start: `${details.start.hours}.${details.start.minutes
         .toString()
-        .padStart(2, "0")}`,
-      end: `${details.end.hours}.${details.end.minutes
-        .toString()
-        .padStart(2, "0")}`,
+        .padStart(2, '0')}`,
+      end: `${details.end.hours}.${details.end.minutes.toString().padStart(2, '0')}`,
     };
   }
 
@@ -271,7 +262,7 @@ export function parseTimeSlot(
   const match = periodName.match(/\(([^)]+)\)/);
   if (!match) return null;
   const timeRange = match[1];
-  const [start, end] = timeRange.split("-");
+  const [start, end] = timeRange.split('-');
   return { start: start?.trim(), end: end?.trim() };
 }
 
@@ -314,7 +305,7 @@ export function getStartOfWeek(date: Date): Date {
  * @returns {string} One of ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].
  */
 export function getDayName(date: Date): string {
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days[date.getDay()];
 }
 
@@ -326,18 +317,18 @@ export function getDayName(date: Date): string {
  */
 export function getMonthName(month: number): string {
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   return months[month - 1];
 }
@@ -371,7 +362,7 @@ export function isSameDay(date1: Date, date2: Date): boolean {
  */
 export function isClassInFuture(dateStr: string, periodName: string): boolean {
   const now = new Date();
-  const classDate = new Date(dateStr || "");
+  const classDate = new Date(dateStr || '');
 
   classDate.setHours(0, 0, 0, 0);
   const today = new Date();
@@ -382,14 +373,14 @@ export function isClassInFuture(dateStr: string, periodName: string): boolean {
   }
 
   if (classDate.getTime() === today.getTime()) {
-    const details = parsePeriodDetails(periodName || "");
+    const details = parsePeriodDetails(periodName || '');
     if (details) {
       const classEndTime = new Date();
       classEndTime.setHours(details.end.hours, details.end.minutes, 0, 0);
       return now < classEndTime;
     }
 
-    const timeSlot = parseTimeSlot(periodName || "");
+    const timeSlot = parseTimeSlot(periodName || '');
     if (timeSlot) {
       const parsedTime = parseTime(timeSlot.end);
       if (parsedTime) {

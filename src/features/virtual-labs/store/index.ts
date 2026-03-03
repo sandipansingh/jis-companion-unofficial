@@ -1,1 +1,1 @@
-export { useVirtualLabsStore } from "./virtualLabsStore";
+export { useVirtualLabsStore } from './virtualLabsStore';

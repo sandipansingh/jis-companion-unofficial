@@ -1,5 +1,7 @@
-import { useAttendanceStore } from "@/src/features/academics/store/attendanceStore";
-import { useAuthStore } from "@/src/features/auth/store/authStore";
+import { useCallback, useEffect, useState } from 'react';
+
+import { useAttendanceStore } from '@/src/features/academics/store/attendanceStore';
+import { useAuthStore } from '@/src/features/auth/store/authStore';
 import {
   extractDateFromISO,
   formatTime,
@@ -7,11 +9,11 @@ import {
   getCurrentMinutes,
   getTodayString,
   parsePeriodDetails,
-} from "@/src/utils/dateHelpers";
-import { useEffect, useState } from "react";
+} from '@/src/utils/dateHelpers';
 
 export function useHomeData() {
-  const { studentId, loginData, userData, isLoggedIn, cachedAttendancePercentage } = useAuthStore();
+  const { studentId, loginData, userData, isLoggedIn, cachedAttendancePercentage } =
+    useAuthStore();
   const { fetchMonthAttendance, getSubjectWiseData } = useAttendanceStore();
 
   const [attendanceData, setAttendanceData] = useState<{
@@ -21,44 +23,44 @@ export function useHomeData() {
   } | null>(() => cachedAttendancePercentage ?? null);
   const [loadingAttendance, setLoadingAttendance] = useState(false);
 
-  useEffect(() => {
-    if (isLoggedIn && studentId && loginData) {
-      loadAttendance();
-      loadMonthlyAttendance();
-    }
-  }, [isLoggedIn, studentId, loginData]);
-
-  const loadAttendance = async () => {
+  const loadAttendance = useCallback(async () => {
     if (!isLoggedIn || !studentId || !loginData) return;
 
     try {
       if (!attendanceData) setLoadingAttendance(true);
 
-      const { syncAttendancePercentage } = await import("@/src/services/sync");
+      const { syncAttendancePercentage } = await import('@/src/services/sync');
       const result = await syncAttendancePercentage(
         studentId,
         loginData.college_id,
-        loginData.branch_id
+        loginData.branch_id,
       );
 
       setAttendanceData(result.data);
     } catch (error: any) {
-      console.error("Failed to load attendance:", error);
+      console.error('Failed to load attendance:', error);
     } finally {
       setLoadingAttendance(false);
     }
-  };
+  }, [isLoggedIn, studentId, loginData, attendanceData]);
 
-  const loadMonthlyAttendance = async () => {
+  const loadMonthlyAttendance = useCallback(async () => {
     if (!isLoggedIn || !studentId || !loginData) return;
 
     try {
       const { year, month } = getCurrentDateComponents();
       await fetchMonthAttendance(year, month);
     } catch (error: any) {
-      console.error("Failed to load monthly attendance:", error);
+      console.error('Failed to load monthly attendance:', error);
     }
-  };
+  }, [isLoggedIn, studentId, loginData, fetchMonthAttendance]);
+
+  useEffect(() => {
+    if (isLoggedIn && studentId && loginData) {
+      loadAttendance();
+      loadMonthlyAttendance();
+    }
+  }, [isLoggedIn, studentId, loginData, loadAttendance, loadMonthlyAttendance]);
 
   const getNextClass = () => {
     const { year, month } = getCurrentDateComponents();
@@ -82,7 +84,7 @@ export function useHomeData() {
       const prevMonthData = getSubjectWiseData(prevYear, prevMonth);
 
       if (prevMonthData) {
-        const prevWeekStr = previousWeekDate.toISOString().split("T")[0];
+        const prevWeekStr = previousWeekDate.toISOString().split('T')[0];
 
         todayClasses = prevMonthData.filter((cls) => {
           const classDate = extractDateFromISO(cls.date1);
@@ -106,8 +108,7 @@ export function useHomeData() {
       const details = parsePeriodDetails(cls.Period_name);
       if (!details) continue;
 
-      const classStartMinutes =
-        details.start.hours * 60 + details.start.minutes;
+      const classStartMinutes = details.start.hours * 60 + details.start.minutes;
 
       if (classStartMinutes > currentMinutes) {
         return cls;
@@ -119,10 +120,10 @@ export function useHomeData() {
 
   const getFormattedTime = (periodName: string) => {
     const details = parsePeriodDetails(periodName);
-    if (!details) return { time: "N/A", period: "AM" as const };
+    if (!details) return { time: 'N/A', period: 'AM' as const };
     const formatted = formatTime(details.start.hours, details.start.minutes);
-    const [time, period] = formatted.split(" ");
-    return { time, period: period as "AM" | "PM" };
+    const [time, period] = formatted.split(' ');
+    return { time, period: period as 'AM' | 'PM' };
   };
 
   return {

@@ -1,15 +1,19 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
+export type FeesViewMode = 'college' | 'simplified';
 
 interface SettingsState {
-  theme: "light" | "dark";
+  theme: 'light' | 'dark';
+  feesViewMode: FeesViewMode;
   shareProfilePic: boolean;
   shareCollege: boolean;
   shareContact: boolean;
   shareSocial: boolean;
   hasReadVideoByteGuidelines: boolean;
-  setTheme: (value: "light" | "dark") => void;
+  setTheme: (value: 'light' | 'dark') => void;
+  setFeesViewMode: (value: FeesViewMode) => void;
   setShareProfilePic: (value: boolean) => void;
   setShareCollege: (value: boolean) => void;
   setShareContact: (value: boolean) => void;
@@ -19,11 +23,18 @@ interface SettingsState {
 
 type PersistedSettingsState = Pick<
   SettingsState,
-  "theme" | "shareProfilePic" | "shareCollege" | "shareContact" | "shareSocial" | "hasReadVideoByteGuidelines"
+  | 'theme'
+  | 'feesViewMode'
+  | 'shareProfilePic'
+  | 'shareCollege'
+  | 'shareContact'
+  | 'shareSocial'
+  | 'hasReadVideoByteGuidelines'
 >;
 
 const defaultPersistedSettings: PersistedSettingsState = {
-  theme: "light",
+  theme: 'light',
+  feesViewMode: 'simplified',
   shareProfilePic: true,
   shareCollege: true,
   shareContact: true,
@@ -33,7 +44,7 @@ const defaultPersistedSettings: PersistedSettingsState = {
 
 const migrateSettings = (
   persistedState: unknown,
-  version: number
+  version: number,
 ): PersistedSettingsState => {
   const state = (persistedState ?? {}) as Partial<PersistedSettingsState>;
 
@@ -41,6 +52,7 @@ const migrateSettings = (
     case 0:
     case 1:
     case 2:
+    case 3:
       return {
         ...defaultPersistedSettings,
         ...state,
@@ -56,24 +68,38 @@ const migrateSettings = (
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      theme: "light",
+      theme: 'light',
+      feesViewMode: 'college',
       shareProfilePic: true,
       shareCollege: true,
       shareContact: true,
       shareSocial: true,
       hasReadVideoByteGuidelines: false,
       setTheme: (value) => set({ theme: value }),
+      setFeesViewMode: (value) => set({ feesViewMode: value }),
       setShareProfilePic: (value) => set({ shareProfilePic: value }),
       setShareCollege: (value) => set({ shareCollege: value }),
       setShareContact: (value) => set({ shareContact: value }),
       setShareSocial: (value) => set({ shareSocial: value }),
-      setHasReadVideoByteGuidelines: (value) => set({ hasReadVideoByteGuidelines: value }),
+      setHasReadVideoByteGuidelines: (value) =>
+        set({ hasReadVideoByteGuidelines: value }),
     }),
     {
-      name: "user-settings-storage",
+      name: 'user-settings-storage',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 2,
+      version: 3,
       migrate: migrateSettings,
-    }
-  )
+      onRehydrateStorage: () => async (state) => {
+        if (!state) return;
+        try {
+          const stored = await AsyncStorage.getItem('user-settings-storage');
+          if (!stored) {
+            useSettingsStore.setState({ ...defaultPersistedSettings });
+          }
+        } catch {
+          // ignore storage errors
+        }
+      },
+    },
+  ),
 );

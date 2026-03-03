@@ -1,29 +1,26 @@
+import * as SQLite from 'expo-sqlite';
+import { Platform } from 'react-native';
+
 import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/features/academics/types";
-import { LoginResponse, UserProfileData } from "@/src/features/auth/types";
-import {
-  QRPayload,
-  ScannedContact,
-  SocialProfile,
-} from "@/src/features/connect/types";
-import { FeeLedgerEntry } from "@/src/features/fees/types";
-import { LibraryBook } from "@/src/features/library/types";
+} from '@/src/features/academics/types';
+import { LoginResponse, UserProfileData } from '@/src/features/auth/types';
+import { QRPayload, ScannedContact, SocialProfile } from '@/src/features/connect/types';
+import { FeeLedgerEntry } from '@/src/features/fees/types';
+import { LibraryBook } from '@/src/features/library/types';
 import {
   VirtualLabCourse,
   VirtualLabExperiment,
-} from "@/src/features/virtual-labs/types";
-import * as SQLite from "expo-sqlite";
-import { Platform } from "react-native";
+} from '@/src/features/virtual-labs/types';
 
 export interface AttendancePercentageData extends AttendanceData {
   studentId: string;
   lastUpdated: string;
 }
 
-const GLOBAL_DATA_KEY = "__global__";
+const GLOBAL_DATA_KEY = '__global__';
 
 let db: SQLite.SQLiteDatabase | null = null;
 let initPromise: Promise<SQLite.SQLiteDatabase> | null = null;
@@ -132,15 +129,11 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
 
     // Read current schema version
     const versionRow = await database.getFirstAsync<{ user_version: number }>(
-      `PRAGMA user_version`
+      `PRAGMA user_version`,
     );
     const currentVersion = versionRow?.user_version ?? 0;
 
     if (currentVersion < 1) {
-      // Migration v0 → v1: drop old tables (which may have autoincrement id columns)
-      // and recreate with student_id as the natural primary key.
-      // This runs on both fresh installs and upgrades from the old schema.
-      console.log("Running DB migration to version 1");
       await database.execAsync(`
         DROP TABLE IF EXISTS login_data;
         DROP TABLE IF EXISTS user_data;
@@ -155,7 +148,6 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       `);
       await createTablesV1(database);
       await database.execAsync(`PRAGMA user_version = ${CURRENT_DB_VERSION};`);
-      console.log("DB migration to version 1 complete");
     } else {
       // Schema is up-to-date; just ensure tables exist (idempotent)
       await createTablesV1(database);
@@ -164,31 +156,29 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
 
   initPromise = (async () => {
     try {
-      const database = await SQLite.openDatabaseAsync("jiscompanion.db");
+      const database = await SQLite.openDatabaseAsync('jiscompanion.db');
       await setupDatabase(database);
       db = database;
-      console.log("Database initialized successfully");
       return db;
     } catch (error: any) {
       if (
-        Platform.OS === "web" &&
-        (error?.message?.includes("Invalid VFS state") ||
-          error?.message?.includes("Access Handles cannot be created") ||
-          error?.message?.includes("NoModificationAllowedError"))
+        Platform.OS === 'web' &&
+        (error?.message?.includes('Invalid VFS state') ||
+          error?.message?.includes('Access Handles cannot be created') ||
+          error?.message?.includes('NoModificationAllowedError'))
       ) {
-        console.warn("Database lock/VFS error detected. Deleting and retrying...", error);
+        console.warn('Database lock/VFS error detected. Deleting and retrying...', error);
         try {
           if (db) {
             await db.closeAsync();
           }
-          await SQLite.deleteDatabaseAsync("jiscompanion.db");
-          const database = await SQLite.openDatabaseAsync("jiscompanion.db");
+          await SQLite.deleteDatabaseAsync('jiscompanion.db');
+          const database = await SQLite.openDatabaseAsync('jiscompanion.db');
           await setupDatabase(database);
           db = database;
-          console.log("Database recovered and initialized successfully");
           return db;
         } catch (retryError) {
-          console.error("Failed to recover database:", retryError);
+          console.error('Failed to recover database:', retryError);
           initPromise = null;
           throw retryError;
         }
@@ -214,7 +204,6 @@ interface SaveDataParams {
   studentId: string;
   columns: string[];
   values: any[];
-  logMessage?: string;
   additionalKeys?: { [key: string]: any };
   includeTimestamps?: boolean;
 }
@@ -235,7 +224,6 @@ interface DeleteDataParams {
   additionalKeys?: { [key: string]: any };
   idColumn?: string;
   idValue?: any;
-  logMessage?: string;
 }
 
 interface GetAllDataParams {
@@ -254,7 +242,6 @@ async function saveData({
   studentId,
   columns,
   values,
-  logMessage,
   additionalKeys = {},
   includeTimestamps = true,
 }: SaveDataParams): Promise<void> {
@@ -265,15 +252,15 @@ async function saveData({
   const additionalKeyValues = Object.values(additionalKeys);
 
   // Primary-key columns (conflict target)
-  const pkColumns = ["student_id", ...additionalKeyColumns];
+  const pkColumns = ['student_id', ...additionalKeyColumns];
 
   // All columns to insert (pk + data + timestamps)
   const allInsertColumns = [
     ...pkColumns,
     ...columns,
-    ...(includeTimestamps ? ["created_at", "updated_at"] : []),
+    ...(includeTimestamps ? ['created_at', 'updated_at'] : []),
   ];
-  const placeholders = allInsertColumns.map(() => "?").join(", ");
+  const placeholders = allInsertColumns.map(() => '?').join(', ');
   const allValues = [
     studentId,
     ...additionalKeyValues,
@@ -282,25 +269,16 @@ async function saveData({
   ];
 
   // On conflict update data columns + updated_at but preserve created_at
-  const updateColumns = [
-    ...columns,
-    ...(includeTimestamps ? ["updated_at"] : []),
-  ];
-  const updateSet = updateColumns
-    .map((col) => `${col} = excluded.${col}`)
-    .join(", ");
-  const conflictTarget = pkColumns.join(", ");
+  const updateColumns = [...columns, ...(includeTimestamps ? ['updated_at'] : [])];
+  const updateSet = updateColumns.map((col) => `${col} = excluded.${col}`).join(', ');
+  const conflictTarget = pkColumns.join(', ');
 
   await database.runAsync(
-    `INSERT INTO ${table} (${allInsertColumns.join(", ")})
+    `INSERT INTO ${table} (${allInsertColumns.join(', ')})
      VALUES (${placeholders})
      ON CONFLICT(${conflictTarget}) DO UPDATE SET ${updateSet}`,
-    ...allValues
+    ...allValues,
   );
-
-  if (logMessage) {
-    console.log(logMessage);
-  }
 }
 
 async function getData<T>({
@@ -321,7 +299,7 @@ async function getData<T>({
   const whereValues: any[] = [];
 
   if (studentId) {
-    whereConditions.push("student_id = ?");
+    whereConditions.push('student_id = ?');
     whereValues.push(studentId);
   }
 
@@ -331,14 +309,14 @@ async function getData<T>({
   whereValues.push(...additionalKeyValues);
 
   if (updatedSince !== undefined) {
-    whereConditions.push("updated_at > ?");
+    whereConditions.push('updated_at > ?');
     whereValues.push(updatedSince);
   }
 
-  let query = `SELECT ${columns.join(", ")} FROM ${table}`;
+  let query = `SELECT ${columns.join(', ')} FROM ${table}`;
 
   if (whereConditions.length > 0) {
-    query += ` WHERE ${whereConditions.join(" AND ")}`;
+    query += ` WHERE ${whereConditions.join(' AND ')}`;
   }
 
   if (orderBy) {
@@ -360,17 +338,12 @@ async function deleteData({
   additionalKeys = {},
   idColumn,
   idValue,
-  logMessage,
 }: DeleteDataParams): Promise<void> {
   const database = await getDatabase();
 
   // ID-based deletion (e.g. scanned_contacts by row id)
   if (idColumn !== undefined && idValue !== undefined) {
-    await database.runAsync(
-      `DELETE FROM ${table} WHERE ${idColumn} = ?`,
-      idValue
-    );
-    if (logMessage) console.log(logMessage);
+    await database.runAsync(`DELETE FROM ${table} WHERE ${idColumn} = ?`, idValue);
     return;
   }
 
@@ -379,19 +352,15 @@ async function deleteData({
   const additionalKeyValues = Object.values(additionalKeys);
 
   const whereConditions = [
-    "student_id = ?",
+    'student_id = ?',
     ...additionalKeyColumns.map((key) => `${key} = ?`),
   ];
   const whereValues = [studentId, ...additionalKeyValues];
 
   await database.runAsync(
-    `DELETE FROM ${table} WHERE ${whereConditions.join(" AND ")}`,
-    ...whereValues
+    `DELETE FROM ${table} WHERE ${whereConditions.join(' AND ')}`,
+    ...whereValues,
   );
-
-  if (logMessage) {
-    console.log(logMessage);
-  }
 }
 
 async function getAllData<T>({
@@ -413,7 +382,7 @@ async function getAllData<T>({
   const whereValues: any[] = [];
 
   if (studentId !== undefined) {
-    whereConditions.push("student_id = ?");
+    whereConditions.push('student_id = ?');
     whereValues.push(studentId);
   }
 
@@ -427,10 +396,10 @@ async function getAllData<T>({
   });
   whereValues.push(...additionalKeyValues);
 
-  let query = `SELECT ${columns.join(", ")} FROM ${table}`;
+  let query = `SELECT ${columns.join(', ')} FROM ${table}`;
 
   if (whereConditions.length > 0) {
-    query += ` WHERE ${whereConditions.join(" AND ")}`;
+    query += ` WHERE ${whereConditions.join(' AND ')}`;
   }
 
   if (orderBy) {
@@ -446,24 +415,21 @@ async function getAllData<T>({
 
 export async function saveLoginData(
   studentId: string,
-  loginResponse: LoginResponse
+  loginResponse: LoginResponse,
 ): Promise<void> {
   await saveData({
-    table: "login_data",
+    table: 'login_data',
     studentId,
-    columns: ["login_response"],
+    columns: ['login_response'],
     values: [JSON.stringify(loginResponse)],
-    logMessage: `Login data saved for student: ${studentId}`,
   });
 }
 
-export async function getLoginData(
-  studentId: string
-): Promise<LoginResponse | null> {
+export async function getLoginData(studentId: string): Promise<LoginResponse | null> {
   const result = await getData<{ login_response: string }>({
-    table: "login_data",
+    table: 'login_data',
     studentId,
-    columns: ["login_response"],
+    columns: ['login_response'],
   });
 
   if (result) {
@@ -481,7 +447,7 @@ export async function hasLoginData(): Promise<{
 
   const result = await database.getFirstAsync<{
     student_id: string;
-  }>("SELECT student_id FROM login_data LIMIT 1");
+  }>('SELECT student_id FROM login_data LIMIT 1');
 
   if (result) {
     return { exists: true, studentId: result.student_id };
@@ -490,9 +456,7 @@ export async function hasLoginData(): Promise<{
   return { exists: false };
 }
 
-export async function getLatestLoginDataForStudent(
-  studentId: string
-): Promise<{
+export async function getLatestLoginDataForStudent(studentId: string): Promise<{
   studentId: string;
   loginData: LoginResponse;
 } | null> {
@@ -502,10 +466,10 @@ export async function getLatestLoginDataForStudent(
     student_id: string;
     login_response: string;
   }>({
-    table: "login_data",
+    table: 'login_data',
     studentId,
-    columns: ["student_id", "login_response"],
-    orderBy: "updated_at DESC",
+    columns: ['student_id', 'login_response'],
+    orderBy: 'updated_at DESC',
     limit: 1,
     updatedSince: thirtyDaysAgo,
   });
@@ -522,32 +486,28 @@ export async function getLatestLoginDataForStudent(
 
 export async function deleteLoginData(studentId: string): Promise<void> {
   await deleteData({
-    table: "login_data",
+    table: 'login_data',
     studentId,
-    logMessage: `Login data deleted for student: ${studentId}`,
   });
 }
 
 export async function saveUserData(
   studentId: string,
-  profileData: UserProfileData
+  profileData: UserProfileData,
 ): Promise<void> {
   await saveData({
-    table: "user_data",
+    table: 'user_data',
     studentId,
-    columns: ["profile_data"],
+    columns: ['profile_data'],
     values: [JSON.stringify(profileData)],
-    logMessage: `User data saved for student: ${studentId}`,
   });
 }
 
-export async function getUserData(
-  studentId: string
-): Promise<UserProfileData | null> {
+export async function getUserData(studentId: string): Promise<UserProfileData | null> {
   const result = await getData<{ profile_data: string }>({
-    table: "user_data",
+    table: 'user_data',
     studentId,
-    columns: ["profile_data"],
+    columns: ['profile_data'],
   });
 
   if (result) {
@@ -559,9 +519,8 @@ export async function getUserData(
 
 export async function deleteUserData(studentId: string): Promise<void> {
   await deleteData({
-    table: "user_data",
+    table: 'user_data',
     studentId,
-    logMessage: `User data deleted for student: ${studentId}`,
   });
 }
 
@@ -569,21 +528,20 @@ export async function saveAttendanceData(
   studentId: string,
   monthKey: string,
   subjectWiseData: SubjectWiseAttendance[],
-  dateWiseData: DateWiseAttendance[]
+  dateWiseData: DateWiseAttendance[],
 ): Promise<void> {
   await saveData({
-    table: "attendance_data",
+    table: 'attendance_data',
     studentId,
     additionalKeys: { month_key: monthKey },
-    columns: ["subject_wise_data", "date_wise_data"],
+    columns: ['subject_wise_data', 'date_wise_data'],
     values: [JSON.stringify(subjectWiseData), JSON.stringify(dateWiseData)],
-    logMessage: `Attendance data saved for ${studentId} - ${monthKey}`,
   });
 }
 
 export async function getAttendanceData(
   studentId: string,
-  monthKey: string
+  monthKey: string,
 ): Promise<{
   subjectWiseData: SubjectWiseAttendance[];
   dateWiseData: DateWiseAttendance[];
@@ -592,17 +550,15 @@ export async function getAttendanceData(
     subject_wise_data: string;
     date_wise_data: string;
   }>({
-    table: "attendance_data",
+    table: 'attendance_data',
     studentId,
     additionalKeys: { month_key: monthKey },
-    columns: ["subject_wise_data", "date_wise_data"],
+    columns: ['subject_wise_data', 'date_wise_data'],
   });
 
   if (result) {
     return {
-      subjectWiseData: JSON.parse(
-        result.subject_wise_data
-      ) as SubjectWiseAttendance[],
+      subjectWiseData: JSON.parse(result.subject_wise_data) as SubjectWiseAttendance[],
       dateWiseData: JSON.parse(result.date_wise_data) as DateWiseAttendance[],
     };
   }
@@ -624,47 +580,41 @@ export async function getAllAttendanceData(studentId: string): Promise<
     subject_wise_data: string;
     date_wise_data: string;
   }>(
-    "SELECT month_key, subject_wise_data, date_wise_data FROM attendance_data WHERE student_id = ? ORDER BY month_key DESC",
-    studentId
+    'SELECT month_key, subject_wise_data, date_wise_data FROM attendance_data WHERE student_id = ? ORDER BY month_key DESC',
+    studentId,
   );
 
   return results.map((row) => ({
     monthKey: row.month_key,
-    subjectWiseData: JSON.parse(
-      row.subject_wise_data
-    ) as SubjectWiseAttendance[],
+    subjectWiseData: JSON.parse(row.subject_wise_data) as SubjectWiseAttendance[],
     dateWiseData: JSON.parse(row.date_wise_data) as DateWiseAttendance[],
   }));
 }
 
 export async function deleteAttendanceData(studentId: string): Promise<void> {
   await deleteData({
-    table: "attendance_data",
+    table: 'attendance_data',
     studentId,
-    logMessage: `Attendance data deleted for student: ${studentId}`,
   });
 }
 
 export async function saveFeeData(
   studentId: string,
-  feeLedger: FeeLedgerEntry[]
+  feeLedger: FeeLedgerEntry[],
 ): Promise<void> {
   await saveData({
-    table: "fees_data",
+    table: 'fees_data',
     studentId,
-    columns: ["fee_ledger"],
+    columns: ['fee_ledger'],
     values: [JSON.stringify(feeLedger)],
-    logMessage: `Fee data saved for student: ${studentId}`,
   });
 }
 
-export async function getFeeData(
-  studentId: string
-): Promise<FeeLedgerEntry[] | null> {
+export async function getFeeData(studentId: string): Promise<FeeLedgerEntry[] | null> {
   const result = await getData<{ fee_ledger: string }>({
-    table: "fees_data",
+    table: 'fees_data',
     studentId,
-    columns: ["fee_ledger"],
+    columns: ['fee_ledger'],
   });
 
   if (result) {
@@ -676,28 +626,26 @@ export async function getFeeData(
 
 export async function deleteFeeData(studentId: string): Promise<void> {
   await deleteData({
-    table: "fees_data",
+    table: 'fees_data',
     studentId,
-    logMessage: `Fee data deleted for student: ${studentId}`,
   });
 }
 
 export async function saveAttendancePercentage(
   studentId: string,
-  data: AttendancePercentageData
+  data: AttendancePercentageData,
 ): Promise<void> {
   await saveData({
-    table: "attendance_percentage",
+    table: 'attendance_percentage',
     studentId,
-    columns: ["total_class", "attd", "pcent", "last_updated"],
+    columns: ['total_class', 'attd', 'pcent', 'last_updated'],
     values: [data.total_class, data.attd, data.pcent, data.lastUpdated],
     includeTimestamps: false,
-    logMessage: `Attendance percentage saved for student: ${studentId}`,
   });
 }
 
 export async function getAttendancePercentage(
-  studentId: string
+  studentId: string,
 ): Promise<AttendancePercentageData | null> {
   const result = await getData<{
     student_id: string;
@@ -706,9 +654,9 @@ export async function getAttendancePercentage(
     pcent: number;
     last_updated: string;
   }>({
-    table: "attendance_percentage",
+    table: 'attendance_percentage',
     studentId,
-    columns: ["student_id", "total_class", "attd", "pcent", "last_updated"],
+    columns: ['student_id', 'total_class', 'attd', 'pcent', 'last_updated'],
   });
 
   if (!result) return null;
@@ -722,35 +670,27 @@ export async function getAttendancePercentage(
   };
 }
 
-export async function deleteAttendancePercentage(
-  studentId: string
-): Promise<void> {
+export async function deleteAttendancePercentage(studentId: string): Promise<void> {
   await deleteData({
-    table: "attendance_percentage",
+    table: 'attendance_percentage',
     studentId,
-    logMessage: `Attendance percentage deleted for student: ${studentId}`,
   });
 }
 
-export async function saveVirtualLabCourses(
-  courses: VirtualLabCourse[]
-): Promise<void> {
+export async function saveVirtualLabCourses(courses: VirtualLabCourse[]): Promise<void> {
   await saveData({
-    table: "virtual_labs_courses",
+    table: 'virtual_labs_courses',
     studentId: GLOBAL_DATA_KEY,
-    columns: ["courses_data"],
+    columns: ['courses_data'],
     values: [JSON.stringify(courses)],
-    logMessage: `Virtual lab courses saved (${courses.length} courses)`,
   });
 }
 
-export async function getVirtualLabCourses(): Promise<
-  VirtualLabCourse[] | null
-> {
+export async function getVirtualLabCourses(): Promise<VirtualLabCourse[] | null> {
   const result = await getData<{ courses_data: string }>({
-    table: "virtual_labs_courses",
+    table: 'virtual_labs_courses',
     studentId: GLOBAL_DATA_KEY,
-    columns: ["courses_data"],
+    columns: ['courses_data'],
   });
 
   if (result) {
@@ -762,9 +702,8 @@ export async function getVirtualLabCourses(): Promise<
 
 export async function deleteVirtualLabCourses(): Promise<void> {
   await deleteData({
-    table: "virtual_labs_courses",
+    table: 'virtual_labs_courses',
     studentId: GLOBAL_DATA_KEY,
-    logMessage: "Virtual lab courses deleted",
   });
 }
 
@@ -772,28 +711,27 @@ export async function saveVirtualLabExperiments(
   course: string,
   stream: string,
   semester: string,
-  experiments: VirtualLabExperiment[]
+  experiments: VirtualLabExperiment[],
 ): Promise<void> {
   await saveData({
-    table: "virtual_labs_experiments",
+    table: 'virtual_labs_experiments',
     studentId: GLOBAL_DATA_KEY,
     additionalKeys: { course, stream, semester },
-    columns: ["experiments_data"],
+    columns: ['experiments_data'],
     values: [JSON.stringify(experiments)],
-    logMessage: `Virtual lab experiments saved for ${course}/${stream}/${semester} (${experiments.length} experiments)`,
   });
 }
 
 export async function getVirtualLabExperiments(
   course: string,
   stream: string,
-  semester: string
+  semester: string,
 ): Promise<VirtualLabExperiment[] | null> {
   const result = await getData<{ experiments_data: string }>({
-    table: "virtual_labs_experiments",
+    table: 'virtual_labs_experiments',
     studentId: GLOBAL_DATA_KEY,
     additionalKeys: { course, stream, semester },
-    columns: ["experiments_data"],
+    columns: ['experiments_data'],
   });
 
   if (result) {
@@ -806,36 +744,34 @@ export async function getVirtualLabExperiments(
 export async function deleteVirtualLabExperiments(): Promise<void> {
   const database = await getDatabase();
   await database.runAsync(
-    "DELETE FROM virtual_labs_experiments WHERE student_id = ?",
-    GLOBAL_DATA_KEY
+    'DELETE FROM virtual_labs_experiments WHERE student_id = ?',
+    GLOBAL_DATA_KEY,
   );
-  console.log("Virtual lab experiments deleted");
 }
 
 export async function saveLibraryBooks(
   studentId: string,
   filterType: string,
-  books: LibraryBook[]
+  books: LibraryBook[],
 ): Promise<void> {
   await saveData({
-    table: "library_books",
+    table: 'library_books',
     studentId,
     additionalKeys: { filter_type: filterType },
-    columns: ["books_data"],
+    columns: ['books_data'],
     values: [JSON.stringify(books)],
-    logMessage: `Library books saved for student: ${studentId}, filter: ${filterType} (${books.length} books)`,
   });
 }
 
 export async function getLibraryBooks(
   studentId: string,
-  filterType: string
+  filterType: string,
 ): Promise<LibraryBook[] | null> {
   const result = await getData<{ books_data: string }>({
-    table: "library_books",
+    table: 'library_books',
     studentId,
     additionalKeys: { filter_type: filterType },
-    columns: ["books_data"],
+    columns: ['books_data'],
   });
 
   if (result) {
@@ -845,27 +781,23 @@ export async function getLibraryBooks(
   return null;
 }
 
-
 export async function saveSocialProfile(
   studentId: string,
-  profile: SocialProfile
+  profile: SocialProfile,
 ): Promise<void> {
   await saveData({
-    table: "social_profiles",
+    table: 'social_profiles',
     studentId,
-    columns: ["social_data"],
+    columns: ['social_data'],
     values: [JSON.stringify(profile)],
-    logMessage: `Social profile saved for student: ${studentId}`,
   });
 }
 
-export async function getSocialProfile(
-  studentId: string
-): Promise<SocialProfile | null> {
+export async function getSocialProfile(studentId: string): Promise<SocialProfile | null> {
   const result = await getData<{ social_data: string }>({
-    table: "social_profiles",
+    table: 'social_profiles',
     studentId,
-    columns: ["social_data"],
+    columns: ['social_data'],
   });
 
   if (result) {
@@ -877,7 +809,7 @@ export async function getSocialProfile(
 
 export async function saveScannedContact(
   scannedBy: string,
-  payload: QRPayload
+  payload: QRPayload,
 ): Promise<void> {
   const database = await getDatabase();
   const now = Date.now();
@@ -896,37 +828,34 @@ export async function saveScannedContact(
         scannedBy,
         studentId,
         dataStr,
-        now
+        now,
       );
     } else {
       await database.runAsync(
-        "INSERT INTO scanned_contacts (scanned_by, payload, timestamp) VALUES (?, ?, ?)",
+        'INSERT INTO scanned_contacts (scanned_by, payload, timestamp) VALUES (?, ?, ?)',
         scannedBy,
         dataStr,
-        now
+        now,
       );
     }
-    console.log(`Scanned contact saved for user: ${scannedBy}`);
   } catch (error) {
-    console.error("Error saving scanned contact:", error);
+    console.error('Error saving scanned contact:', error);
     throw error;
   }
 }
 
-export async function getScannedContacts(
-  scannedBy: string
-): Promise<ScannedContact[]> {
+export async function getScannedContacts(scannedBy: string): Promise<ScannedContact[]> {
   const rows = await getAllData<{
     id: number;
     scanned_by: string;
     payload: string;
     timestamp: number;
   }>({
-    table: "scanned_contacts",
-    columns: ["id", "scanned_by", "payload", "timestamp"],
-    whereColumn: "scanned_by",
+    table: 'scanned_contacts',
+    columns: ['id', 'scanned_by', 'payload', 'timestamp'],
+    whereColumn: 'scanned_by',
     whereValue: scannedBy,
-    orderBy: "timestamp DESC",
+    orderBy: 'timestamp DESC',
   });
 
   return rows.map((row) => ({
@@ -939,18 +868,16 @@ export async function getScannedContacts(
 
 export async function deleteScannedContact(id: number): Promise<void> {
   await deleteData({
-    table: "scanned_contacts",
-    idColumn: "id",
+    table: 'scanned_contacts',
+    idColumn: 'id',
     idValue: id,
-    logMessage: `Scanned contact deleted: ${id}`,
   });
 }
 
 export async function deleteLibraryBooks(studentId: string): Promise<void> {
   await deleteData({
-    table: "library_books",
+    table: 'library_books',
     studentId,
-    logMessage: `Library books deleted for student: ${studentId}`,
   });
 }
 
@@ -958,41 +885,27 @@ export async function deleteAllUserData(studentId: string): Promise<void> {
   const database = await getDatabase();
 
   await database.withTransactionAsync(async () => {
+    await database.runAsync('DELETE FROM login_data WHERE student_id = ?', studentId);
+    await database.runAsync('DELETE FROM user_data WHERE student_id = ?', studentId);
     await database.runAsync(
-      "DELETE FROM login_data WHERE student_id = ?",
-      studentId
+      'DELETE FROM attendance_data WHERE student_id = ?',
+      studentId,
+    );
+    await database.runAsync('DELETE FROM fees_data WHERE student_id = ?', studentId);
+    await database.runAsync(
+      'DELETE FROM attendance_percentage WHERE student_id = ?',
+      studentId,
+    );
+    await database.runAsync('DELETE FROM library_books WHERE student_id = ?', studentId);
+    await database.runAsync(
+      'DELETE FROM social_profiles WHERE student_id = ?',
+      studentId,
     );
     await database.runAsync(
-      "DELETE FROM user_data WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM attendance_data WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM fees_data WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM attendance_percentage WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM library_books WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM social_profiles WHERE student_id = ?",
-      studentId
-    );
-    await database.runAsync(
-      "DELETE FROM scanned_contacts WHERE scanned_by = ?",
-      studentId
+      'DELETE FROM scanned_contacts WHERE scanned_by = ?',
+      studentId,
     );
   });
-
-  console.log(`All data deleted for student: ${studentId}`);
 }
 
 export async function clearDatabase(): Promise<void> {
@@ -1010,6 +923,4 @@ export async function clearDatabase(): Promise<void> {
     DELETE FROM social_profiles;
     DELETE FROM scanned_contacts;
   `);
-
-  console.log("Database cleared");
 }

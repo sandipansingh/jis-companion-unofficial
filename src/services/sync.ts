@@ -1,35 +1,37 @@
+import { Platform } from 'react-native';
+
 import {
   fetchAttendancePercentage,
   fetchDateWiseAttendance,
   fetchSubjectWiseAttendance,
-} from "@/src/features/academics/api/academics";
+} from '@/src/features/academics/api/academics';
 import {
   AttendanceData,
   DateWiseAttendance,
   SubjectWiseAttendance,
-} from "@/src/features/academics/types";
+} from '@/src/features/academics/types';
 import {
-  login as apiLogin,
   clearUserData as clearSecureStoreData,
   fetchUserProfile,
   getStoredCredentials,
-} from "@/src/features/auth/api/auth";
-import { LoginResponse, UserProfileData } from "@/src/features/auth/types";
-import { fetchStudentFeeLedger } from "@/src/features/fees/api/fees";
-import { FeeLedgerEntry } from "@/src/features/fees/types";
-import { fetchLibraryBooks } from "@/src/features/library/api/library";
-import { LibraryBook, LibraryFilterType } from "@/src/features/library/types";
+  login as apiLogin,
+} from '@/src/features/auth/api/auth';
+import { LoginResponse, UserProfileData } from '@/src/features/auth/types';
+import { fetchStudentFeeLedger } from '@/src/features/fees/api/fees';
+import { FeeLedgerEntry } from '@/src/features/fees/types';
+import { fetchLibraryBooks } from '@/src/features/library/api/library';
+import { LibraryBook, LibraryFilterType } from '@/src/features/library/types';
 import {
   fetchVirtualLabCourses,
   fetchVirtualLabExperiments,
-} from "@/src/features/virtual-labs/api/virtualLabs";
+} from '@/src/features/virtual-labs/api/virtualLabs';
 import {
   VirtualLabCourse,
   VirtualLabExperiment,
-} from "@/src/features/virtual-labs/types";
-import { Platform } from "react-native";
-import { getMonthEndDate, getMonthStartDate } from "../utils/dateHelpers";
-import { getItemAsync } from "../utils/secureStore";
+} from '@/src/features/virtual-labs/types';
+
+import { getMonthEndDate, getMonthStartDate } from '../utils/dateHelpers';
+import { getItemAsync } from '../utils/secureStore';
 import {
   getAttendanceData,
   getAttendancePercentage,
@@ -47,9 +49,9 @@ import {
   saveLoginData,
   saveUserData,
   saveVirtualLabCourses,
-  saveVirtualLabExperiments
-} from "./database";
-import { hasInternetConnection } from "./network";
+  saveVirtualLabExperiments,
+} from './database';
+import { hasInternetConnection } from './network';
 
 export interface SyncResult {
   success: boolean;
@@ -59,7 +61,7 @@ export interface SyncResult {
 
 export async function syncLoginData(
   studentId: string,
-  password: string
+  password: string,
 ): Promise<{
   loginData: LoginResponse | null;
   userData: UserProfileData | null;
@@ -69,12 +71,11 @@ export async function syncLoginData(
 }> {
   const isOnline = await hasInternetConnection();
 
-  let loginData = await getLoginData(studentId);
-  let userData = await getUserData(studentId);
+  const loginData = await getLoginData(studentId);
+  const userData = await getUserData(studentId);
 
   if (isOnline) {
     try {
-      console.log("Online mode: Fetching fresh data from API");
       const freshLoginData = await apiLogin({ studentId, password });
 
       const credentials = await getStoredCredentials();
@@ -92,7 +93,7 @@ export async function syncLoginData(
 
       const freshUserData = await fetchUserProfile(
         freshLoginData.branch_id.toString(),
-        freshLoginData.std_id.toString()
+        freshLoginData.std_id.toString(),
       );
 
       if (!isDemoLogin) {
@@ -110,9 +111,8 @@ export async function syncLoginData(
         isDemoAccount: isDemoLogin,
       };
     } catch (error) {
-      console.error("Error fetching data from API:", error);
+      console.error('Error fetching data from API:', error);
       if (loginData || userData) {
-        console.log("API failed, using cached data");
         return {
           loginData,
           userData,
@@ -124,9 +124,8 @@ export async function syncLoginData(
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached data");
     if (!loginData) {
-      throw new Error("No cached login data available");
+      throw new Error('No cached login data available');
     }
 
     return {
@@ -149,13 +148,13 @@ export async function checkAuthWithOfflineSupport(): Promise<{
   isDemoAccount?: boolean;
 }> {
   const isOnline = await hasInternetConnection();
-  const isWeb = Platform.OS === "web";
+  const isWeb = Platform.OS === 'web';
 
   // Secure store is the authoritative source for the currently logged-in user.
   // If credentials are absent there is no active session regardless of what
   // the local DB contains (data is kept for future account switches).
   const credentials = await getStoredCredentials();
-  const storedStudentId = await getItemAsync("student_id");
+  const storedStudentId = await getItemAsync('student_id');
 
   if (!credentials) {
     // For web, we fall back only when a student_id is present in secure storage.
@@ -171,9 +170,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         };
       }
 
-      const latestLoginFromDb = await getLatestLoginDataForStudent(
-        storedStudentId
-      );
+      const latestLoginFromDb = await getLatestLoginDataForStudent(storedStudentId);
 
       if (latestLoginFromDb) {
         const { loginData, studentId } = latestLoginFromDb;
@@ -181,7 +178,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         if (isOnline) {
           const userData = await fetchUserProfile(
             loginData.branch_id.toString(),
-            loginData.std_id.toString()
+            loginData.std_id.toString(),
           );
           if (userData) {
             await saveUserData(studentId, userData);
@@ -230,7 +227,6 @@ export async function checkAuthWithOfflineSupport(): Promise<{
       });
 
       if (loginData.is_valid !== 1) {
-        console.log("Invalid credentials, clearing stored credentials");
         await clearSecureStoreData();
         return {
           isAuthenticated: false,
@@ -242,7 +238,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
 
       const userData = await fetchUserProfile(
         loginData.branch_id.toString(),
-        loginData.std_id.toString()
+        loginData.std_id.toString(),
       );
 
       if (!isDemoLogin) {
@@ -262,15 +258,9 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         isDemoAccount: isDemoLogin,
       };
     } catch (error: any) {
-      console.error("API authentication failed:", error);
+      console.error('API authentication failed:', error);
 
-      if (
-        error.message?.includes("Invalid") ||
-        error.response?.status === 401
-      ) {
-        // Credentials rejected by server — clear only the secure store so the
-        // user must re-login. Cached DB rows are preserved for account switching.
-        console.log("Invalid credentials, clearing stored credentials");
+      if (error.message?.includes('Invalid') || error.response?.status === 401) {
         await clearSecureStoreData();
         return {
           isAuthenticated: false,
@@ -327,7 +317,7 @@ export async function syncAttendanceData(
   branchId: number,
   year: number,
   month: number,
-  monthKey: string
+  monthKey: string,
 ): Promise<{
   subjectWiseData: SubjectWiseAttendance[];
   dateWiseData: DateWiseAttendance[];
@@ -340,34 +330,16 @@ export async function syncAttendanceData(
 
   if (isOnline) {
     try {
-      console.log(`Online mode: Fetching attendance for ${monthKey}`);
-
       const fromDate = getMonthStartDate(year, month);
       const toDate = getMonthEndDate(year, month);
 
       const [subjectWiseData, dateWiseData] = await Promise.all([
-        fetchSubjectWiseAttendance(
-          studentId,
-          collegeId,
-          branchId,
-          fromDate,
-          toDate
-        ),
+        fetchSubjectWiseAttendance(studentId, collegeId, branchId, fromDate, toDate),
 
-        fetchDateWiseAttendance(
-          studentId,
-          branchId,
-          year.toString(),
-          month.toString()
-        ),
+        fetchDateWiseAttendance(studentId, branchId, year.toString(), month.toString()),
       ]);
 
-      await saveAttendanceData(
-        studentId,
-        monthKey,
-        subjectWiseData,
-        dateWiseData
-      );
+      await saveAttendanceData(studentId, monthKey, subjectWiseData, dateWiseData);
 
       return {
         subjectWiseData,
@@ -379,7 +351,6 @@ export async function syncAttendanceData(
       console.error(`Error fetching attendance for ${monthKey}:`, error);
 
       if (cachedData) {
-        console.log("API failed, using cached attendance data");
         return {
           subjectWiseData: cachedData.subjectWiseData,
           dateWiseData: cachedData.dateWiseData,
@@ -391,8 +362,6 @@ export async function syncAttendanceData(
       throw error;
     }
   } else {
-    console.log(`Offline mode: Using cached attendance for ${monthKey}`);
-
     if (!cachedData) {
       throw new Error(`No cached attendance data for ${monthKey}`);
     }
@@ -409,7 +378,7 @@ export async function syncAttendanceData(
 export async function syncAttendancePercentage(
   studentId: string,
   collegeId: number,
-  branchId: number
+  branchId: number,
 ): Promise<{
   data: AttendanceData;
   isOnline: boolean;
@@ -421,13 +390,7 @@ export async function syncAttendancePercentage(
 
   if (isOnline) {
     try {
-      console.log("Online mode: Fetching attendance percentage");
-
-      const data = await fetchAttendancePercentage(
-        studentId,
-        collegeId,
-        branchId
-      );
+      const data = await fetchAttendancePercentage(studentId, collegeId, branchId);
 
       await saveAttendancePercentage(studentId, {
         studentId,
@@ -437,20 +400,17 @@ export async function syncAttendancePercentage(
 
       return { data, isOnline: true, fromCache: false };
     } catch (error) {
-      console.error("Failed to sync attendance percentage:", error);
+      console.error('Failed to sync attendance percentage:', error);
 
       if (cachedData) {
-        console.log("API failed, using cached attendance percentage data");
         return { data: cachedData, isOnline: false, fromCache: true };
       }
 
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached attendance percentage");
-
     if (!cachedData) {
-      throw new Error("No cached attendance percentage data available");
+      throw new Error('No cached attendance percentage data available');
     }
 
     return { data: cachedData, isOnline: false, fromCache: true };
@@ -459,7 +419,7 @@ export async function syncAttendancePercentage(
 
 export async function syncFeeData(
   studentId: string,
-  branchId: number
+  branchId: number,
 ): Promise<{
   feeData: FeeLedgerEntry[];
   fromCache: boolean;
@@ -471,8 +431,6 @@ export async function syncFeeData(
 
   if (isOnline) {
     try {
-      console.log("Online mode: Fetching fee data");
-
       const feeData = await fetchStudentFeeLedger(studentId, branchId);
 
       await saveFeeData(studentId, feeData);
@@ -483,10 +441,9 @@ export async function syncFeeData(
         isOnline: true,
       };
     } catch (error) {
-      console.error("Error fetching fee data:", error);
+      console.error('Error fetching fee data:', error);
 
       if (cachedData) {
-        console.log("API failed, using cached fee data");
         return {
           feeData: cachedData,
           fromCache: true,
@@ -497,10 +454,8 @@ export async function syncFeeData(
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached fee data");
-
     if (!cachedData) {
-      throw new Error("No cached fee data available");
+      throw new Error('No cached fee data available');
     }
 
     return {
@@ -513,28 +468,24 @@ export async function syncFeeData(
 
 export async function backgroundSyncUserData(
   studentId: string,
-  password: string
+  password: string,
 ): Promise<boolean> {
   const isOnline = await hasInternetConnection();
 
   if (!isOnline) {
-    console.log("No internet connection, skipping background sync");
     return false;
   }
 
   try {
-    console.log("Background sync: Updating user data");
-
     const loginData = await apiLogin({ studentId, password });
 
     if (loginData.is_valid !== 1) {
-      console.log("Background sync: credentials are no longer valid");
       return false;
     }
 
     const userData = await fetchUserProfile(
       loginData.branch_id.toString(),
-      loginData.std_id.toString()
+      loginData.std_id.toString(),
     );
 
     await saveLoginData(studentId, loginData);
@@ -542,10 +493,9 @@ export async function backgroundSyncUserData(
       await saveUserData(studentId, userData);
     }
 
-    console.log("Background sync completed successfully");
     return true;
   } catch (error) {
-    console.error("Background sync failed:", error);
+    console.error('Background sync failed:', error);
     return false;
   }
 }
@@ -555,7 +505,6 @@ export async function cleanupUserData(_studentId: string): Promise<void> {
   // SQLite data is intentionally kept to support fast account switching:
   // cached rows are keyed by student_id and will be upserted on next login.
   await clearSecureStoreData();
-  console.log(`Credentials cleared (DB data retained for account switching)`);
 }
 
 export async function syncVirtualLabCourses(): Promise<{
@@ -569,8 +518,6 @@ export async function syncVirtualLabCourses(): Promise<{
 
   if (isOnline) {
     try {
-      console.log("Online mode: Fetching virtual lab courses");
-
       const courses = await fetchVirtualLabCourses();
 
       await saveVirtualLabCourses(courses);
@@ -581,10 +528,9 @@ export async function syncVirtualLabCourses(): Promise<{
         isOnline: true,
       };
     } catch (error) {
-      console.error("Error fetching virtual lab courses:", error);
+      console.error('Error fetching virtual lab courses:', error);
 
       if (cachedCourses) {
-        console.log("API failed, using cached virtual lab courses");
         return {
           courses: cachedCourses,
           fromCache: true,
@@ -595,10 +541,8 @@ export async function syncVirtualLabCourses(): Promise<{
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached virtual lab courses");
-
     if (!cachedCourses) {
-      throw new Error("No cached virtual lab courses available");
+      throw new Error('No cached virtual lab courses available');
     }
 
     return {
@@ -612,7 +556,7 @@ export async function syncVirtualLabCourses(): Promise<{
 export async function syncVirtualLabExperiments(
   course: string,
   stream: string,
-  semester: string
+  semester: string,
 ): Promise<{
   experiments: VirtualLabExperiment[];
   fromCache: boolean;
@@ -620,23 +564,11 @@ export async function syncVirtualLabExperiments(
 }> {
   const isOnline = await hasInternetConnection();
 
-  const cachedExperiments = await getVirtualLabExperiments(
-    course,
-    stream,
-    semester
-  );
+  const cachedExperiments = await getVirtualLabExperiments(course, stream, semester);
 
   if (isOnline) {
     try {
-      console.log(
-        `Online mode: Fetching virtual lab experiments for ${course}/${stream}/${semester}`
-      );
-
-      const experiments = await fetchVirtualLabExperiments(
-        course,
-        stream,
-        semester
-      );
+      const experiments = await fetchVirtualLabExperiments(course, stream, semester);
 
       await saveVirtualLabExperiments(course, stream, semester, experiments);
 
@@ -646,10 +578,9 @@ export async function syncVirtualLabExperiments(
         isOnline: true,
       };
     } catch (error) {
-      console.error("Error fetching virtual lab experiments:", error);
+      console.error('Error fetching virtual lab experiments:', error);
 
       if (cachedExperiments) {
-        console.log("API failed, using cached virtual lab experiments");
         return {
           experiments: cachedExperiments,
           fromCache: true,
@@ -660,11 +591,9 @@ export async function syncVirtualLabExperiments(
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached virtual lab experiments");
-
     if (!cachedExperiments) {
       throw new Error(
-        `No cached virtual lab experiments available for ${course}/${stream}/${semester}`
+        `No cached virtual lab experiments available for ${course}/${stream}/${semester}`,
       );
     }
 
@@ -678,7 +607,7 @@ export async function syncVirtualLabExperiments(
 
 export async function syncLibraryBooks(
   studentId: string,
-  filterType: LibraryFilterType
+  filterType: LibraryFilterType,
 ): Promise<{
   books: LibraryBook[];
   fromCache: boolean;
@@ -690,10 +619,6 @@ export async function syncLibraryBooks(
 
   if (isOnline) {
     try {
-      console.log(
-        `Online mode: Fetching library books for ${studentId} (filter: ${filterType})`
-      );
-
       const books = await fetchLibraryBooks(studentId, filterType);
 
       await saveLibraryBooks(studentId, filterType, books);
@@ -704,10 +629,9 @@ export async function syncLibraryBooks(
         isOnline: true,
       };
     } catch (error) {
-      console.error("Error fetching library books:", error);
+      console.error('Error fetching library books:', error);
 
       if (cachedBooks) {
-        console.log("API failed, using cached library books");
         return {
           books: cachedBooks,
           fromCache: true,
@@ -718,10 +642,8 @@ export async function syncLibraryBooks(
       throw error;
     }
   } else {
-    console.log("Offline mode: Using cached library books");
-
     if (!cachedBooks) {
-      throw new Error("No cached library books available");
+      throw new Error('No cached library books available');
     }
 
     return {

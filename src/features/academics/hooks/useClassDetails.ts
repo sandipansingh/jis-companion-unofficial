@@ -1,15 +1,13 @@
-import { useAuthStore } from "@/src/features/auth/store/authStore";
-import {
-  formatTime,
-  isClassInFuture,
-  parseTimeSlot,
-} from "@/src/utils/dateHelpers";
-import { getFileName, parseSubjectName } from "@/src/utils/stringHelpers";
-import { useEffect, useState } from "react";
-import { useAttendanceStore } from "../store";
-import { SubjectWiseAttendance } from "../types";
-import { getAttendanceStatus } from "../utils/attendanceHelpers";
-import { parseClassId } from "../utils/classId";
+import { useEffect, useState } from 'react';
+
+import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { formatTime, isClassInFuture, parseTimeSlot } from '@/src/utils/dateHelpers';
+import { getFileName, parseSubjectName } from '@/src/utils/stringHelpers';
+
+import { useAttendanceStore } from '../store';
+import { SubjectWiseAttendance } from '../types';
+import { getAttendanceStatus } from '../utils/attendanceHelpers';
+import { parseClassId } from '../utils/classId';
 
 interface Resource {
   filename: string;
@@ -24,7 +22,7 @@ interface UseClassDetailsReturn {
     code: string;
   };
   timeRange: string;
-  classType: "LAB" | "THEORY";
+  classType: 'LAB' | 'THEORY';
   location: string;
   isFutureClass: boolean;
   statValue: string | undefined;
@@ -39,9 +37,7 @@ export function useClassDetails(classId?: string): UseClassDetailsReturn {
   const { loginData } = useAuthStore();
   const { selectedClass, getClassByIdentifier } = useAttendanceStore();
 
-  const [classData, setClassData] = useState<SubjectWiseAttendance | null>(
-    selectedClass
-  );
+  const [classData, setClassData] = useState<SubjectWiseAttendance | null>(selectedClass);
   const [loading, setLoading] = useState(!selectedClass);
   const [pdfModalVisible, setPdfModalVisible] = useState(false);
   const [selectedPdf, setSelectedPdf] = useState<{
@@ -68,9 +64,9 @@ export function useClassDetails(classId?: string): UseClassDetailsReturn {
   }, [classId, classData, getClassByIdentifier]);
 
   const getTimeRange = (): string => {
-    if (!classData) return "";
-    const timeSlot = parseTimeSlot(classData.Period_name || "");
-    if (!timeSlot) return "";
+    if (!classData) return '';
+    const timeSlot = parseTimeSlot(classData.Period_name || '');
+    if (!timeSlot) return '';
     return `${formatTime(timeSlot.start)} - ${formatTime(timeSlot.end)}`;
   };
 
@@ -84,7 +80,7 @@ export function useClassDetails(classId?: string): UseClassDetailsReturn {
       classData.upload4,
       classData.upload5,
     ]
-      .filter((url): url is string => url !== undefined && url?.trim() !== "")
+      .filter((url): url is string => url !== undefined && url?.trim() !== '')
       .map((url) => ({
         filename: getFileName(url),
         url,
@@ -103,20 +99,20 @@ export function useClassDetails(classId?: string): UseClassDetailsReturn {
   };
 
   const subject = classData
-    ? parseSubjectName(classData.subject_name || "")
-    : { name: "", code: "" };
+    ? parseSubjectName(classData.subject_name || '')
+    : { name: '', code: '' };
 
   const isFutureClass = classData
-    ? isClassInFuture(classData.date1 || "", classData.Period_name || "")
+    ? isClassInFuture(classData.date1 || '', classData.Period_name || '')
     : false;
 
-  const classType: "LAB" | "THEORY" = classData?.subject_name
+  const classType: 'LAB' | 'THEORY' = classData?.subject_name
     ?.toLowerCase()
-    .includes("lab")
-    ? "LAB"
-    : "THEORY";
+    .includes('lab')
+    ? 'LAB'
+    : 'THEORY';
 
-  const location = `${loginData?.college_sht_name || "College Name"} Campus`;
+  const location = `${loginData?.college_sht_name || 'College Name'} Campus`;
 
   const statValue = classData ? getAttendanceStatus(classData) : undefined;
 

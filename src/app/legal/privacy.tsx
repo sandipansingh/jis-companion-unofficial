@@ -1,1 +1,1 @@
-export { PrivacyScreen as default } from "@/src/features/legal";
+export { PrivacyScreen as default } from '@/src/features/legal';

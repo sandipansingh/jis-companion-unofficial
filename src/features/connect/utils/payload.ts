@@ -1,8 +1,10 @@
-import CryptoJS from "crypto-js";
-import { QRPayload } from "../types";
+import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = process.env.EXPO_PUBLIC_QR_SECRET_KEY
-  || "da253c6dcf70460d815fb3270b2928904619a846615d691bf1e5ac7a8a0ce111";
+import { QRPayload } from '../types';
+
+const SECRET_KEY =
+  process.env.EXPO_PUBLIC_QR_SECRET_KEY ||
+  'da253c6dcf70460d815fb3270b2928904619a846615d691bf1e5ac7a8a0ce111';
 
 export const encryptPayload = (payload: QRPayload): string => {
   try {
@@ -10,8 +12,8 @@ export const encryptPayload = (payload: QRPayload): string => {
     const encrypted = CryptoJS.AES.encrypt(jsonString, SECRET_KEY).toString();
     return encrypted;
   } catch (error) {
-    console.error("Encryption error:", error);
-    return "";
+    console.error('Encryption error:', error);
+    return '';
   }
 };
 
@@ -22,7 +24,7 @@ export const decryptPayload = (encryptedText: string): QRPayload | null => {
     if (!decryptedString) return null;
     return JSON.parse(decryptedString);
   } catch (error) {
-    console.error("Decryption error:", error);
+    console.error('Decryption error:', error);
     return null;
   }
 };

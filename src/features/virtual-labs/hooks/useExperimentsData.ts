@@ -1,7 +1,9 @@
-import { useAlertStore } from "@/src/store/alertStore";
-import { useRouter } from "expo-router";
-import { Linking } from "react-native";
-import { useVirtualLabsStore } from "../store/virtualLabsStore";
+import { useRouter } from 'expo-router';
+import { Linking } from 'react-native';
+
+import { useAlertStore } from '@/src/store/alertStore';
+
+import { useVirtualLabsStore } from '../store/virtualLabsStore';
 
 export function useExperimentsData() {
   const router = useRouter();
@@ -19,15 +21,15 @@ export function useExperimentsData() {
         await Linking.openURL(link);
       } else {
         showAlert({
-          title: "Error",
-          message: "Cannot open this link",
+          title: 'Error',
+          message: 'Cannot open this link',
         });
       }
     } catch (error) {
-      console.error("Error opening link:", error);
+      console.error('Error opening link:', error);
       showAlert({
-        title: "Error",
-        message: "Failed to open the link",
+        title: 'Error',
+        message: 'Failed to open the link',
       });
     }
   };

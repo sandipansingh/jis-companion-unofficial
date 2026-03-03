@@ -1,5 +1,5 @@
-import { ScrollViewStyleReset } from "expo-router/html";
-import { type PropsWithChildren } from "react";
+import { ScrollViewStyleReset } from 'expo-router/html';
+import { type PropsWithChildren } from 'react';
 
 export default function Root({ children }: PropsWithChildren) {
   return (
@@ -21,27 +21,12 @@ export default function Root({ children }: PropsWithChildren) {
         {/* iOS PWA */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta
-          name="apple-mobile-web-app-title"
-          content="JIS Companion (Unofficial)"
-        />
+        <meta name="apple-mobile-web-app-title" content="JIS Companion (Unofficial)" />
 
         {/* Icons */}
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon-180.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="167x167"
-          href="/apple-touch-icon-167.png"
-        />
-        <link
-          rel="apple-touch-icon"
-          sizes="152x152"
-          href="/apple-touch-icon-152.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152.png" />
         <link rel="apple-touch-icon" sizes="120x120" />
 
         {/* Theme */}
@@ -51,7 +36,11 @@ export default function Root({ children }: PropsWithChildren) {
         <script dangerouslySetInnerHTML={{ __html: sw }} />
 
         {/* Prevent white flash before JS loads */}
-        <style dangerouslySetInnerHTML={{ __html: `html, body { background-color: #FAFAFA; margin: 0; padding: 0; }` }} />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html, body { background-color: #FAFAFA; margin: 0; padding: 0; }`,
+          }}
+        />
 
         {/* This helps reset default browser styles for Expo/React Native Web */}
         <ScrollViewStyleReset />

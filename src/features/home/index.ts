@@ -1,5 +1,5 @@
 // Hooks
-export { useHomeData } from "./hooks";
+export { useHomeData } from './hooks';
 
 // Screens
-export * from "./screens";
+export * from './screens';

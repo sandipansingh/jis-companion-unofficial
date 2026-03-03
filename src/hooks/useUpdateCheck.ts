@@ -1,12 +1,13 @@
-import { AppInfo, getAppInfo } from "@/src/api/appInfo";
-import { getItemAsync, setItemAsync } from "@/src/utils/secureStore";
-import { getUpdateType, UpdateType } from "@/src/utils/versionHelpers";
-import Constants from "expo-constants";
-import { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import Constants from 'expo-constants';
+import { useCallback, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
-const UPDATE_CHECK_KEY = "last_update_check";
-const UPDATE_DISMISSED_KEY = "update_dismissed_version";
+import { AppInfo, getAppInfo } from '@/src/api/appInfo';
+import { getItemAsync, setItemAsync } from '@/src/utils/secureStore';
+import { getUpdateType, UpdateType } from '@/src/utils/versionHelpers';
+
+const UPDATE_CHECK_KEY = 'last_update_check';
+const UPDATE_DISMISSED_KEY = 'update_dismissed_version';
 const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 interface UpdateCheckResult {
@@ -19,21 +20,13 @@ interface UpdateCheckResult {
 
 export function useUpdateCheck(): UpdateCheckResult {
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [updateType, setUpdateType] = useState<UpdateType>("none");
+  const [updateType, setUpdateType] = useState<UpdateType>('none');
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
   const [isChecking, setIsChecking] = useState(false);
 
-  const currentVersion = Constants.expoConfig?.version || "1.0.0";
+  const currentVersion = Constants.expoConfig?.version || '1.0.0';
 
-  useEffect(() => {
-    if (Platform.OS !== "android") {
-      return;
-    }
-
-    checkForUpdate();
-  }, []);
-
-  const checkForUpdate = async () => {
+  const checkForUpdate = useCallback(async () => {
     try {
       setIsChecking(true);
 
@@ -45,11 +38,8 @@ export function useUpdateCheck(): UpdateCheckResult {
         if (timeSinceLastCheck < CHECK_INTERVAL) {
           const dismissedVersion = await getItemAsync(UPDATE_DISMISSED_KEY);
           if (dismissedVersion) {
-            const dismissedUpdateType = getUpdateType(
-              currentVersion,
-              dismissedVersion
-            );
-            if (dismissedUpdateType !== "major") {
+            const dismissedUpdateType = getUpdateType(currentVersion, dismissedVersion);
+            if (dismissedUpdateType !== 'major') {
               setIsChecking(false);
               return;
             }
@@ -64,24 +54,28 @@ export function useUpdateCheck(): UpdateCheckResult {
 
       const updateTypeResult = getUpdateType(currentVersion, latestVersion);
 
-      if (updateTypeResult !== "none") {
+      if (updateTypeResult !== 'none') {
         const dismissedVersion = await getItemAsync(UPDATE_DISMISSED_KEY);
 
-        if (
-          updateTypeResult === "major" ||
-          dismissedVersion !== latestVersion
-        ) {
+        if (updateTypeResult === 'major' || dismissedVersion !== latestVersion) {
           setUpdateAvailable(true);
           setUpdateType(updateTypeResult);
           setAppInfo(latestAppInfo);
         }
       }
     } catch (error) {
-      console.error("Error checking for updates:", error);
+      console.error('Error checking for updates:', error);
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [currentVersion]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') {
+      return;
+    }
+    checkForUpdate();
+  }, [checkForUpdate]);
 
   return {
     updateAvailable,

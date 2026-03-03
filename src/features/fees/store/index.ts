@@ -1,1 +1,1 @@
-export { useFeesStore } from "./feesStore";
+export { useFeesStore } from './feesStore';

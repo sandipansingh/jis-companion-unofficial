@@ -1,1 +1,1 @@
-export { useAttendanceStore } from "./attendanceStore";
+export { useAttendanceStore } from './attendanceStore';

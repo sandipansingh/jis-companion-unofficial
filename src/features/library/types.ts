@@ -14,7 +14,7 @@ export interface LibraryBook {
   act_return_date?: string;
 }
 
-export type LibraryFilterType = "1" | "2"; // 1 = all, 2 = pending
+export type LibraryFilterType = '1' | '2'; // 1 = all, 2 = pending
 
 export interface LibrarySearchResult {
   sl_no: number;
@@ -31,7 +31,7 @@ export interface LibrarySearchResult {
 }
 
 export type LibrarySearchField =
-  | "acc_title"
-  | "acc_author_name"
-  | "acc_call"
-  | "acc_isbn";
+  | 'acc_title'
+  | 'acc_author_name'
+  | 'acc_call'
+  | 'acc_isbn';

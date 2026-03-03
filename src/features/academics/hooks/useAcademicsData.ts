@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react';
+
 import {
   extractDateFromISO,
   formatDate,
@@ -5,25 +7,21 @@ import {
   getStartOfWeek,
   getWeekDates,
   parseTimeSlot,
-} from "@/src/utils/dateHelpers";
-import { useEffect, useState } from "react";
-import { useAttendanceStore } from "../store";
+} from '@/src/utils/dateHelpers';
+
+import { useAttendanceStore } from '../store';
 
 export function useAcademicsData() {
   const { fetchMonthAttendance, getDateWiseData, getSubjectWiseData } =
     useAttendanceStore();
 
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(
-    getStartOfWeek(new Date())
+    getStartOfWeek(new Date()),
   );
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadWeekData();
-  }, [currentWeekStart]);
-
-  const loadWeekData = async () => {
+  const loadWeekData = useCallback(async () => {
     setLoading(true);
     try {
       const weekDates = getWeekDates(currentWeekStart);
@@ -37,16 +35,20 @@ export function useAcademicsData() {
 
       await Promise.all(
         Array.from(monthsToFetch).map((key) => {
-          const [year, month] = key.split("-").map(Number);
+          const [year, month] = key.split('-').map(Number);
           return fetchMonthAttendance(year, month);
-        })
+        }),
       );
     } catch (error) {
-      console.error("Failed to load week data:", error);
+      console.error('Failed to load week data:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentWeekStart, fetchMonthAttendance]);
+
+  useEffect(() => {
+    loadWeekData();
+  }, [loadWeekData]);
 
   const goToPreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
@@ -91,9 +93,7 @@ export function useAcademicsData() {
     const subjectWiseData = getSubjectWiseData(year, month);
     if (!subjectWiseData) return [];
 
-    return subjectWiseData.filter(
-      (d) => extractDateFromISO(d.date1) === dateStr
-    );
+    return subjectWiseData.filter((d) => extractDateFromISO(d.date1) === dateStr);
   };
 
   const getRoutineWithFallback = (date: Date) => {
@@ -104,7 +104,7 @@ export function useAcademicsData() {
 
     const isCurrentOrFutureDate = compareDate >= today;
 
-    let routine = getRoutineForDate(date);
+    const routine = getRoutineForDate(date);
 
     if (routine.length === 0 && isCurrentOrFutureDate) {
       const dayOfWeek = date.getDay();
@@ -166,39 +166,39 @@ export function useAcademicsData() {
   };
 
   const getAttendanceStatus = (
-    date: Date
-  ): "present" | "absent" | "partial" | "holiday" => {
+    date: Date,
+  ): 'present' | 'absent' | 'partial' | 'holiday' => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const compareDate = new Date(date);
     compareDate.setHours(0, 0, 0, 0);
 
     if (compareDate > today) {
-      return "holiday";
+      return 'holiday';
     }
 
     const dayOfWeek = date.getDay();
 
     if (dayOfWeek === 0) {
-      return "holiday";
+      return 'holiday';
     }
 
     const attendance = getAttendanceWithFallback(date);
 
     if (dayOfWeek === 6 && !attendance) {
-      return "holiday";
+      return 'holiday';
     }
 
-    if (!attendance) return "absent";
+    if (!attendance) return 'absent';
 
-    if (attendance.rtCount === 0) return "holiday";
+    if (attendance.rtCount === 0) return 'holiday';
 
-    if ((attendance as any)._isFallback) return "holiday";
+    if ((attendance as any)._isFallback) return 'holiday';
 
     const percentage = (attendance.rtPresent / attendance.rtCount) * 100;
-    if (percentage === 100) return "present";
-    if (percentage === 0) return "absent";
-    return "partial";
+    if (percentage === 100) return 'present';
+    if (percentage === 0) return 'absent';
+    return 'partial';
   };
 
   return {

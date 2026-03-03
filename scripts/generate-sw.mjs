@@ -1,40 +1,40 @@
-import { generateSW } from "workbox-build";
+import { generateSW } from 'workbox-build';
 
 await generateSW({
-  globDirectory: "dist",
-  globPatterns: ["**/*.{html,js,css,json,png,svg,ico,webp}"],
-  swDest: "dist/sw.js",
+  globDirectory: 'dist',
+  globPatterns: ['**/*.{html,js,css,json,png,svg,ico,webp}'],
+  swDest: 'dist/sw.js',
   maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
 
   skipWaiting: true,
   clientsClaim: true,
 
-  navigateFallback: "/index.html",
+  navigateFallback: '/index.html',
 
   runtimeCaching: [
     {
       // Always revalidate HTML
-      urlPattern: ({ request }) => request.mode === "navigate",
-      handler: "NetworkFirst",
+      urlPattern: ({ request }) => request.mode === 'navigate',
+      handler: 'NetworkFirst',
       options: {
-        cacheName: "pages",
+        cacheName: 'pages',
         networkTimeoutSeconds: 3,
       },
     },
     {
       // JS/CSS update silently in background
       urlPattern: /\.(?:js|css)$/,
-      handler: "StaleWhileRevalidate",
+      handler: 'StaleWhileRevalidate',
       options: {
-        cacheName: "static-resources",
+        cacheName: 'static-resources',
       },
     },
     {
       // Images cached for a week
       urlPattern: /\.(?:png|jpg|jpeg|svg|ico|webp)$/,
-      handler: "CacheFirst",
+      handler: 'CacheFirst',
       options: {
-        cacheName: "images",
+        cacheName: 'images',
         expiration: {
           maxEntries: 100,
           maxAgeSeconds: 7 * 24 * 60 * 60,
@@ -44,4 +44,4 @@ await generateSW({
   ],
 });
 
-console.log("Service worker generated");
+console.log('Service worker generated');

@@ -83,6 +83,7 @@ npm run typecheck
 ```
 
 When to run:
+
 - `npm install`: first setup or after dependency changes
 - `npx expo start`: active development server
 - `npm run typecheck`: before pushing/merging changes
@@ -106,6 +107,7 @@ Use these when you need platform-specific verification beyond Expo start menu.
 Runs TypeScript with `tsconfig.typecheck.json`.
 
 Recommended usage:
+
 - Before commits
 - Before creating release builds
 - Before opening PRs
@@ -119,24 +121,24 @@ Recommended usage:
 #### Development APK
 
 - **Local build:**
-	- `npm run build:android:dev:local`
-	- Creates APK locally using EAS Local Build
-	- Moves resulting `.apk` to `builds/`
+  - `npm run build:android:dev:local`
+  - Creates APK locally using EAS Local Build
+  - Moves resulting `.apk` to `builds/`
 
 - **Cloud build:**
-	- `npm run build:android:dev:cloud`
-	- Starts development Android build in EAS Cloud
+  - `npm run build:android:dev:cloud`
+  - Starts development Android build in EAS Cloud
 
 Use development builds for QA/internal testing.
 
 #### Production Android
 
 - **Cloud build (recommended for release):**
-	- `npm run build:android:prod:cloud`
+  - `npm run build:android:prod:cloud`
 
 - **Local production build:**
-	- `npm run build:android:prod:local`
-	- Produces `.aab` and moves it to `builds/`
+  - `npm run build:android:prod:local`
+  - Produces `.aab` and moves it to `builds/`
 
 Use production builds for Play Store release artifacts.
 
@@ -155,13 +157,13 @@ Use this after a successful production build when you are ready to submit to Pla
 ### 6) Web build scripts
 
 - `npm run build:web:cloud`
-	- Cleans `dist`
-	- Exports Expo web build
-	- Generates service worker
+  - Cleans `dist`
+  - Exports Expo web build
+  - Generates service worker
 
 - `npm run build:web:local`
-	- Does everything above
-	- Also creates a versioned zip in `dist/` (named from `package.json` version)
+  - Does everything above
+  - Also creates a versioned zip in `dist/` (named from `package.json` version)
 
 Use local web build when you need a deployable zip artifact.
 

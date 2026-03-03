@@ -1,1 +1,1 @@
-export { useFeedbackStore } from "./feedbackStore";
+export { useFeedbackStore } from './feedbackStore';
