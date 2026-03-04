@@ -15,7 +15,6 @@ import { useAlertStore } from '@/src/store/alertStore';
 import { useSafeAreaStore } from '@/src/store/safeAreaStore';
 
 import {
-  DesktopHomeHeader,
   MenuItem,
   NextClassCard,
   QuickAccessActionCards,
@@ -98,87 +97,53 @@ export default function Home() {
     }
   };
 
-  if (isDesktopWeb) {
-    const pct = attendanceData?.pcent ?? 0;
-    const attended = attendanceData?.attd ?? 0;
-    const total = attendanceData?.total_class ?? 0;
-
-    return (
-      <View className="flex-1 bg-base">
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
-          showsVerticalScrollIndicator={false}
-        >
-          <ContentContainer maxWidth={1280}>
-            <DesktopHomeHeader
-              userName={loginData?.student_name || 'Student'}
-              profileImageUrl={userData?.profile_pict_cur_url}
-              courseName={loginData?.batch_name || 'CSE AI & ML'}
-              collegeName={loginData?.college_sht_name || 'N/A'}
-              attendancePercentage={pct}
-              attendedClass={attended}
-              totalClass={total}
-              loadingAttendance={loadingAttendance}
-            />
-
-            <View className="gap-0">
-              {nextClass && (
-                <NextClassCard
-                  className={
-                    nextClass.subject_name.split(' - ')[1]?.trim() ||
-                    nextClass.subject_name
-                  }
-                  faculty={nextClass.faculty}
-                  time={getFormattedTime(nextClass.Period_name).time}
-                  period={getFormattedTime(nextClass.Period_name).period}
-                  isFallback={(nextClass as any)._isFallback}
-                  onSeeAll={() => router.push('/academics')}
-                />
-              )}
-              <QuickAccessActionCards
-                items={MENU_ITEMS}
-                onItemPress={handleMenuItemPress}
-              />
-            </View>
-          </ContentContainer>
-        </ScrollView>
-      </View>
-    );
-  }
+  const welcomeCardProps = {
+    userName: loginData?.student_name || 'Student',
+    profileImageUrl: userData?.profile_pict_cur_url,
+    courseName: loginData?.batch_name || 'CSE AI & ML',
+    collegeName: loginData?.college_sht_name || 'N/A',
+    attendancePercentage: attendanceData?.pcent ?? 0,
+    attendedClass: attendanceData?.attd ?? 0,
+    totalClass: attendanceData?.total_class ?? 0,
+    loadingAttendance,
+  };
 
   return (
     <View className="flex-1 bg-base">
-      <WelcomeCard
-        userName={loginData?.student_name || 'Student'}
-        profileImageUrl={userData?.profile_pict_cur_url}
-        courseName={loginData?.batch_name || 'CSE AI & ML'}
-        collegeName={loginData?.college_sht_name || 'N/A'}
-        attendancePercentage={attendanceData?.pcent || 0}
-        attendedClass={attendanceData?.attd || 0}
-        totalClass={attendanceData?.total_class || 0}
-        loadingAttendance={loadingAttendance}
-      />
+      {!isDesktopWeb && <WelcomeCard {...welcomeCardProps} />}
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={true} bounces>
-        <View className="px-6 pt-6">
-          {nextClass && (
-            <NextClassCard
-              className={
-                nextClass.subject_name.split(' - ')[1]?.trim() || nextClass.subject_name
-              }
-              faculty={nextClass.faculty}
-              time={getFormattedTime(nextClass.Period_name).time}
-              period={getFormattedTime(nextClass.Period_name).period}
-              isFallback={(nextClass as any)._isFallback}
-              onSeeAll={() => router.push('/academics')}
-            />
-          )}
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={isDesktopWeb ? { paddingHorizontal: 32, paddingBottom: 80 } : undefined}
+        showsVerticalScrollIndicator={false}
+        bounces={!isDesktopWeb}
+      >
+        <ContentContainer maxWidth={isDesktopWeb ? 1280 : undefined}>
+          {isDesktopWeb && <WelcomeCard {...welcomeCardProps} />}
 
-          <QuickAccessGrid items={MENU_ITEMS} onItemPress={handleMenuItemPress} />
-        </View>
+          <View className={isDesktopWeb ? 'gap-0' : 'px-6 pt-6'}>
+            {nextClass && (
+              <NextClassCard
+                className={
+                  nextClass.subject_name.split(' - ')[1]?.trim() || nextClass.subject_name
+                }
+                faculty={nextClass.faculty}
+                time={getFormattedTime(nextClass.Period_name).time}
+                period={getFormattedTime(nextClass.Period_name).period}
+                isFallback={(nextClass as any)._isFallback}
+                onSeeAll={() => router.push('/academics')}
+              />
+            )}
 
-        <View style={{ height: bottomOffset + 100 }} />
+            {isDesktopWeb ? (
+              <QuickAccessActionCards items={MENU_ITEMS} onItemPress={handleMenuItemPress} />
+            ) : (
+              <QuickAccessGrid items={MENU_ITEMS} onItemPress={handleMenuItemPress} />
+            )}
+          </View>
+
+          {!isDesktopWeb && <View style={{ height: bottomOffset + 100 }} />}
+        </ContentContainer>
       </ScrollView>
     </View>
   );
