@@ -216,17 +216,23 @@ export default function SettingsScreen() {
                   </Text>
                   {Platform.OS === 'ios' ? (
                     <Text className="text-xs text-ink-500 dark:text-ink-400 leading-5 font-sans">
-                      {'1. Open the link in '}{
+                      {'1. Open the link in '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           Safari
                         </Text>
-                      }{'\n'}
-                      {'2. Tap the '}{
+                      }
+                      {'\n'}
+                      {'2. Tap the '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           Share
                         </Text>
-                      }{' icon at the bottom'}{'\n'}
-                      {'3. Tap '}{
+                      }
+                      {' icon at the bottom'}
+                      {'\n'}
+                      {'3. Tap '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           Add to Home Screen
                         </Text>
@@ -234,17 +240,23 @@ export default function SettingsScreen() {
                     </Text>
                   ) : (
                     <Text className="text-xs text-ink-500 dark:text-ink-400 leading-5 font-sans">
-                      {'1. Open the link in '}{
+                      {'1. Open the link in '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           Chrome
                         </Text>
-                      }{'\n'}
-                      {'2. Tap the '}{
+                      }
+                      {'\n'}
+                      {'2. Tap the '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           ⋮ menu
                         </Text>
-                      }{' (top right)'}{'\n'}
-                      {'3. Tap '}{
+                      }
+                      {' (top right)'}
+                      {'\n'}
+                      {'3. Tap '}
+                      {
                         <Text className="font-semibold text-ink-700 dark:text-ink-200">
                           Add to Home Screen
                         </Text>

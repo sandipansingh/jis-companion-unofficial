@@ -1,11 +1,12 @@
 import { useRouter } from 'expo-router';
 import { Download } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 
 import { Header } from '@/src/components';
+import { buildViewerUrl, PdfWebView } from '@/src/components/PdfWebView';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useDevice } from '@/src/hooks/useDevice';
 import { useFileDownload } from '@/src/hooks/useFileDownload';
 import { useAlertStore } from '@/src/store/alertStore';
 
@@ -13,6 +14,7 @@ import { usePyqStore } from '../store/pyqStore';
 
 export default function PyqViewerScreen() {
   const { colors } = useTheme();
+  const { isAndroid } = useDevice();
   const router = useRouter();
   const { showAlert } = useAlertStore();
 
@@ -62,27 +64,10 @@ export default function PyqViewerScreen() {
       : 'DOCX'
     : 'PDF';
 
-  const useGoogleViewer = hasValidViewUrl && (isDoc || Platform.OS === 'android');
+  const forceGoogleViewer = isDoc || isAndroid;
   const pdfViewerUrl = hasValidViewUrl
-    ? useGoogleViewer
-      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(viewUrl)}`
-      : viewUrl
+    ? buildViewerUrl(viewUrl, { isAndroid, forceGoogleViewer })
     : '';
-  const originWhitelist = (() => {
-    if (!hasValidViewUrl) {
-      return ['https://docs.google.com'];
-    }
-
-    if (useGoogleViewer) {
-      return ['https://docs.google.com', 'https://docs.googleusercontent.com'];
-    }
-
-    try {
-      return [new URL(viewUrl).origin];
-    } catch {
-      return ['https://docs.google.com'];
-    }
-  })();
 
   const titleLine = `${selectedPyq.subjectName}${selectedPyq.year ? ` · ${selectedPyq.year}` : ''} [${fileTypeLabel}]`;
 
@@ -119,8 +104,8 @@ export default function PyqViewerScreen() {
         )}
 
         {hasValidViewUrl ? (
-          <WebView
-            source={{ uri: pdfViewerUrl }}
+          <PdfWebView
+            uri={pdfViewerUrl}
             style={{ flex: 1 }}
             onLoadStart={() => setWebViewLoading(true)}
             onLoadEnd={() => setWebViewLoading(false)}
@@ -128,22 +113,13 @@ export default function PyqViewerScreen() {
               setWebViewLoading(false);
               showAlert({ title: 'Error', message: 'Failed to load PDF' });
             }}
-            originWhitelist={originWhitelist}
-            javaScriptEnabled
-            domStorageEnabled
-            scalesPageToFit
-            mixedContentMode="never"
-            androidLayerType="hardware"
-            injectedJavaScript={`
-              const meta = document.createElement('meta');
-              meta.setAttribute('content', 'width=device-width, initial-scale=1');
-              meta.setAttribute('name', 'viewport');
-              document.getElementsByTagName('head')[0].appendChild(meta);
-              const style = document.createElement('style');
-              style.innerHTML = '.ndfHFb-c4YZDc-Wrql6b, .ndfHFb-c4YZDc, div[role="toolbar"], [aria-label="Pop-out"] { display: none !important; }';
-              document.head.appendChild(style);
-              true;
-            `}
+            onHttpError={(event) => {
+              setWebViewLoading(false);
+              showAlert({
+                title: 'Preview Error',
+                message: `Document preview failed (${event.nativeEvent.statusCode}). Try download instead.`,
+              });
+            }}
           />
         ) : (
           <View className="flex-1 items-center justify-center px-6">

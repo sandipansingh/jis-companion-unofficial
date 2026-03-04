@@ -7,6 +7,19 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import tseslint from 'typescript-eslint';
 
 export default [
+  {
+    ignores: [
+      'node_modules',
+      'android',
+      'ios',
+      '.expo',
+      'dist',
+      'build',
+      'coverage',
+      '.next',
+    ],
+  },
+
   js.configs.recommended,
   ...tseslint.configs.recommended,
 

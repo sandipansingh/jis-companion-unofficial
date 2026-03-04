@@ -5,17 +5,17 @@ import {
   Animated,
   Modal,
   PanResponder,
-  Platform,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { WebView } from 'react-native-webview';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useDevice } from '@/src/hooks/useDevice';
 import { useFileDownload } from '@/src/hooks/useFileDownload';
 
 import { useAlertStore } from '../store/alertStore';
+import { buildViewerUrl, PdfWebView } from './PdfWebView';
 
 interface PdfPreviewModalProps {
   visible: boolean;
@@ -31,6 +31,7 @@ export function PdfPreviewModal({
   onClose,
 }: PdfPreviewModalProps) {
   const { colors } = useTheme();
+  const { isAndroid } = useDevice();
   const [loading, setLoading] = useState(true);
   const translateY = useRef(new Animated.Value(0)).current;
   const { showAlert } = useAlertStore();
@@ -41,10 +42,7 @@ export function PdfPreviewModal({
     mimeType: 'application/pdf',
   });
 
-  const pdfViewerUrl =
-    Platform.OS === 'android'
-      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
-      : url;
+  const pdfViewerUrl = buildViewerUrl(url, { isAndroid });
 
   const handleClose = () => {
     onClose();
@@ -135,37 +133,22 @@ export function PdfPreviewModal({
                 </Text>
               </View>
             )}
-            <WebView
-              source={{ uri: pdfViewerUrl }}
+            <PdfWebView
+              uri={pdfViewerUrl}
               className="flex-1 bg-transparent"
               onLoadStart={() => setLoading(true)}
               onLoadEnd={() => setLoading(false)}
               onError={() => {
                 setLoading(false);
+                showAlert({ title: 'Error', message: 'Failed to load PDF' });
+              }}
+              onHttpError={(event) => {
+                setLoading(false);
                 showAlert({
-                  title: 'Error',
-                  message: 'Failed to load PDF',
+                  title: 'Preview Error',
+                  message: `Document preview failed (${event.nativeEvent.statusCode}). Try download instead.`,
                 });
               }}
-              originWhitelist={['*']}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              scalesPageToFit={true}
-              injectedJavaScript={`
-                const meta = document.createElement('meta');
-                meta.setAttribute('content', 'width=device-width, initial-scale=1');
-                meta.setAttribute('name', 'viewport');
-                document.getElementsByTagName('head')[0].appendChild(meta);
-                const style = document.createElement('style');
-                style.innerHTML = '.ndfHFb-c4YZDc-Wrql6b, .ndfHFb-c4YZDc, div[role="toolbar"], [aria-label="Pop-out"] { display: none !important; }';
-                document.head.appendChild(style);
-                true;
-              `}
-              mixedContentMode="always"
-              androidLayerType="hardware"
-              allowFileAccess={true}
-              allowFileAccessFromFileURLs={true}
-              allowUniversalAccessFromFileURLs={true}
             />
           </View>
         </Animated.View>

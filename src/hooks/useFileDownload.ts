@@ -9,6 +9,22 @@ import { useAlertStore } from '@/src/store/alertStore';
 
 const SAF_URI_KEY = 'app_saf_downloads_uri';
 
+function buildAndroidDisplayPath(dirUri: string, fileName: string): string {
+  const decoded = decodeURIComponent(dirUri);
+  const treeMatch = decoded.match(/tree\/([^/?]+)/);
+  const docId = treeMatch?.[1] ?? '';
+
+  if (!docId) {
+    return `/<folder>/${fileName}`;
+  }
+
+  const afterColon = docId.includes(':') ? docId.split(':')[1] : docId;
+  const cleaned = afterColon.replace(/^\/+|\/+$/g, '');
+  const basePath = cleaned ? `/${cleaned}` : '/<folder>';
+
+  return `${basePath}/${fileName}`;
+}
+
 async function getSafDownloadsUri(): Promise<string | null> {
   const stored = await AsyncStorage.getItem(SAF_URI_KEY);
   if (stored) {
@@ -113,14 +129,18 @@ export function useFileDownload({
           finalFileName,
           meta.mime,
         );
-        await LegacyFileSystem.StorageAccessFramework.copyAsync({
-          from: targetFile.uri,
-          to: safUri,
+        const fileContent = await LegacyFileSystem.readAsStringAsync(targetFile.uri, {
+          encoding: LegacyFileSystem.EncodingType.Base64,
         });
+        await LegacyFileSystem.writeAsStringAsync(safUri, fileContent, {
+          encoding: LegacyFileSystem.EncodingType.Base64,
+        });
+
+        const displayPath = buildAndroidDisplayPath(dirUri, finalFileName);
 
         showAlert({
           title: 'Downloaded',
-          message: 'File saved to your selected folder.',
+          message: `File saved to:\n${displayPath}`,
         });
       } else {
         const isAvailable = await Sharing.isAvailableAsync();

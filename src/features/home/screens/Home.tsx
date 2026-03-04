@@ -114,7 +114,9 @@ export default function Home() {
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={isDesktopWeb ? { paddingHorizontal: 32, paddingBottom: 80 } : undefined}
+        contentContainerStyle={
+          isDesktopWeb ? { paddingHorizontal: 32, paddingBottom: 80 } : undefined
+        }
         showsVerticalScrollIndicator={false}
         bounces={!isDesktopWeb}
       >
@@ -136,7 +138,10 @@ export default function Home() {
             )}
 
             {isDesktopWeb ? (
-              <QuickAccessActionCards items={MENU_ITEMS} onItemPress={handleMenuItemPress} />
+              <QuickAccessActionCards
+                items={MENU_ITEMS}
+                onItemPress={handleMenuItemPress}
+              />
             ) : (
               <QuickAccessGrid items={MENU_ITEMS} onItemPress={handleMenuItemPress} />
             )}

@@ -15,6 +15,7 @@ export {
 export { LoadingState } from './LoadingState';
 export { MenuCard } from './MenuCard';
 export { PdfPreviewModal } from './PdfPreviewModal';
+export { buildViewerUrl, PdfWebView } from './PdfWebView';
 export { SegmentedControl } from './SegmentedControl';
 export { Switch } from './Switch';
 export { TabButton } from './TabButton';
