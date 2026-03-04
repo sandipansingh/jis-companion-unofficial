@@ -120,8 +120,9 @@ export const usePyqStore = create<PyqState>((set, get) => ({
         loadingMore: false,
         isFetching: false,
       }));
-    } catch {
-      set({ loadingMore: false, isFetching: false });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to load more';
+      set({ loadingMore: false, isFetching: false, error: message });
     }
   },
 

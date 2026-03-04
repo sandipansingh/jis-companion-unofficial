@@ -5,6 +5,7 @@ import {
   Animated,
   Modal,
   PanResponder,
+  Platform,
   Text,
   TouchableOpacity,
   View,
@@ -12,7 +13,6 @@ import {
 import { WebView } from 'react-native-webview';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { device } from '@/src/hooks/useDevice';
 import { useFileDownload } from '@/src/hooks/useFileDownload';
 
 import { useAlertStore } from '../store/alertStore';
@@ -41,9 +41,10 @@ export function PdfPreviewModal({
     mimeType: 'application/pdf',
   });
 
-  const pdfViewerUrl = device.isAndroid
-    ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
-    : url;
+  const pdfViewerUrl =
+    Platform.OS === 'android'
+      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
+      : url;
 
   const handleClose = () => {
     onClose();

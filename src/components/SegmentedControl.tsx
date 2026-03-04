@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, LayoutRectangle, Pressable, Text, View } from 'react-native';
+import { Animated, LayoutRectangle, Platform, Pressable, Text, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { device } from '@/src/hooks/useDevice';
 
 export interface SegmentedControlTab<T extends string> {
   key: T;
@@ -79,7 +78,7 @@ export function SegmentedControl<T extends string>({
           transform: [{ translateX }],
           borderRadius: 9,
           backgroundColor: colors.surface,
-          ...(device.isWeb
+          ...(Platform.OS === 'web'
             ? { boxShadow: '0 1px 3px rgba(0,0,0,0.15)' }
             : {
                 shadowColor: '#000',
@@ -115,7 +114,7 @@ export function SegmentedControl<T extends string>({
               paddingHorizontal: 8,
               paddingVertical: 7,
               overflow: 'hidden',
-              ...(device.isWeb ? { cursor: 'pointer' } : {}),
+              ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
             }}
           >
             <Text

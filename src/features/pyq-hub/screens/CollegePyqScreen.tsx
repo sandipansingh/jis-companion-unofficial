@@ -193,7 +193,6 @@ export default function CollegePyqScreen() {
                         borderWidth: 1,
                         borderColor: colors.border,
                         backgroundColor: colors.surface,
-                        opacity: error ? 0.5 : 1,
                       }}
                     >
                       <Text

@@ -22,6 +22,7 @@ export function FeedbackProgressBar({
   totalCount,
 }: FeedbackProgressBarProps) {
   const { colors } = useTheme();
+  const clampedProgress = Math.min(Math.max(progressPercentage, 0), 100);
 
   return (
     <View className="rounded-[14px] border border-border p-[18px] mb-6 flex-row items-center gap-6 bg-surface">
@@ -43,12 +44,16 @@ export function FeedbackProgressBar({
         </Text>
       </View>
       <View className="flex-1">
-        <View className="h-1.5 rounded-[3px] overflow-hidden mb-2.5 bg-border">
+        <View
+          className="h-1.5 rounded-[3px] overflow-hidden mb-2.5 bg-border"
+          accessibilityRole="progressbar"
+          accessibilityValue={{ min: 0, now: clampedProgress, max: 100 }}
+        >
           <View
             className="h-full rounded-[3px]"
             style={{
               backgroundColor: colors.textSecondary,
-              width: `${Math.min(progressPercentage, 100)}%`,
+              width: `${clampedProgress}%`,
             }}
           />
         </View>

@@ -13,11 +13,10 @@
  *   - No circular floating icons
  */
 
-import { Pressable, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
-import { device } from '@/src/hooks/useDevice';
 
 import { type MenuItem } from './QuickAccessGrid';
 
@@ -45,17 +44,18 @@ export function QuickAccessActionCards({
 
   const columns = isXl ? 4 : 2;
 
-  const gridStyle: object = device.isWeb
-    ? ({
-        display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: 12,
-      } as any)
-    : {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 12,
-      };
+  const gridStyle: object =
+    Platform.OS === 'web'
+      ? ({
+          display: 'grid',
+          gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          gap: 12,
+        } as any)
+      : {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: 12,
+        };
 
   return (
     <View className="mb-1">
@@ -84,7 +84,7 @@ export function QuickAccessActionCards({
                   padding: 16,
                   borderWidth: 1,
                   borderColor: colors.border,
-                  ...(device.isWeb
+                  ...(Platform.OS === 'web'
                     ? ({
                         cursor: 'pointer',
                         transition: 'background-color 150ms ease-out',

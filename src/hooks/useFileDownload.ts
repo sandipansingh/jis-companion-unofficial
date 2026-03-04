@@ -3,8 +3,8 @@ import { File, Paths } from 'expo-file-system';
 import * as LegacyFileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { useState } from 'react';
+import { Platform } from 'react-native';
 
-import { device } from '@/src/hooks/useDevice';
 import { useAlertStore } from '@/src/store/alertStore';
 
 const SAF_URI_KEY = 'app_saf_downloads_uri';
@@ -64,7 +64,7 @@ export function useFileDownload({
   const meta = MIME_META[mimeType] ?? DEFAULT_META;
 
   const download = async () => {
-    if (device.isWeb) {
+    if (Platform.OS === 'web') {
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = filename;
@@ -75,6 +75,8 @@ export function useFileDownload({
       document.body.removeChild(link);
       return;
     }
+
+    let cacheFileUri: string | null = null;
 
     try {
       setDownloading(true);
@@ -93,9 +95,10 @@ export function useFileDownload({
       }
 
       const targetFile = new File(cacheDir, finalFileName);
+      cacheFileUri = targetFile.uri;
       await File.downloadFileAsync(downloadUrl, targetFile);
 
-      if (device.isAndroid) {
+      if (Platform.OS === 'android') {
         const dirUri = await getSafDownloadsUri();
         if (!dirUri) {
           showAlert({
@@ -105,14 +108,14 @@ export function useFileDownload({
           return;
         }
 
-        const base64 = await targetFile.base64();
         const safUri = await LegacyFileSystem.StorageAccessFramework.createFileAsync(
           dirUri,
           finalFileName,
           meta.mime,
         );
-        await LegacyFileSystem.writeAsStringAsync(safUri, base64, {
-          encoding: LegacyFileSystem.EncodingType.Base64,
+        await LegacyFileSystem.StorageAccessFramework.copyAsync({
+          from: targetFile.uri,
+          to: safUri,
         });
 
         showAlert({
@@ -138,6 +141,13 @@ export function useFileDownload({
         message: 'Failed to download file. Please try again.',
       });
     } finally {
+      if (cacheFileUri) {
+        try {
+          await LegacyFileSystem.deleteAsync(cacheFileUri, { idempotent: true });
+        } catch (cleanupError) {
+          console.warn('Failed to clean cached download file:', cleanupError);
+        }
+      }
       setDownloading(false);
     }
   };

@@ -9,6 +9,7 @@ import {
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   LayoutAnimation,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -18,13 +19,12 @@ import {
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
-import { device } from '@/src/hooks/useDevice';
 import { useSafeAreaStore } from '@/src/store/safeAreaStore';
 
 import { FeeLedgerEntry } from '../types';
 import { FeesSummaryCard } from './FeesSummaryCard';
 
-if (device.isAndroid && UIManager.setLayoutAnimationEnabledExperimental) {
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -160,7 +160,7 @@ function MonthGroup({
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   const toggle = useCallback(() => {
-    if (!device.isWeb) {
+    if (Platform.OS !== 'web') {
       LayoutAnimation.configureNext(
         LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
       );
@@ -178,7 +178,7 @@ function MonthGroup({
         className="flex-row items-center px-4 py-3.5 gap-3"
         style={({ pressed }: any) => ({
           backgroundColor: pressed ? colors.elevated : 'transparent',
-          ...(device.isWeb
+          ...(Platform.OS === 'web'
             ? { cursor: 'pointer', transition: 'background-color 120ms' }
             : {}),
         })}

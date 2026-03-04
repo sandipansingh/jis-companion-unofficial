@@ -14,6 +14,7 @@ interface HeaderCardProps {
   icon: LucideIcon;
   variant?: 'default' | 'hero';
   iconSize?: number;
+  heroIconSize?: number;
   iconCircleSize?: number;
   stats?: HeroStat[];
   note?: string;
@@ -25,6 +26,7 @@ export function HeaderCard({
   icon: Icon,
   variant = 'default',
   iconSize = 40,
+  heroIconSize = 28,
   iconCircleSize = 80,
   stats,
   note,
@@ -58,7 +60,7 @@ export function HeaderCard({
             backgroundColor: isDark ? 'rgba(248,250,252,0.16)' : 'rgba(255,255,255,0.15)',
           }}
         >
-          <Icon size={iconSize === 40 ? 28 : iconSize} color={heroText} />
+          <Icon size={heroIconSize} color={heroText} />
         </View>
 
         <Text className="font-sans-bold text-[22px] mb-1.5" style={{ color: heroText }}>

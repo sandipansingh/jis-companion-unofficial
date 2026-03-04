@@ -1,7 +1,6 @@
 import * as Updates from 'expo-updates';
 import { useEffect } from 'react';
-
-import { device } from '@/src/hooks/useDevice';
+import { Platform } from 'react-native';
 
 /**
  * Silent OTA Update Hook
@@ -12,7 +11,7 @@ import { device } from '@/src/hooks/useDevice';
 export function useSilentOTAUpdate() {
   useEffect(() => {
     async function checkAndDownloadUpdate() {
-      if (__DEV__ || device.isWeb || !Updates.isEnabled) {
+      if (__DEV__ || Platform.OS === 'web' || !Updates.isEnabled) {
         return;
       }
 

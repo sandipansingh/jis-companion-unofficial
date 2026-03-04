@@ -89,11 +89,15 @@ export function useCourseSelectionData() {
 
   const handleCourseSelect = (value: string) => {
     setSelectionCourse(value);
+    setSelectionStream('');
+    setSelectionSemester('');
     setCourseDropdownVisible(false);
+    setStreamDropdownVisible(false);
   };
 
   const handleStreamSelect = (value: string) => {
     setSelectionStream(value);
+    setSelectionSemester('');
     setStreamDropdownVisible(false);
   };
 

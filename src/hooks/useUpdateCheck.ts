@@ -1,8 +1,8 @@
 import Constants from 'expo-constants';
 import { useCallback, useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
 import { AppInfo, getAppInfo } from '@/src/api/appInfo';
-import { device } from '@/src/hooks/useDevice';
 import { getItemAsync, setItemAsync } from '@/src/utils/secureStore';
 import { getUpdateType, UpdateType } from '@/src/utils/versionHelpers';
 
@@ -71,7 +71,7 @@ export function useUpdateCheck(): UpdateCheckResult {
   }, [currentVersion]);
 
   useEffect(() => {
-    if (!device.isAndroid) {
+    if (Platform.OS !== 'android') {
       return;
     }
     checkForUpdate();

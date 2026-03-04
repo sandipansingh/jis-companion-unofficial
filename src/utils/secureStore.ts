@@ -1,8 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
-import { device } from '@/src/hooks/useDevice';
-
-const isWeb = device.isWeb;
+const isWeb = Platform.OS === 'web';
 const sensitiveKeywords = ['_password'];
 
 /**

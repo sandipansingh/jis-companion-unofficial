@@ -1,10 +1,16 @@
 import { Lock } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Modal, Text, TouchableOpacity, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { Button, TextInput } from '@/src/components';
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { device } from '@/src/hooks/useDevice';
 import { useAlertStore } from '@/src/store/alertStore';
 
 interface ChangePasswordModalProps {
@@ -29,7 +35,7 @@ export default function ChangePasswordModal({
   }>({});
   const { showAlert } = useAlertStore();
   const { colors } = useTheme();
-  const isWeb = device.isWeb;
+  const isWeb = Platform.OS === 'web';
 
   const validatePasswords = (): boolean => {
     const newErrors: {
@@ -90,7 +96,7 @@ export default function ChangePasswordModal({
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={device.isIOS ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
         <TouchableOpacity

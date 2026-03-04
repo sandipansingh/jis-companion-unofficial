@@ -222,7 +222,7 @@ export default function FacultyListScreen() {
           {isFeedbackLocked ? (
             <View className="flex-1 items-center justify-center px-8">
               <View className="w-20 h-20 rounded-full bg-ink-100 dark:bg-ink-800 items-center justify-center mb-4">
-                <Lock size={36} color={colors.textTertiary} />
+                <Lock size={36} color={colors.textTertiary ?? colors.textSecondary} />
               </View>
               <Text className="text-xl text-ink-900 mb-2 dark:text-ink-100 font-display">
                 Feedback Locked
@@ -298,7 +298,7 @@ export default function FacultyListScreen() {
                             </View>
                             <View className="flex-1">
                               <Button
-                                title="Confirm"
+                                title="Confirm Submit"
                                 onPress={handleSubmitAllFeedback}
                                 loading={submittingFinal}
                               />

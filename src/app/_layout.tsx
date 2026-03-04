@@ -12,13 +12,12 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
-import { AppState, View } from 'react-native';
+import { AppState, Platform, View } from 'react-native';
 
 import { AlertProvider, DemoBanner, UpdateModal } from '@/src/components';
 import { LoadingState } from '@/src/components/LoadingState';
 import { ThemeProvider, useTheme } from '@/src/contexts/ThemeContext';
 import { useAuthStore } from '@/src/features/auth/store/authStore';
-import { device } from '@/src/hooks/useDevice';
 import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
 import { useSilentOTAUpdate } from '@/src/hooks/useSilentOTAUpdate';
 import { dismissUpdate, useUpdateCheck } from '@/src/hooks/useUpdateCheck';
@@ -43,7 +42,7 @@ export default function RootLayout() {
   }, [error]);
 
   if (!loaded) {
-    if (!device.isWeb) {
+    if (Platform.OS !== 'web') {
       return null;
     }
   }
@@ -91,14 +90,14 @@ function RootLayoutNav() {
       }
 
       const elapsed = Date.now() - startTime;
-      const minDisplayTime = device.isWeb ? 0 : 1000;
+      const minDisplayTime = Platform.OS === 'web' ? 0 : 1000;
 
       if (elapsed < minDisplayTime) {
         await new Promise((resolve) => setTimeout(resolve, minDisplayTime - elapsed));
       }
 
       setIsReady(true);
-      if (!device.isWeb) {
+      if (Platform.OS !== 'web') {
         try {
           await SplashScreen.hideAsync();
         } catch {
@@ -158,7 +157,7 @@ function RootLayoutNav() {
   }, [isLoggedIn, segments, isReady, isPublicRoute, router]);
 
   if (!isReady || (!isLoggedIn && !isPublicRoute && !isLoggingOut)) {
-    if (device.isWeb) {
+    if (Platform.OS === 'web') {
       return <LoadingState />;
     }
     return null;
@@ -168,7 +167,7 @@ function RootLayoutNav() {
     <View className="flex-1 bg-base">
       <StatusBar
         style={colorScheme === 'dark' ? 'light' : 'dark'}
-        translucent={device.isAndroid}
+        translucent={Platform.OS === 'android'}
         backgroundColor="transparent"
       />
       <Stack
@@ -186,7 +185,7 @@ function RootLayoutNav() {
       </Stack>
       <DemoBanner />
       <AlertProvider />
-      {appInfo && device.isAndroid && (
+      {appInfo && Platform.OS === 'android' && (
         <UpdateModal
           visible={showUpdateModal}
           updateType={updateType}

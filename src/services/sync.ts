@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import {
   fetchAttendancePercentage,
   fetchDateWiseAttendance,
@@ -27,7 +29,6 @@ import {
   VirtualLabCourse,
   VirtualLabExperiment,
 } from '@/src/features/virtual-labs/types';
-import { device } from '@/src/hooks/useDevice';
 
 import { getMonthEndDate, getMonthStartDate } from '../utils/dateHelpers';
 import { getItemAsync } from '../utils/secureStore';
@@ -147,7 +148,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
   isDemoAccount?: boolean;
 }> {
   const isOnline = await hasInternetConnection();
-  const isWeb = device.isWeb;
+  const isWeb = Platform.OS === 'web';
 
   // Secure store is the authoritative source for the currently logged-in user.
   // If credentials are absent there is no active session regardless of what

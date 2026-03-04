@@ -1,12 +1,11 @@
 import { useRouter } from 'expo-router';
 import { Download } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import { Header } from '@/src/components';
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { device } from '@/src/hooks/useDevice';
 import { useFileDownload } from '@/src/hooks/useFileDownload';
 import { useAlertStore } from '@/src/store/alertStore';
 
@@ -21,11 +20,18 @@ export default function PyqViewerScreen() {
 
   const [webViewLoading, setWebViewLoading] = useState(true);
 
-  const filename =
-    selectedPyq?.originalFileName ||
-    `${selectedPyq?.subjectName}_${selectedPyq?.year}.pdf`;
   const downloadUrl = selectedPyq?.downloadUrl ?? '';
   const mimeType = selectedPyq?.mimeType ?? '';
+
+  const MIME_TO_EXT: Record<string, string> = {
+    'application/pdf': 'pdf',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  };
+  const ext = MIME_TO_EXT[mimeType] ?? 'pdf';
+  const filename =
+    selectedPyq?.originalFileName ||
+    `${selectedPyq?.subjectName}_${selectedPyq?.year}.${ext}`;
   const { download, downloading } = useFileDownload({ downloadUrl, filename, mimeType });
 
   useEffect(() => {
@@ -42,7 +48,8 @@ export default function PyqViewerScreen() {
     );
   }
 
-  const viewUrl = selectedPyq.viewUrl;
+  const viewUrl = selectedPyq.viewUrl?.trim() ?? '';
+  const hasValidViewUrl = viewUrl.length > 0;
 
   const isDoc =
     mimeType === 'application/msword' ||
@@ -55,10 +62,27 @@ export default function PyqViewerScreen() {
       : 'DOCX'
     : 'PDF';
 
-  const useGoogleViewer = isDoc || device.isAndroid;
-  const pdfViewerUrl = useGoogleViewer
-    ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(viewUrl)}`
-    : viewUrl;
+  const useGoogleViewer = hasValidViewUrl && (isDoc || Platform.OS === 'android');
+  const pdfViewerUrl = hasValidViewUrl
+    ? useGoogleViewer
+      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(viewUrl)}`
+      : viewUrl
+    : '';
+  const originWhitelist = (() => {
+    if (!hasValidViewUrl) {
+      return ['https://docs.google.com'];
+    }
+
+    if (useGoogleViewer) {
+      return ['https://docs.google.com', 'https://docs.googleusercontent.com'];
+    }
+
+    try {
+      return [new URL(viewUrl).origin];
+    } catch {
+      return ['https://docs.google.com'];
+    }
+  })();
 
   const titleLine = `${selectedPyq.subjectName}${selectedPyq.year ? ` · ${selectedPyq.year}` : ''} [${fileTypeLabel}]`;
 
@@ -87,42 +111,51 @@ export default function PyqViewerScreen() {
       />
 
       <View className="flex-1 relative">
-        {webViewLoading && (
+        {hasValidViewUrl && webViewLoading && (
           <View className="absolute inset-0 z-10 bg-base items-center justify-center">
             <ActivityIndicator size="large" color={colors.cta} />
             <Text className="text-sm text-ink-500 mt-3 font-sans">Loading PDF...</Text>
           </View>
         )}
 
-        <WebView
-          source={{ uri: pdfViewerUrl }}
-          style={{ flex: 1 }}
-          onLoadStart={() => setWebViewLoading(true)}
-          onLoadEnd={() => setWebViewLoading(false)}
-          onError={() => {
-            setWebViewLoading(false);
-            showAlert({ title: 'Error', message: 'Failed to load PDF' });
-          }}
-          originWhitelist={['*']}
-          javaScriptEnabled
-          domStorageEnabled
-          scalesPageToFit
-          mixedContentMode="always"
-          androidLayerType="hardware"
-          allowFileAccess
-          allowFileAccessFromFileURLs
-          allowUniversalAccessFromFileURLs
-          injectedJavaScript={`
-            const meta = document.createElement('meta');
-            meta.setAttribute('content', 'width=device-width, initial-scale=1');
-            meta.setAttribute('name', 'viewport');
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            const style = document.createElement('style');
-            style.innerHTML = '.ndfHFb-c4YZDc-Wrql6b, .ndfHFb-c4YZDc, div[role="toolbar"], [aria-label="Pop-out"] { display: none !important; }';
-            document.head.appendChild(style);
-            true;
-          `}
-        />
+        {hasValidViewUrl ? (
+          <WebView
+            source={{ uri: pdfViewerUrl }}
+            style={{ flex: 1 }}
+            onLoadStart={() => setWebViewLoading(true)}
+            onLoadEnd={() => setWebViewLoading(false)}
+            onError={() => {
+              setWebViewLoading(false);
+              showAlert({ title: 'Error', message: 'Failed to load PDF' });
+            }}
+            originWhitelist={originWhitelist}
+            javaScriptEnabled
+            domStorageEnabled
+            scalesPageToFit
+            mixedContentMode="never"
+            androidLayerType="hardware"
+            injectedJavaScript={`
+              const meta = document.createElement('meta');
+              meta.setAttribute('content', 'width=device-width, initial-scale=1');
+              meta.setAttribute('name', 'viewport');
+              document.getElementsByTagName('head')[0].appendChild(meta);
+              const style = document.createElement('style');
+              style.innerHTML = '.ndfHFb-c4YZDc-Wrql6b, .ndfHFb-c4YZDc, div[role="toolbar"], [aria-label="Pop-out"] { display: none !important; }';
+              document.head.appendChild(style);
+              true;
+            `}
+          />
+        ) : (
+          <View className="flex-1 items-center justify-center px-6">
+            <Text className="text-base text-ink-700 dark:text-ink-300 font-sans-semi text-center">
+              Invalid or missing document URL.
+            </Text>
+            <Text className="text-sm text-ink-500 mt-2 text-center font-sans">
+              This file cannot be previewed right now. Please go back and try another
+              file.
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );

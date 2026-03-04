@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 
 import { Button, Header } from '@/src/components';
@@ -25,6 +25,20 @@ export default function FacultyRatingScreen() {
 
   const parsed = id ? parseFacultyId(id) : null;
 
+  const handleSuccess = useCallback(() => {
+    showAlert({ title: 'Success', message: 'Feedback submitted successfully!' });
+  }, [showAlert]);
+
+  const handleError = useCallback(
+    (message: string) => {
+      showAlert({ title: 'Error', message });
+      if (message === 'Failed to load faculty information') {
+        router.back();
+      }
+    },
+    [showAlert],
+  );
+
   const {
     faculty,
     feedbackQuestions,
@@ -40,15 +54,8 @@ export default function FacultyRatingScreen() {
     facCode: parsed?.facCode || null,
     subCode: parsed?.subCode || null,
     secId: parsed?.secId || null,
-    onSuccess: () => {
-      showAlert({ title: 'Success', message: 'Feedback submitted successfully!' });
-    },
-    onError: (message) => {
-      showAlert({ title: 'Error', message });
-      if (message === 'Failed to load faculty information') {
-        router.back();
-      }
-    },
+    onSuccess: handleSuccess,
+    onError: handleError,
   });
 
   const handleSaveFeedback = async () => {

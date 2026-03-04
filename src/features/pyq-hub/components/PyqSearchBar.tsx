@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import {
   Dimensions,
   Modal,
+  Platform,
   Pressable,
   Text,
   TouchableWithoutFeedback,
@@ -11,7 +12,6 @@ import {
 
 import { TextInput } from '@/src/components';
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { device } from '@/src/hooks/useDevice';
 
 import { usePyqStore } from '../store/pyqStore';
 import { PYQ_FILTER_OPTIONS, PyqSearchFilter } from '../types';
@@ -120,7 +120,7 @@ export function PyqSearchBar({ value, onChangeText }: PyqSearchBarProps) {
                       className={`flex-row items-center justify-between py-3 px-3.5 ${
                         isActive
                           ? 'bg-slate-100 dark:bg-slate-800'
-                          : device.isWeb
+                          : Platform.OS === 'web'
                             ? 'bg-transparent active:bg-slate-50 dark:active:bg-slate-900'
                             : 'bg-transparent'
                       }`}
