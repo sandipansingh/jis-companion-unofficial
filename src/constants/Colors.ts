@@ -18,6 +18,15 @@ const Colors = {
     primary: '#2B5BDB', // cobalt.500
     primaryLight: '#EEF3FF', // cobalt.50
 
+    // CTA (non-blue)
+    cta: '#334155', // ink.800
+    onCta: '#FFFFFF',
+    ctaSoft: '#E2E8F0', // ink.300
+
+    // Action alias (backward compatibility)
+    action: '#334155',
+    onAction: '#FFFFFF',
+
     // System
     success: '#10B981',
     warning: '#F59E0B',
@@ -79,6 +88,15 @@ const Colors = {
     // Primary/Brand
     primary: '#4C7EF3', // cobalt.400 (lighter for dark mode)
     primaryLight: '#0A2672', // cobalt.900 (darker background)
+
+    // CTA (non-blue)
+    cta: '#E2E8F0', // ink.300
+    onCta: '#0F172A',
+    ctaSoft: '#30363D', // dark border tone
+
+    // Action alias (backward compatibility)
+    action: '#E2E8F0',
+    onAction: '#0F172A',
 
     // System
     success: '#34D399', // success.400

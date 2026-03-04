@@ -74,7 +74,6 @@ export function CalendarStrip({
             onPress={() => onDatePress(date)}
             activeOpacity={0.7}
           >
-            {/* Day label */}
             <Text
               className="text-[10px] uppercase tracking-wider font-sans-semi"
               style={{
@@ -84,7 +83,6 @@ export function CalendarStrip({
               {getDayName(date)}
             </Text>
 
-            {/* Date circle */}
             <View
               className="w-[38px] h-[38px] rounded-full items-center justify-center"
               style={{
@@ -104,7 +102,6 @@ export function CalendarStrip({
               </Text>
             </View>
 
-            {/* Class count */}
             {attendance && attendance.rtCount > 0 && (
               <Text
                 className="text-[9px] text-ink-500 dark:text-ink-500 font-sans"

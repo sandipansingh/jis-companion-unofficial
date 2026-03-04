@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -17,6 +16,7 @@ import { useAuthStore } from '@/src/features/auth/store/authStore';
 import { useConnectStore } from '@/src/features/connect/store/connectStore';
 import { encryptPayload } from '@/src/features/connect/utils/payload';
 import { useSettingsStore } from '@/src/features/settings/store/settingsStore';
+import { device } from '@/src/hooks/useDevice';
 
 import { QRPayload, SocialProfile } from '../types';
 import { SocialInput } from './SocialInput';
@@ -109,14 +109,14 @@ export const MyQRView = React.memo(() => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={device.isIOS ? 'padding' : 'height'}
       className="flex-1"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      keyboardVerticalOffset={device.isIOS ? 100 : 0}
     >
       <ScrollView
         className="flex-1 p-4"
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: Platform.OS === 'web' ? 24 : 100 }}
+        contentContainerStyle={{ paddingBottom: device.isWeb ? 24 : 100 }}
       >
         <View className="items-center mb-8">
           <Pressable

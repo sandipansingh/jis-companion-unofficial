@@ -47,9 +47,11 @@ function SelectionPanel({
       >
         <View
           className="items-center justify-center w-[22px] h-[22px] rounded-full"
-          style={{ backgroundColor: colors.primary }}
+          style={{ backgroundColor: colors.cta }}
         >
-          <Text className="font-sans-bold text-[11px] text-white">{step}</Text>
+          <Text className="font-sans-bold text-[11px]" style={{ color: colors.onCta }}>
+            {step}
+          </Text>
         </View>
         <Text
           className="font-sans-bold text-sm tracking-[-0.2px]"
@@ -142,35 +144,11 @@ export default function CourseSelection() {
     handleProceed,
   } = useCourseSelectionData();
 
-  if (isDesktopWeb) {
-    if (loading && courses.length === 0) {
-      return (
-        <View className="flex-1 bg-base">
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
-          >
-            <ContentContainer maxWidth={1280}>
-              <Header title="Virtual Labs" showBackButton fallbackRoute="/(tabs)" />
-              <View className="items-center justify-center py-20 gap-3">
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text
-                  className="font-sans text-sm"
-                  style={{ color: colors.textSecondary }}
-                >
-                  Loading courses...
-                </Text>
-              </View>
-            </ContentContainer>
-          </ScrollView>
-        </View>
-      );
-    }
+  const canProceed = !!selectedCourse && !!selectedStream && !!selectedSemester;
 
-    const canProceed = !!selectedCourse && !!selectedStream && !!selectedSemester;
-
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -178,202 +156,203 @@ export default function CourseSelection() {
         >
           <ContentContainer maxWidth={960}>
             <Header title="Virtual Labs" showBackButton fallbackRoute="/(tabs)" />
-
-            {/* Breadcrumb */}
-            <View className="flex-row items-center gap-1.5 mb-6">
-              <FlaskConical size={16} color={colors.primary} />
-              <Text
-                className="font-sans-md text-[13px]"
-                style={{ color: colors.textSecondary }}
-              >
-                Lab Configuration
-              </Text>
-              {selectedCourse && (
-                <>
-                  <ChevronRight size={14} color={colors.border} />
-                  <Text
-                    className="font-sans-semi text-[13px]"
-                    numberOfLines={1}
-                    style={{ color: colors.text }}
-                  >
-                    {selectedCourse}
-                  </Text>
-                </>
-              )}
-              {selectedStream && (
-                <>
-                  <ChevronRight size={14} color={colors.border} />
-                  <Text
-                    className="font-sans-semi text-[13px]"
-                    numberOfLines={1}
-                    style={{ color: colors.text }}
-                  >
-                    {selectedStream}
-                  </Text>
-                </>
-              )}
-              {selectedSemester && (
-                <>
-                  <ChevronRight size={14} color={colors.border} />
-                  <Text
-                    className="font-sans-semi text-[13px]"
-                    style={{ color: colors.primary }}
-                  >
-                    Sem {selectedSemester}
-                  </Text>
-                </>
-              )}
-            </View>
-
-            {/* Three-step panels */}
-            <View className="flex-row items-start gap-5">
-              <SelectionPanel
-                title="Course"
-                step={1}
-                options={courseOptions}
-                selectedValue={selectedCourse}
-                onSelect={handleCourseSelect}
-                colors={colors}
-                isDark={isDark}
-              />
-
-              <SelectionPanel
-                title="Stream"
-                step={2}
-                options={streamOptions}
-                selectedValue={selectedStream}
-                onSelect={handleStreamSelect}
-                enabled={!!selectedCourse}
-                colors={colors}
-                isDark={isDark}
-              />
-
-              <SelectionPanel
-                title="Semester"
-                step={3}
-                options={semesterOptions}
-                selectedValue={selectedSemester}
-                onSelect={handleSemesterSelect}
-                enabled={!!selectedCourse && !!selectedStream}
-                colors={colors}
-                isDark={isDark}
-              />
-            </View>
-
-            <View className="items-end mt-5">
-              <Pressable
-                onPress={canProceed ? handleProceed : undefined}
-                disabled={!canProceed}
-                style={({ pressed, hovered }: any) => ({
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 8,
-                  paddingVertical: 12,
-                  paddingHorizontal: 24,
-                  borderRadius: 12,
-                  opacity: canProceed ? 1 : 0.55,
-                  backgroundColor: !canProceed
-                    ? colors.elevated
-                    : pressed
-                      ? colors.primary + 'CC'
-                      : hovered
-                        ? colors.primary + 'EE'
-                        : colors.primary,
-                  borderWidth: 1,
-                  borderColor: canProceed ? colors.primary : colors.border,
-                  cursor: canProceed ? 'pointer' : 'auto',
-                  transition: 'background-color 120ms, opacity 120ms',
-                })}
-                accessibilityRole="button"
-                accessibilityState={{ disabled: !canProceed }}
-              >
-                <FlaskConical
-                  size={16}
-                  color={canProceed ? '#fff' : colors.textTertiary}
-                />
+            {loading && courses.length === 0 ? (
+              <View className="items-center justify-center py-20 gap-3">
+                <ActivityIndicator size="large" color={colors.cta} />
                 <Text
-                  className="font-sans-semi text-sm"
-                  style={{ color: canProceed ? '#fff' : colors.textTertiary }}
+                  className="font-sans text-sm"
+                  style={{ color: colors.textSecondary }}
                 >
-                  View Experiments
+                  Loading courses...
                 </Text>
-              </Pressable>
-            </View>
+              </View>
+            ) : (
+              <>
+                <View className="flex-row items-center gap-1.5 mb-6">
+                  <FlaskConical size={16} color={colors.cta} />
+                  <Text
+                    className="font-sans-md text-[13px]"
+                    style={{ color: colors.textSecondary }}
+                  >
+                    Lab Configuration
+                  </Text>
+                  {selectedCourse && (
+                    <>
+                      <ChevronRight size={14} color={colors.border} />
+                      <Text
+                        className="font-sans-semi text-[13px]"
+                        numberOfLines={1}
+                        style={{ color: colors.text }}
+                      >
+                        {selectedCourse}
+                      </Text>
+                    </>
+                  )}
+                  {selectedStream && (
+                    <>
+                      <ChevronRight size={14} color={colors.border} />
+                      <Text
+                        className="font-sans-semi text-[13px]"
+                        numberOfLines={1}
+                        style={{ color: colors.text }}
+                      >
+                        {selectedStream}
+                      </Text>
+                    </>
+                  )}
+                  {selectedSemester && (
+                    <>
+                      <ChevronRight size={14} color={colors.border} />
+                      <Text
+                        className="font-sans-semi text-[13px]"
+                        style={{ color: colors.cta }}
+                      >
+                        Sem {selectedSemester}
+                      </Text>
+                    </>
+                  )}
+                </View>
+
+                <View className="flex-row items-start gap-5">
+                  <SelectionPanel
+                    title="Course"
+                    step={1}
+                    options={courseOptions}
+                    selectedValue={selectedCourse}
+                    onSelect={handleCourseSelect}
+                    colors={colors}
+                    isDark={isDark}
+                  />
+                  <SelectionPanel
+                    title="Stream"
+                    step={2}
+                    options={streamOptions}
+                    selectedValue={selectedStream}
+                    onSelect={handleStreamSelect}
+                    enabled={!!selectedCourse}
+                    colors={colors}
+                    isDark={isDark}
+                  />
+                  <SelectionPanel
+                    title="Semester"
+                    step={3}
+                    options={semesterOptions}
+                    selectedValue={selectedSemester}
+                    onSelect={handleSemesterSelect}
+                    enabled={!!selectedCourse && !!selectedStream}
+                    colors={colors}
+                    isDark={isDark}
+                  />
+                </View>
+
+                <View className="items-end mt-5">
+                  <Pressable
+                    onPress={canProceed ? handleProceed : undefined}
+                    disabled={!canProceed}
+                    style={({ pressed, hovered }: any) => ({
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 8,
+                      paddingVertical: 12,
+                      paddingHorizontal: 24,
+                      borderRadius: 12,
+                      opacity: canProceed ? 1 : 0.55,
+                      backgroundColor: !canProceed
+                        ? colors.elevated
+                        : pressed
+                          ? colors.cta + 'CC'
+                          : hovered
+                            ? colors.cta + 'EE'
+                            : colors.cta,
+                      borderWidth: 1,
+                      borderColor: canProceed ? colors.cta : colors.border,
+                      cursor: canProceed ? 'pointer' : 'auto',
+                      transition: 'background-color 120ms, opacity 120ms',
+                    })}
+                    accessibilityRole="button"
+                    accessibilityState={{ disabled: !canProceed }}
+                  >
+                    <FlaskConical
+                      size={16}
+                      color={canProceed ? colors.onCta : colors.textTertiary}
+                    />
+                    <Text
+                      className="font-sans-semi text-sm"
+                      style={{ color: canProceed ? colors.onCta : colors.textTertiary }}
+                    >
+                      View Experiments
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
+      ) : (
+        <>
+          <Header title="Virtual Labs" showBackButton />
+          {loading && courses.length === 0 ? (
+            <View className="flex-1 items-center justify-center gap-3">
+              <ActivityIndicator size="large" color={colors.cta} />
+              <Text className="text-sm text-ink-500 font-sans">Loading courses...</Text>
+            </View>
+          ) : (
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+              <View className="px-5 pt-6 pb-2 gap-5">
+                <HeaderCard
+                  variant="hero"
+                  title="Lab Configuration"
+                  description="Select your course details to view available virtual experiments."
+                  icon={FlaskConical}
+                />
 
-  if (loading && courses.length === 0) {
-    return (
-      <View className="flex-1 bg-base">
-        <Header title="Virtual Labs" showBackButton />
-        <View className="flex-1 items-center justify-center gap-3">
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-sm text-ink-500 font-sans">Loading courses...</Text>
-        </View>
-      </View>
-    );
-  }
+                <View className="gap-3">
+                  <CourseDropdown
+                    label="COURSE"
+                    value={selectedCourse}
+                    placeholder="Select Course"
+                    options={courseOptions}
+                    visible={courseDropdownVisible}
+                    onOpen={() => setCourseDropdownVisible(true)}
+                    onClose={() => setCourseDropdownVisible(false)}
+                    onSelect={handleCourseSelect}
+                  />
 
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Virtual Labs" showBackButton />
+                  {selectedCourse && (
+                    <CourseDropdown
+                      label="STREAM"
+                      value={selectedStream}
+                      placeholder="Select Stream"
+                      options={streamOptions}
+                      visible={streamDropdownVisible}
+                      onOpen={() => setStreamDropdownVisible(true)}
+                      onClose={() => setStreamDropdownVisible(false)}
+                      onSelect={handleStreamSelect}
+                    />
+                  )}
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-5 pt-6 pb-2 gap-5">
-          <HeaderCard
-            variant="hero"
-            title="Lab Configuration"
-            description="Select your course details to view available virtual experiments."
-            icon={FlaskConical}
-          />
+                  {selectedCourse && selectedStream && (
+                    <CourseDropdown
+                      label="SEMESTER"
+                      value={selectedSemester ? `Semester ${selectedSemester}` : ''}
+                      placeholder="Select Semester"
+                      options={semesterOptions}
+                      visible={semesterDropdownVisible}
+                      onOpen={() => setSemesterDropdownVisible(true)}
+                      onClose={() => setSemesterDropdownVisible(false)}
+                      onSelect={handleSemesterSelect}
+                    />
+                  )}
+                </View>
 
-          <View className="gap-3">
-            <CourseDropdown
-              label="COURSE"
-              value={selectedCourse}
-              placeholder="Select Course"
-              options={courseOptions}
-              visible={courseDropdownVisible}
-              onOpen={() => setCourseDropdownVisible(true)}
-              onClose={() => setCourseDropdownVisible(false)}
-              onSelect={handleCourseSelect}
-            />
-
-            {selectedCourse && (
-              <CourseDropdown
-                label="STREAM"
-                value={selectedStream}
-                placeholder="Select Stream"
-                options={streamOptions}
-                visible={streamDropdownVisible}
-                onOpen={() => setStreamDropdownVisible(true)}
-                onClose={() => setStreamDropdownVisible(false)}
-                onSelect={handleStreamSelect}
-              />
-            )}
-
-            {selectedCourse && selectedStream && (
-              <CourseDropdown
-                label="SEMESTER"
-                value={selectedSemester ? `Semester ${selectedSemester}` : ''}
-                placeholder="Select Semester"
-                options={semesterOptions}
-                visible={semesterDropdownVisible}
-                onOpen={() => setSemesterDropdownVisible(true)}
-                onClose={() => setSemesterDropdownVisible(false)}
-                onSelect={handleSemesterSelect}
-              />
-            )}
-          </View>
-
-          {selectedCourse && selectedStream && selectedSemester && (
-            <Button title="View Experiments" onPress={handleProceed} />
+                {canProceed && (
+                  <Button title="View Experiments" onPress={handleProceed} />
+                )}
+              </View>
+            </ScrollView>
           )}
-        </View>
-      </ScrollView>
+        </>
+      )}
     </View>
   );
 }

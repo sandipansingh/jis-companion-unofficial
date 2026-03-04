@@ -38,9 +38,12 @@ export default function ContactDetailScreen() {
         </Text>
         <TouchableOpacity
           onPress={() => router.back()}
-          className="mt-4 bg-cobalt-500 px-4 py-2 rounded-lg"
+          className="mt-4 px-4 py-2 rounded-lg"
+          style={{ backgroundColor: colors.cta }}
         >
-          <Text className="text-white font-sans-semi">Go Back</Text>
+          <Text className="font-sans-semi" style={{ color: colors.onCta }}>
+            Go Back
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -104,7 +107,6 @@ export default function ContactDetailScreen() {
         className="flex-1"
         contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
       >
-        {/* Profile Header */}
         <View className="items-center pt-8 pb-6 px-4 mx-4 mt-6 bg-surface dark:bg-surface rounded-2xl border border-border mb-4 shadow-sm">
           {profilePicUrl ? (
             <Image
@@ -113,8 +115,11 @@ export default function ContactDetailScreen() {
               className="w-28 h-28 rounded-3xl mb-4 border-[3px] border-border"
             />
           ) : (
-            <View className="w-28 h-28 rounded-3xl mb-4 bg-cobalt-500/10 items-center justify-center border-4 border-white dark:border-slate-800">
-              <Text className="text-cobalt-500 font-bold text-4xl">
+            <View
+              className="w-28 h-28 rounded-3xl mb-4 items-center justify-center border-4 border-white dark:border-slate-800"
+              style={{ backgroundColor: colors.ctaSoft }}
+            >
+              <Text className="font-bold text-4xl" style={{ color: colors.cta }}>
                 {getInitials(fullName)}
               </Text>
             </View>
@@ -134,12 +139,11 @@ export default function ContactDetailScreen() {
         </View>
 
         <View className="px-4 gap-4">
-          {/* Academic Stats */}
           {college && (college.branch || college.semester) && (
             <View className="flex-row gap-3">
               {college.branch && (
                 <View className="flex-1 bg-surface dark:bg-surface p-4 rounded-xl border border-border shadow-sm">
-                  <BookOpen size={20} color={colors.primary} className="mb-2" />
+                  <BookOpen size={20} color={colors.cta} className="mb-2" />
                   <Text className="text-xs text-ink-500 dark:text-ink-400 font-sans">
                     Branch
                   </Text>
@@ -153,7 +157,7 @@ export default function ContactDetailScreen() {
               )}
               {college.semester && (
                 <View className="flex-1 bg-surface dark:bg-surface p-4 rounded-xl border border-border shadow-sm">
-                  <Calendar size={20} color={colors.primary} className="mb-2" />
+                  <Calendar size={20} color={colors.cta} className="mb-2" />
                   <Text className="text-xs text-ink-500 dark:text-ink-400 font-sans">
                     Semester
                   </Text>
@@ -168,7 +172,6 @@ export default function ContactDetailScreen() {
             </View>
           )}
 
-          {/* Contact Information */}
           {contactInfo && (contactInfo.email || contactInfo.mobileNumber) && (
             <View className="bg-surface dark:bg-surface rounded-2xl p-5 border border-border shadow-sm">
               <Text className="text-sm font-sans-bold text-ink-400 uppercase tracking-wider mb-2">
@@ -176,7 +179,7 @@ export default function ContactDetailScreen() {
               </Text>
               {contactInfo.email && (
                 <InfoRow
-                  icon={<Mail size={20} color={colors.primary} />}
+                  icon={<Mail size={20} color={colors.cta} />}
                   label="Email Address"
                   value={contactInfo.email}
                   onPress={() => openUrl(`mailto:${contactInfo.email}`)}
@@ -185,7 +188,7 @@ export default function ContactDetailScreen() {
               )}
               {contactInfo.mobileNumber && (
                 <InfoRow
-                  icon={<Phone size={20} color={colors.primary} />}
+                  icon={<Phone size={20} color={colors.cta} />}
                   label="Phone Number"
                   value={contactInfo.mobileNumber}
                   onPress={() => openUrl(`tel:${contactInfo.mobileNumber}`)}
@@ -195,7 +198,6 @@ export default function ContactDetailScreen() {
             </View>
           )}
 
-          {/* Social Links */}
           {social && Object.values(social).some((v) => !!v) && (
             <View className="bg-surface dark:bg-surface rounded-2xl p-5 border border-border shadow-sm">
               <Text className="text-sm font-sans-bold text-ink-400 uppercase tracking-wider mb-2">
@@ -203,9 +205,7 @@ export default function ContactDetailScreen() {
               </Text>
               {social.linkedin && (
                 <InfoRow
-                  icon={
-                    <FontAwesome6 name="linkedin-in" size={20} color={colors.primary} />
-                  }
+                  icon={<FontAwesome6 name="linkedin-in" size={20} color={colors.cta} />}
                   label="LinkedIn"
                   value={social.linkedin}
                   onPress={() => openUrl(`https://linkedin.com/in/${social.linkedin}`)}
@@ -216,7 +216,7 @@ export default function ContactDetailScreen() {
               )}
               {social.github && (
                 <InfoRow
-                  icon={<FontAwesome6 name="github" size={20} color={colors.primary} />}
+                  icon={<FontAwesome6 name="github" size={20} color={colors.cta} />}
                   label="GitHub"
                   value={social.github}
                   onPress={() => openUrl(`https://github.com/${social.github}`)}
@@ -225,9 +225,7 @@ export default function ContactDetailScreen() {
               )}
               {social.x && (
                 <InfoRow
-                  icon={
-                    <FontAwesome6 name="x-twitter" size={20} color={colors.primary} />
-                  }
+                  icon={<FontAwesome6 name="x-twitter" size={20} color={colors.cta} />}
                   label="X (Twitter)"
                   value={social.x}
                   onPress={() => openUrl(`https://x.com/${social.x}`)}
@@ -236,7 +234,7 @@ export default function ContactDetailScreen() {
               )}
               {social.portfolio && (
                 <InfoRow
-                  icon={<Globe size={20} color={colors.primary} />}
+                  icon={<Globe size={20} color={colors.cta} />}
                   label="Portfolio"
                   value={social.portfolio.replace(/^https?:\/\//, '')}
                   onPress={() => social.portfolio && openUrl(social.portfolio)}
@@ -245,7 +243,7 @@ export default function ContactDetailScreen() {
               )}
               {social.discord && (
                 <InfoRow
-                  icon={<MessageCircle size={20} color={colors.primary} />}
+                  icon={<MessageCircle size={20} color={colors.cta} />}
                   label="Discord"
                   value={social.discord}
                   last={true}

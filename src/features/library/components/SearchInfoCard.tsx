@@ -16,8 +16,11 @@ export function SearchInfoCard() {
         elevation: 2,
       }}
     >
-      <View className="w-18 h-18 rounded-full bg-cobalt-50 dark:bg-elevated border border-border items-center justify-center mb-4">
-        <Search size={32} color={colors.primary} />
+      <View
+        className="w-18 h-18 rounded-full border border-border items-center justify-center mb-4"
+        style={{ backgroundColor: colors.ctaSoft }}
+      >
+        <Search size={32} color={colors.cta} />
       </View>
       <Text className="text-xl text-ink-900 dark:text-white mb-2 text-center font-display">
         Library Search

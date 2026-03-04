@@ -78,6 +78,13 @@
           "recordAudioAndroid": true
         }
       ],
+      [
+        "expo-file-system",
+        {
+          "supportsOpeningDocumentsInPlace": true,
+          "enableFileSharing": true
+        }
+      ],
       "expo-asset",
       "expo-video",
       "./plugins/withGradleMemory.cjs"

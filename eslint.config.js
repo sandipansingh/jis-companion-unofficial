@@ -24,12 +24,16 @@ export default [
       parser: tseslint.parser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
+        sourceType: 'module',
       },
     },
 
     settings: {
       react: {
         version: 'detect',
+      },
+      'import/resolver': {
+        typescript: true,
       },
     },
 
@@ -45,6 +49,7 @@ export default [
       'import/order': 'off',
       'simple-import-sort/imports': 'warn',
       'simple-import-sort/exports': 'warn',
+      'import/no-cycle': ['error', { maxDepth: Infinity }],
     },
   },
 

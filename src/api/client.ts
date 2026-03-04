@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { Platform } from 'react-native';
+
+import { device } from '@/src/hooks/useDevice';
 
 /**
  * Standard API response envelope returned by the official API.
@@ -19,7 +20,7 @@ export interface StandardApiResponse<T = string> {
   message: string;
 }
 
-const isWeb = Platform.OS === 'web';
+const isWeb = device.isWeb;
 const isProd = process.env.EXPO_PUBLIC_ENV === 'production';
 
 export const API_URL =

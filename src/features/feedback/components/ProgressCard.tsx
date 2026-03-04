@@ -29,11 +29,13 @@ export function ProgressCard({
       }}
     >
       <View
-        className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-cobalt-500/10"
+        className="absolute -top-10 -right-10 w-32 h-32 rounded-full"
+        style={{ backgroundColor: colors.elevated }}
         pointerEvents="none"
       />
       <View
-        className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-cobalt-300/10"
+        className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full"
+        style={{ backgroundColor: colors.overlay }}
         pointerEvents="none"
       />
 
@@ -46,7 +48,7 @@ export function ProgressCard({
             Complete feedback for all subjects
           </Text>
         </View>
-        <Text className="text-3xl text-cobalt-600 dark:text-cobalt-300 font-display-bold">
+        <Text className="text-3xl font-display-bold" style={{ color: colors.text }}>
           {progressPercentage}%
         </Text>
       </View>
@@ -80,7 +82,7 @@ export function ProgressCard({
 
       <View className="h-3 bg-ink-200 dark:bg-ink-800 rounded-full overflow-hidden">
         <LinearGradient
-          colors={[colors.cobalt[500], colors.cobalt[300]]}
+          colors={[colors.textSecondary, colors.textTertiary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={{

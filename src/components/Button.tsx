@@ -52,29 +52,50 @@ export function Button({
 
   const variantClass =
     variant === 'secondary'
-      ? 'bg-transparent border border-ink-300 dark:border-border'
+      ? 'bg-transparent'
       : variant === 'ghost'
         ? 'bg-transparent'
         : variant === 'danger'
           ? 'bg-danger'
-          : 'bg-cobalt-500';
+          : '';
+
+  const variantStyle =
+    variant === 'primary'
+      ? {
+          backgroundColor: colors.cta,
+          borderWidth: 1,
+          borderColor: colors.cta,
+        }
+      : variant === 'secondary'
+        ? {
+            borderWidth: 1,
+            borderColor: colors.border,
+          }
+        : undefined;
 
   const spinnerColor =
-    variant === 'primary' || variant === 'danger' ? '#fff' : colors.primary;
+    variant === 'primary' || variant === 'danger'
+      ? (colors.onCta ?? colors.textInverse)
+      : variant === 'ghost'
+        ? colors.cta
+        : colors.textSecondary;
 
   const textClass = size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-lg' : 'text-base';
 
-  const textColorClass =
-    variant === 'secondary'
-      ? 'text-ink-700 dark:text-ink-300'
-      : variant === 'ghost'
-        ? 'text-cobalt-500 dark:text-cobalt-400'
-        : 'text-white';
+  const textColorClass = variant === 'danger' ? 'text-white' : '';
+  const textColorStyle = {
+    color:
+      variant === 'primary' || variant === 'danger'
+        ? (colors.onCta ?? colors.textInverse)
+        : variant === 'ghost'
+          ? colors.cta
+          : colors.text,
+  };
 
   return (
     <TouchableOpacity
       className={`${containerBase} ${widthClass} ${variantClass} ${opacityClass} items-center justify-center ${className || ''}`}
-      style={style}
+      style={[variantStyle, style]}
       disabled={isDisabled}
       activeOpacity={0.82}
       {...props}
@@ -86,7 +107,7 @@ export function Button({
           {icon && iconPosition === 'left' && icon}
           <RNText
             className={`${textClass} ${textColorClass} font-sans-semi ${textClassName || ''}`}
-            style={textStyle}
+            style={[textColorStyle, textStyle]}
           >
             {title}
           </RNText>

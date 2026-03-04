@@ -34,8 +34,11 @@ export const ScannedContactsView = React.memo(() => {
               contentFit="cover"
             />
           ) : (
-            <View className="w-12 h-12 bg-cobalt-500/10 rounded-full items-center justify-center mr-4">
-              <Text className="text-cobalt-500 font-bold text-lg">
+            <View
+              className="w-12 h-12 rounded-full items-center justify-center mr-4"
+              style={{ backgroundColor: colors.ctaSoft }}
+            >
+              <Text className="font-bold text-lg" style={{ color: colors.cta }}>
                 {getInitials(fullName)}
               </Text>
             </View>

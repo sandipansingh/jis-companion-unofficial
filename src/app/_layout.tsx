@@ -1,4 +1,3 @@
-import 'react-native-reanimated';
 import '../../global.css';
 
 import {
@@ -13,12 +12,13 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
-import { AppState, Platform, View } from 'react-native';
+import { AppState, View } from 'react-native';
 
 import { AlertProvider, DemoBanner, UpdateModal } from '@/src/components';
 import { LoadingState } from '@/src/components/LoadingState';
 import { ThemeProvider, useTheme } from '@/src/contexts/ThemeContext';
 import { useAuthStore } from '@/src/features/auth/store/authStore';
+import { device } from '@/src/hooks/useDevice';
 import { useNetworkStatus } from '@/src/hooks/useNetworkStatus';
 import { useSilentOTAUpdate } from '@/src/hooks/useSilentOTAUpdate';
 import { dismissUpdate, useUpdateCheck } from '@/src/hooks/useUpdateCheck';
@@ -43,9 +43,7 @@ export default function RootLayout() {
   }, [error]);
 
   if (!loaded) {
-    // On web, expo-font injects @font-face CSS and fonts load via browser naturally.
-    // Don't block rendering — FOUT is better than a white screen.
-    if (Platform.OS !== 'web') {
+    if (!device.isWeb) {
       return null;
     }
   }
@@ -93,16 +91,14 @@ function RootLayoutNav() {
       }
 
       const elapsed = Date.now() - startTime;
-      // Only enforce minimum splash screen time on native (splash screen exists there).
-      // On web there is no splash screen, so skip the artificial delay.
-      const minDisplayTime = Platform.OS === 'web' ? 0 : 1000;
+      const minDisplayTime = device.isWeb ? 0 : 1000;
 
       if (elapsed < minDisplayTime) {
         await new Promise((resolve) => setTimeout(resolve, minDisplayTime - elapsed));
       }
 
       setIsReady(true);
-      if (Platform.OS !== 'web') {
+      if (!device.isWeb) {
         try {
           await SplashScreen.hideAsync();
         } catch {
@@ -162,7 +158,7 @@ function RootLayoutNav() {
   }, [isLoggedIn, segments, isReady, isPublicRoute, router]);
 
   if (!isReady || (!isLoggedIn && !isPublicRoute && !isLoggingOut)) {
-    if (Platform.OS === 'web') {
+    if (device.isWeb) {
       return <LoadingState />;
     }
     return null;
@@ -172,7 +168,7 @@ function RootLayoutNav() {
     <View className="flex-1 bg-base">
       <StatusBar
         style={colorScheme === 'dark' ? 'light' : 'dark'}
-        translucent={Platform.OS === 'android'}
+        translucent={device.isAndroid}
         backgroundColor="transparent"
       />
       <Stack
@@ -190,7 +186,7 @@ function RootLayoutNav() {
       </Stack>
       <DemoBanner />
       <AlertProvider />
-      {appInfo && Platform.OS === 'android' && (
+      {appInfo && device.isAndroid && (
         <UpdateModal
           visible={showUpdateModal}
           updateType={updateType}

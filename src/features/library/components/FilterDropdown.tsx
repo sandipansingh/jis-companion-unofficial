@@ -32,18 +32,22 @@ export function FilterDropdown({ selectedField, onSelectField }: FilterDropdownP
       {FILTER_OPTIONS.map((option) => (
         <TouchableOpacity
           key={option.field}
-          className={`flex-row items-center px-4 py-3.5 gap-3 ${
-            selectedField === option.field ? 'bg-cobalt-50 dark:bg-ink-800' : ''
-          }`}
+          className="flex-row items-center px-4 py-3.5 gap-3"
+          style={
+            selectedField === option.field
+              ? { backgroundColor: colors.ctaSoft }
+              : undefined
+          }
           onPress={() => onSelectField(option.field)}
           activeOpacity={0.7}
         >
           <Text
             className={`flex-1 text-sm ${
-              selectedField === option.field
-                ? 'text-cobalt-700 dark:text-white font-sans-semi'
-                : 'text-ink-800 dark:text-ink-300 font-sans'
+              selectedField === option.field ? 'font-sans-semi' : 'font-sans'
             }`}
+            style={{
+              color: selectedField === option.field ? colors.cta : colors.text,
+            }}
           >
             {option.label}
           </Text>

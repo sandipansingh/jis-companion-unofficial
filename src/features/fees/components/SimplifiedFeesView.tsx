@@ -9,7 +9,6 @@ import {
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   LayoutAnimation,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -19,12 +18,13 @@ import {
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { device } from '@/src/hooks/useDevice';
 import { useSafeAreaStore } from '@/src/store/safeAreaStore';
 
 import { FeeLedgerEntry } from '../types';
 import { FeesSummaryCard } from './FeesSummaryCard';
 
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+if (device.isAndroid && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
@@ -160,7 +160,7 @@ function MonthGroup({
   const [expanded, setExpanded] = useState(defaultExpanded);
 
   const toggle = useCallback(() => {
-    if (Platform.OS !== 'web') {
+    if (!device.isWeb) {
       LayoutAnimation.configureNext(
         LayoutAnimation.create(200, 'easeInEaseOut', 'opacity'),
       );
@@ -178,7 +178,7 @@ function MonthGroup({
         className="flex-row items-center px-4 py-3.5 gap-3"
         style={({ pressed }: any) => ({
           backgroundColor: pressed ? colors.elevated : 'transparent',
-          ...(Platform.OS === 'web'
+          ...(device.isWeb
             ? { cursor: 'pointer', transition: 'background-color 120ms' }
             : {}),
         })}
@@ -207,7 +207,6 @@ function MonthGroup({
         )}
       </Pressable>
 
-      {/* Rows */}
       {expanded ? (
         <View className="border-t border-border">
           {transactions.map((tx, idx) => (
@@ -270,11 +269,9 @@ export function SimplifiedFeesView({ transactions }: SimplifiedFeesViewProps) {
     </>
   );
 
-  if (isDesktopWeb) {
-    return <View className="gap-5">{content}</View>;
-  }
-
-  return (
+  return isDesktopWeb ? (
+    <View className="gap-5">{content}</View>
+  ) : (
     <ScrollView
       className="flex-1"
       contentContainerStyle={{

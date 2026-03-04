@@ -20,8 +20,11 @@ export function SearchResultsHeader({ count }: SearchResultsHeaderProps) {
         elevation: 2,
       }}
     >
-      <View className="w-10 h-10 rounded-full bg-cobalt-50 dark:bg-elevated border border-border items-center justify-center">
-        <Sparkles size={18} color={colors.primary} />
+      <View
+        className="w-10 h-10 rounded-full border border-border items-center justify-center"
+        style={{ backgroundColor: colors.ctaSoft }}
+      >
+        <Sparkles size={18} color={colors.cta} />
       </View>
       <View>
         <Text className="text-base text-ink-900 dark:text-white font-display">

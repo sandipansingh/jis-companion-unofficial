@@ -25,7 +25,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "check": "prettier --check .",
-    "lint:strict": "eslint . --max-warnings=0"
+    "lint:strict": "eslint . --max-warnings=0",
+    "check:cycles": "madge --extensions ts,tsx --circular .",
+    "graph:deps": "madge --extensions ts,tsx --image dependency-graph.png ."
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -93,10 +95,12 @@
     "bestzip": "^2.2.1",
     "eslint": "^9.39.3",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
+    "madge": "^8.0.0",
     "prettier": "^3.8.1",
     "react-test-renderer": "19.1.0",
     "rimraf": "^6.1.2",

@@ -43,14 +43,12 @@ export default function ConnectScreen() {
     return () => clearTimeout(timer);
   }, [studentId, fetchSocialProfile]);
 
-  // Desktop: fetch both panels on mount since both are always visible
   useEffect(() => {
     if (!isDesktopWeb || !studentId) return;
     const t = setTimeout(() => fetchScannedContacts(studentId), 50);
     return () => clearTimeout(t);
   }, [isDesktopWeb, studentId, fetchScannedContacts]);
 
-  // Mobile: fetch scanned contacts only when that tab is active
   useFocusEffect(
     useCallback(() => {
       if (isDesktopWeb || !studentId || activeTab !== 'scanned') return;
@@ -59,9 +57,9 @@ export default function ConnectScreen() {
     }, [isDesktopWeb, studentId, activeTab, fetchScannedContacts]),
   );
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerClassName="px-8 pb-20"
@@ -79,9 +77,9 @@ export default function ConnectScreen() {
                   accessibilityLabel="Scan QR"
                   accessibilityRole="button"
                 >
-                  <ScanLine size={16} color={colors.primary} />
+                  <ScanLine size={16} color={colors.cta} />
                   <Text
-                    style={{ color: colors.primary }}
+                    style={{ color: colors.cta }}
                     className="text-[13px] font-sans-semi"
                   >
                     Scan QR
@@ -93,9 +91,7 @@ export default function ConnectScreen() {
             <View className="flex-row items-start gap-6">
               <View
                 className="rounded-[20px] border border-border overflow-hidden bg-surface"
-                style={{
-                  flex: 5,
-                }}
+                style={{ flex: 5 }}
               >
                 <View className="px-5 pt-[18px] pb-3.5 border-b border-border">
                   <Text
@@ -109,16 +105,14 @@ export default function ConnectScreen() {
                   <MyQRView />
                 ) : (
                   <View className="min-h-80 items-center justify-center">
-                    <ActivityIndicator size="large" color={colors.primary} />
+                    <ActivityIndicator size="large" color={colors.cta} />
                   </View>
                 )}
               </View>
 
               <View
                 className="rounded-[20px] border border-border overflow-hidden min-h-[480px] bg-surface"
-                style={{
-                  flex: 7,
-                }}
+                style={{ flex: 7 }}
               >
                 <View className="px-5 pt-[18px] pb-3.5 border-b border-border">
                   <Text
@@ -133,51 +127,49 @@ export default function ConnectScreen() {
             </View>
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
+      ) : (
+        <>
+          <Header
+            title="Connect"
+            actionElement={
+              <TouchableOpacity
+                className="items-center justify-center p-2"
+                onPress={() => router.push('/connect/scan')}
+                accessibilityLabel="Scan QR"
+                accessibilityRole="button"
+              >
+                <ScanLine size={24} color={colorScheme === 'dark' ? 'white' : 'black'} />
+              </TouchableOpacity>
+            }
+            showBackButton
+          />
 
-  return (
-    <View className="flex-1 bg-base">
-      <Header
-        title="Connect"
-        actionElement={
-          <TouchableOpacity
-            className="items-center justify-center p-2"
-            onPress={() => router.push('/connect/scan')}
-            accessibilityLabel="Scan QR"
-            accessibilityRole="button"
-          >
-            <ScanLine size={24} color={colorScheme === 'dark' ? 'white' : 'black'} />
-          </TouchableOpacity>
-        }
-        showBackButton
-      />
+          <View className="p-4">
+            <ConnectTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          </View>
 
-      <View className="p-4">
-        <ConnectTabs activeTab={activeTab} onTabChange={setActiveTab} />
-      </View>
-
-      <View className="flex-1">
-        <View
-          className="flex-1"
-          style={{ display: activeTab === 'my-qr' ? 'flex' : 'none' }}
-        >
-          {showMyQr && hasFetchedSocialProfile ? (
-            <MyQRView />
-          ) : (
-            <View className="flex-1 items-center justify-center">
-              <ActivityIndicator size="large" />
+          <View className="flex-1">
+            <View
+              className="flex-1"
+              style={{ display: activeTab === 'my-qr' ? 'flex' : 'none' }}
+            >
+              {showMyQr && hasFetchedSocialProfile ? (
+                <MyQRView />
+              ) : (
+                <View className="flex-1 items-center justify-center">
+                  <ActivityIndicator size="large" />
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        <View
-          className="flex-1"
-          style={{ display: activeTab === 'scanned' ? 'flex' : 'none' }}
-        >
-          <ScannedContactsView />
-        </View>
-      </View>
+            <View
+              className="flex-1"
+              style={{ display: activeTab === 'scanned' ? 'flex' : 'none' }}
+            >
+              <ScannedContactsView />
+            </View>
+          </View>
+        </>
+      )}
     </View>
   );
 }

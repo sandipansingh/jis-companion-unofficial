@@ -12,10 +12,16 @@ interface VirtualLabsState {
   error: string | null;
   isOnline: boolean;
   fromCache: boolean;
+  selectionCourse: string;
+  selectionStream: string;
+  selectionSemester: string;
 
   fetchCourses: () => Promise<void>;
   fetchExperiments: (course: string, stream: string, semester: string) => Promise<void>;
   setSelectedCourse: (course: VirtualLabCourse | null) => void;
+  setSelectionCourse: (course: string) => void;
+  setSelectionStream: (stream: string) => void;
+  setSelectionSemester: (semester: string) => void;
   clearError: () => void;
   clearVirtualLabsData: () => void;
 }
@@ -28,6 +34,10 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
   error: null,
   isOnline: true,
   fromCache: false,
+
+  selectionCourse: '',
+  selectionStream: '',
+  selectionSemester: '',
 
   fetchCourses: async () => {
     set({ loading: true, error: null });
@@ -69,6 +79,18 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
     set({ selectedCourse: course, experiments: [] });
   },
 
+  setSelectionCourse: (course: string) => {
+    set({ selectionCourse: course, selectionStream: '', selectionSemester: '' });
+  },
+
+  setSelectionStream: (stream: string) => {
+    set({ selectionStream: stream, selectionSemester: '' });
+  },
+
+  setSelectionSemester: (semester: string) => {
+    set({ selectionSemester: semester });
+  },
+
   clearError: () => {
     set({ error: null });
   },
@@ -81,6 +103,9 @@ export const useVirtualLabsStore = create<VirtualLabsState>((set) => ({
       loading: false,
       error: null,
       fromCache: false,
+      selectionCourse: '',
+      selectionStream: '',
+      selectionSemester: '',
     });
   },
 }));

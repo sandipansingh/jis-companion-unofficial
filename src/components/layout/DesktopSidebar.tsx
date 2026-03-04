@@ -55,12 +55,10 @@ const PRIMARY_NAV: NavItem[] = [
 
 function isNavItemActive(routeName: string, pathname: string): boolean {
   if (routeName === 'index') {
-    // Home is active at the root or the (tabs) group root
     return (
       pathname === '/' || pathname === '/(tabs)' || /^\/(\(tabs\))?\/?$/.test(pathname)
     );
   }
-  // Match exact segment e.g. pathname "/academics" or "/(tabs)/academics"
   return pathname.endsWith(`/${routeName}`) || pathname.includes(`/${routeName}/`);
 }
 
@@ -132,9 +130,7 @@ export function DesktopSidebar() {
 
   return (
     <View className="w-[240px] border-r border-border bg-surface pt-8 pb-6 px-4 flex-col justify-between web:min-h-screen">
-      {/* Top section */}
       <View>
-        {/* Branding */}
         <View className="px-3 mb-8">
           <Text className="text-base font-sans-bold text-text leading-[22px]">
             JIS Companion

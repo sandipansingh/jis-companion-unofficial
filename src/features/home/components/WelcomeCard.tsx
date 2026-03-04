@@ -85,8 +85,11 @@ export function WelcomeCard({
             {firstName}
           </Text>
           <View className="flex-row items-center gap-1.5 mt-2 flex-wrap">
-            <View className="bg-cobalt-50 dark:bg-cobalt-900/30 rounded-full px-2.5 py-0.5 border border-cobalt-100 dark:border-cobalt-800/50">
-              <Text className="text-[11px] text-cobalt-600 dark:text-cobalt-300 font-sans-md">
+            <View
+              className="rounded-full px-2.5 py-0.5 border"
+              style={{ backgroundColor: colors.ctaSoft, borderColor: colors.border }}
+            >
+              <Text className="text-[11px] font-sans-md" style={{ color: colors.cta }}>
                 {courseName}
               </Text>
             </View>
@@ -121,8 +124,11 @@ export function WelcomeCard({
                 }}
               />
             ) : (
-              <View className="w-16 h-16 rounded-2xl bg-cobalt-500 items-center justify-center border-2 border-border">
-                <Text className="text-xl text-white font-display">
+              <View
+                className="w-16 h-16 rounded-2xl items-center justify-center border-2 border-border"
+                style={{ backgroundColor: colors.cta }}
+              >
+                <Text className="text-xl font-display" style={{ color: colors.onCta }}>
                   {getInitials(userName)}
                 </Text>
               </View>
@@ -148,7 +154,7 @@ export function WelcomeCard({
             Attendance
           </Text>
           {loadingAttendance ? (
-            <ActivityIndicator size="small" color={colors.primary} />
+            <ActivityIndicator size="small" color={colors.cta} />
           ) : (
             <Text
               className="text-3xl font-display-bold"
@@ -178,7 +184,7 @@ export function WelcomeCard({
             Classes
           </Text>
           {loadingAttendance ? (
-            <ActivityIndicator size="small" color={colors.primary} />
+            <ActivityIndicator size="small" color={colors.cta} />
           ) : (
             <View className="flex-row items-end gap-1">
               <Text className="text-3xl text-ink-950 dark:text-ink-100 font-display-bold">

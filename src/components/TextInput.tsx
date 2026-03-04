@@ -2,7 +2,6 @@ import { Eye, EyeOff, LucideIcon } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import {
   Animated,
-  Platform,
   Text,
   TextInput as RNTextInput,
   TextInputProps,
@@ -11,22 +10,27 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { device } from '@/src/hooks/useDevice';
 
 interface CustomTextInputProps extends TextInputProps {
   icon?: LucideIcon;
+  iconColor?: string;
   isPassword?: boolean;
   showPasswordToggle?: boolean;
   label?: string;
   error?: string;
+  disableFocusStyle?: boolean;
 }
 
 export function TextInput({
   icon,
+  iconColor,
   isPassword,
   showPasswordToggle = true,
   label,
   error,
   style,
+  disableFocusStyle,
   ...props
 }: CustomTextInputProps) {
   const { colors } = useTheme();
@@ -36,56 +40,62 @@ export function TextInput({
 
   const handleFocus: NonNullable<TextInputProps['onFocus']> = (e) => {
     setIsFocused(true);
-    Animated.timing(borderAnim, {
-      toValue: 1,
-      duration: 180,
-      useNativeDriver: false,
-    }).start();
+    if (!disableFocusStyle) {
+      Animated.timing(borderAnim, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: false,
+      }).start();
+    }
     props.onFocus?.(e);
   };
 
   const handleBlur: NonNullable<TextInputProps['onBlur']> = (e) => {
     setIsFocused(false);
-    Animated.timing(borderAnim, {
-      toValue: 0,
-      duration: 180,
-      useNativeDriver: false,
-    }).start();
+    if (!disableFocusStyle) {
+      Animated.timing(borderAnim, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: false,
+      }).start();
+    }
     props.onBlur?.(e);
   };
 
   const borderColor = borderAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.overlay, colors.primary],
+    outputRange: [colors.overlay, colors.textSecondary],
   });
 
   const IconComponent = icon;
 
-  const Container = (Platform.OS === 'web' ? View : Animated.View) as any;
-  const containerProps =
-    Platform.OS === 'web'
-      ? {
-          style: {
-            borderColor: isFocused ? colors.primary : colors.overlay,
-            borderWidth: isFocused ? 1.5 : 1,
-            shadowColor: isFocused ? colors.primary : 'transparent',
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: isFocused ? 0.14 : 0,
-            shadowRadius: isFocused ? 6 : 0,
-            elevation: isFocused ? 2 : 0,
-          },
-        }
-      : {
-          style: {
-            borderColor,
-            borderWidth: isFocused ? 1.5 : 1,
-            shadowColor: isFocused ? colors.primary : 'transparent',
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: isFocused ? 0.14 : 0,
-            shadowRadius: isFocused ? 6 : 0,
-            elevation: isFocused ? 2 : 0,
-          },
-        };
+  const Container = (device.isWeb ? View : Animated.View) as any;
+  const containerProps = device.isWeb
+    ? {
+        style: {
+          borderColor:
+            isFocused && !disableFocusStyle ? colors.textSecondary : colors.overlay,
+          borderWidth: isFocused && !disableFocusStyle ? 1.5 : 1,
+          shadowColor:
+            isFocused && !disableFocusStyle ? colors.textSecondary : 'transparent',
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: isFocused && !disableFocusStyle ? 0.14 : 0,
+          shadowRadius: isFocused && !disableFocusStyle ? 6 : 0,
+          elevation: isFocused && !disableFocusStyle ? 2 : 0,
+        },
+      }
+    : {
+        style: {
+          borderColor: disableFocusStyle ? colors.overlay : borderColor,
+          borderWidth: isFocused && !disableFocusStyle ? 1.5 : 1,
+          shadowColor:
+            isFocused && !disableFocusStyle ? colors.textSecondary : 'transparent',
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: isFocused && !disableFocusStyle ? 0.14 : 0,
+          shadowRadius: isFocused && !disableFocusStyle ? 6 : 0,
+          elevation: isFocused && !disableFocusStyle ? 2 : 0,
+        },
+      };
 
   return (
     <View className="w-full gap-1.5">
@@ -101,7 +111,12 @@ export function TextInput({
         {IconComponent && (
           <IconComponent
             size={18}
-            color={isFocused ? colors.primary : colors.textTertiary}
+            color={
+              iconColor ||
+              (isFocused && !disableFocusStyle
+                ? colors.textSecondary
+                : colors.textTertiary)
+            }
             style={{ marginRight: 10 }}
           />
         )}
@@ -114,7 +129,7 @@ export function TextInput({
               fontFamily: 'Inter_400Regular',
               height: '100%',
             },
-            Platform.OS === 'web' && ({ outlineStyle: 'none' } as any),
+            device.isWeb && ({ outlineStyle: 'none' } as any),
             style,
           ]}
           placeholderTextColor={colors.textTertiary}

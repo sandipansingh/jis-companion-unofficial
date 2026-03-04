@@ -1,5 +1,4 @@
 import * as SQLite from 'expo-sqlite';
-import { Platform } from 'react-native';
 
 import {
   AttendanceData,
@@ -14,6 +13,7 @@ import {
   VirtualLabCourse,
   VirtualLabExperiment,
 } from '@/src/features/virtual-labs/types';
+import { device } from '@/src/hooks/useDevice';
 
 export interface AttendancePercentageData extends AttendanceData {
   studentId: string;
@@ -123,7 +123,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
   };
 
   const setupDatabase = async (database: SQLite.SQLiteDatabase) => {
-    if (Platform.OS !== 'web') {
+    if (!device.isWeb) {
       await database.execAsync(`PRAGMA journal_mode = WAL;`);
     }
 
@@ -162,7 +162,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
       return db;
     } catch (error: any) {
       if (
-        Platform.OS === 'web' &&
+        device.isWeb &&
         (error?.message?.includes('Invalid VFS state') ||
           error?.message?.includes('Access Handles cannot be created') ||
           error?.message?.includes('NoModificationAllowedError'))

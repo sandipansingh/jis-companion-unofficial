@@ -15,9 +15,9 @@ export default function Fees() {
   const { feeData, loading, error, refreshFeeData } = useFeesData();
   const { viewMode, setViewMode } = useFeesViewMode();
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -25,7 +25,6 @@ export default function Fees() {
         >
           <ContentContainer maxWidth={1100}>
             <Header title="Fees & Dues" />
-
             {loading ? (
               <LoadingState message="Loading fee details..." />
             ) : error ? (
@@ -44,26 +43,23 @@ export default function Fees() {
             )}
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Fees & Dues" />
-
-      {loading ? (
-        <LoadingState message="Loading fee details..." />
-      ) : error ? (
-        <ErrorState message={error} onRetry={refreshFeeData} />
-      ) : feeData.length === 0 ? (
-        <EmptyState message="No transactions found" />
       ) : (
         <>
-          {viewMode === 'college' ? (
-            <CollegeLedgerView transactions={feeData} />
+          <Header title="Fees & Dues" />
+          {loading ? (
+            <LoadingState message="Loading fee details..." />
+          ) : error ? (
+            <ErrorState message={error} onRetry={refreshFeeData} />
+          ) : feeData.length === 0 ? (
+            <EmptyState message="No transactions found" />
           ) : (
-            <SimplifiedFeesView transactions={feeData} />
+            <>
+              {viewMode === 'college' ? (
+                <CollegeLedgerView transactions={feeData} />
+              ) : (
+                <SimplifiedFeesView transactions={feeData} />
+              )}
+            </>
           )}
         </>
       )}

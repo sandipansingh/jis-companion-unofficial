@@ -48,6 +48,7 @@ yarn-error.*
 note.txt
 structure.txt
 unofficial-api.yaml
+dependency-graph.png
 
 # build outputs
 /builds

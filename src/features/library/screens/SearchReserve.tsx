@@ -51,9 +51,9 @@ export default function SearchReserve() {
     handleReserve,
   } = useSearchReserveData();
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -77,6 +77,7 @@ export default function SearchReserve() {
                   onChangeText={setSearchQuery}
                   onSubmitEditing={handleSearch}
                   returnKeyType="search"
+                  disableFocusStyle
                 />
 
                 <View className="bg-surface rounded-2xl border border-border overflow-hidden">
@@ -138,18 +139,20 @@ export default function SearchReserve() {
                     paddingVertical: 12,
                     borderRadius: 12,
                     backgroundColor: pressed
-                      ? colors.primary + 'CC'
+                      ? colors.cta + 'CC'
                       : hovered
-                        ? colors.primary + 'EE'
-                        : colors.primary,
-
+                        ? colors.cta + 'EE'
+                        : colors.cta,
                     cursor: 'pointer' as any,
                     transition: 'background-color 120ms',
                   })}
                   accessibilityRole="button"
                 >
-                  <Search size={16} color="#fff" />
-                  <Text className="text-sm font-semibold text-white font-sans">
+                  <Search size={16} color={colors.onCta} />
+                  <Text
+                    className="text-sm font-semibold font-sans"
+                    style={{ color: colors.onCta }}
+                  >
                     Search
                   </Text>
                 </Pressable>
@@ -158,7 +161,7 @@ export default function SearchReserve() {
               <View className="flex-1 min-w-0 gap-3">
                 {searchLoading ? (
                   <View className="items-center py-12 gap-3">
-                    <ActivityIndicator size="large" color={colors.primary} />
+                    <ActivityIndicator size="large" color={colors.cta} />
                     <Text className="text-sm text-ink-500 font-sans">
                       Searching library...
                     </Text>
@@ -207,72 +210,74 @@ export default function SearchReserve() {
             </View>
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
+      ) : (
+        <>
+          <Header title="Search & Reserve" showBackButton />
 
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Search & Reserve" showBackButton />
+          <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+            <View className="p-4 gap-4">
+              <SearchInfoCard />
 
-      <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
-        <View className="p-4 gap-4">
-          <SearchInfoCard />
+              <View className="flex-row items-center gap-2">
+                <View className="flex-1">
+                  <TextInput
+                    icon={Search}
+                    placeholder="Search for books..."
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    onSubmitEditing={handleSearch}
+                    returnKeyType="search"
+                    disableFocusStyle
+                  />
+                </View>
+                <TouchableOpacity
+                  className="w-12 h-12 rounded-xl border border-border items-center justify-center"
+                  style={{ backgroundColor: colors.ctaSoft }}
+                  onPress={() => setShowFilterDropdown(!showFilterDropdown)}
+                  activeOpacity={0.7}
+                >
+                  <Filter size={18} color={colors.cta} />
+                </TouchableOpacity>
+              </View>
 
-          <View className="flex-row items-center gap-2">
-            <View className="flex-1">
-              <TextInput
-                icon={Search}
-                placeholder="Search for books..."
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                onSubmitEditing={handleSearch}
-                returnKeyType="search"
-              />
-            </View>
-            <TouchableOpacity
-              className="w-12 h-12 rounded-xl bg-cobalt-50 dark:bg-elevated border border-border items-center justify-center"
-              onPress={() => setShowFilterDropdown(!showFilterDropdown)}
-              activeOpacity={0.7}
-            >
-              <Filter size={18} color={isDark ? colors.textTertiary : colors.primary} />
-            </TouchableOpacity>
-          </View>
-
-          {showFilterDropdown && (
-            <FilterDropdown
-              selectedField={searchField}
-              onSelectField={(field) => {
-                setSearchField(field);
-                setShowFilterDropdown(false);
-              }}
-            />
-          )}
-
-          {searchLoading ? (
-            <View className="items-center py-12 gap-3">
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text className="text-sm text-ink-500 font-sans">Searching library...</Text>
-            </View>
-          ) : searchResults.length > 0 ? (
-            <>
-              <SearchResultsHeader count={searchResults.length} />
-              {searchResults.map((item, index) => (
-                <SearchBookCard
-                  key={`${item.sl_no}-${index}`}
-                  book={item}
-                  onReserve={handleReserve}
-                  isDemoUser={isDemoUser}
+              {showFilterDropdown && (
+                <FilterDropdown
+                  selectedField={searchField}
+                  onSelectField={(field) => {
+                    setSearchField(field);
+                    setShowFilterDropdown(false);
+                  }}
                 />
-              ))}
-            </>
-          ) : hasSearched ? (
-            <NoResultsView />
-          ) : null}
+              )}
 
-          <View style={{ height: bottomOffset + 20 }} />
-        </View>
-      </ScrollView>
+              {searchLoading ? (
+                <View className="items-center py-12 gap-3">
+                  <ActivityIndicator size="large" color={colors.cta} />
+                  <Text className="text-sm text-ink-500 font-sans">
+                    Searching library...
+                  </Text>
+                </View>
+              ) : searchResults.length > 0 ? (
+                <>
+                  <SearchResultsHeader count={searchResults.length} />
+                  {searchResults.map((item, index) => (
+                    <SearchBookCard
+                      key={`${item.sl_no}-${index}`}
+                      book={item}
+                      onReserve={handleReserve}
+                      isDemoUser={isDemoUser}
+                    />
+                  ))}
+                </>
+              ) : hasSearched ? (
+                <NoResultsView />
+              ) : null}
+
+              <View style={{ height: bottomOffset + 20 }} />
+            </View>
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 }

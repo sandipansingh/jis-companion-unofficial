@@ -15,7 +15,7 @@ export function LegalSection({ title, children, isHeader }: LegalSectionProps) {
           {title}
         </Text>
         <Text className="text-xs text-ink-500 dark:text-ink-400 font-sans">
-          Effective Date: February 21, 2026
+          Effective Date: March 4, 2026
         </Text>
         {children}
       </View>

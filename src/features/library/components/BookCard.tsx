@@ -23,15 +23,22 @@ export function BookCard({ book }: BookCardProps) {
         elevation: 2,
       }}
     >
-      <View className="w-16 h-16 rounded-xl bg-cobalt-50 dark:bg-elevated border border-border items-center justify-center">
-        <Book size={28} color={colors.primary} />
+      <View
+        className="w-16 h-16 rounded-xl border border-border items-center justify-center"
+        style={{ backgroundColor: colors.ctaSoft }}
+      >
+        <Book size={28} color={colors.cta} />
       </View>
 
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1.5">
-          <View className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-full px-2.5 py-0.5">
+          <View
+            className="border border-border rounded-full px-2.5 py-0.5"
+            style={{ backgroundColor: colors.ctaSoft }}
+          >
             <Text
-              className="text-[10px] text-cobalt-600 dark:text-cobalt-300 uppercase tracking-wider font-sans-semi"
+              className="text-[10px] uppercase tracking-wider font-sans-semi"
+              style={{ color: colors.cta }}
               numberOfLines={1}
             >
               {book.acc_type}

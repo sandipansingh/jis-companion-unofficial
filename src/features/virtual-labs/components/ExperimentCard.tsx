@@ -29,8 +29,11 @@ export function ExperimentCard({
       }}
     >
       <View className="flex-row items-center gap-3 mb-3">
-        <View className="w-10 h-10 rounded-xl bg-cobalt-50 dark:bg-ink-800 border border-border items-center justify-center">
-          <FlaskConical size={18} color={colors.primary} />
+        <View
+          className="w-10 h-10 rounded-xl border border-border items-center justify-center"
+          style={{ backgroundColor: colors.ctaSoft }}
+        >
+          <FlaskConical size={18} color={colors.cta} />
         </View>
         <View className="flex-1 gap-1">
           <View className="bg-ink-100 dark:bg-ink-800 rounded-full px-2.5 py-0.5 self-start">
@@ -51,12 +54,13 @@ export function ExperimentCard({
       </Text>
 
       <TouchableOpacity
-        className="flex-row items-center justify-center gap-2 bg-cobalt-50 dark:bg-ink-900 border border-border rounded-xl py-2.5"
+        className="flex-row items-center justify-center gap-2 rounded-xl py-2.5"
+        style={{ backgroundColor: colors.ctaSoft }}
         onPress={onPress}
         activeOpacity={0.7}
       >
-        <PlayCircle size={16} color={colors.primary} />
-        <Text className="text-sm text-cobalt-600 dark:text-cobalt-400 font-sans-semi">
+        <PlayCircle size={16} color={colors.cta} />
+        <Text className="text-sm font-sans-semi" style={{ color: colors.cta }}>
           Start Simulation
         </Text>
       </TouchableOpacity>

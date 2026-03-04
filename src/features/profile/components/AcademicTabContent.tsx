@@ -29,7 +29,7 @@ export function AcademicTabContent({
       {hasAcademicHistoryData() && (
         <View className="mt-1 mb-4">
           <View className="flex-row items-center gap-2 mb-2 pb-1">
-            <Briefcase size={16} color={colors.primary} />
+            <Briefcase size={16} color={colors.cta} />
             <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
               Academic History
             </Text>
@@ -57,7 +57,7 @@ export function AcademicTabContent({
       {hasSubjectMarks() && (
         <View className="mt-1 mb-4">
           <View className="flex-row items-center gap-2 mb-2 pb-1">
-            <Calculator size={16} color={colors.primary} />
+            <Calculator size={16} color={colors.cta} />
             <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
               Class XII Marks
             </Text>
@@ -97,7 +97,7 @@ export function AcademicTabContent({
 
       <View className="mt-1">
         <View className="flex-row items-center gap-2 mb-2 pb-1">
-          <Award size={16} color={colors.primary} />
+          <Award size={16} color={colors.cta} />
           <Text className="text-sm text-ink-900 dark:text-white font-sans-bold">
             Semester Results
           </Text>

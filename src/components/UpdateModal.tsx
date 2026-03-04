@@ -87,7 +87,6 @@ export function UpdateModal({
   const { Icon, iconColor, title } = getHeaderAttributes();
   const canDismiss = updateType !== 'major';
 
-  // Dynamic classes based on update type
   const iconBgClass =
     updateType === 'patch' ? 'bg-success/[0.125]' : 'bg-primary/[0.125]';
 

@@ -194,11 +194,9 @@ export function CollegeLedgerView({ transactions }: CollegeLedgerViewProps) {
   const { isDesktopWeb } = useBreakpoint();
   const { bottomOffset } = useSafeAreaStore();
 
-  if (isDesktopWeb) {
-    return <FeesTable transactions={transactions} colors={colors} />;
-  }
-
-  return (
+  return isDesktopWeb ? (
+    <FeesTable transactions={transactions} colors={colors} />
+  ) : (
     <ScrollView
       className="flex-1"
       contentContainerStyle={{ padding: 16, paddingBottom: bottomOffset + 100, gap: 12 }}

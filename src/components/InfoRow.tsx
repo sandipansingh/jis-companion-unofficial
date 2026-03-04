@@ -12,7 +12,7 @@ interface InfoRowProps {
 
 export function InfoRow({ label, value, icon: Icon, isLast = false }: InfoRowProps) {
   const { colors } = useTheme();
-  const iconColor = colors.primary;
+  const iconColor = colors.cta;
 
   return (
     <View className={`py-3 ${!isLast ? 'border-b border-border' : ''}`}>

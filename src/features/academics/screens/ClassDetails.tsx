@@ -37,9 +37,9 @@ export default function ClassDetails() {
     closePdfPreview,
   } = useClassDetails(id);
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerClassName="px-8 pb-20"
@@ -53,11 +53,11 @@ export default function ClassDetails() {
             />
 
             {loading ? (
-              <View className="items-center justify-center py-20">
+              <View className="flex-1 justify-center items-center py-20">
                 <ActivityIndicator size="large" color={colors.primary} />
               </View>
             ) : !classData ? (
-              <View className="items-center justify-center py-20">
+              <View className="flex-1 justify-center items-center py-20">
                 <Text
                   style={{ color: colors.textSecondary }}
                   className="text-[15px] font-sans-md"
@@ -67,7 +67,6 @@ export default function ClassDetails() {
               </View>
             ) : (
               <View className="gap-5">
-                {/* Hero banner */}
                 <View
                   className="rounded-[20px] border border-border bg-surface p-7"
                   style={{
@@ -112,7 +111,6 @@ export default function ClassDetails() {
                   </View>
                 </View>
 
-                {/* Info grid: Date · Attendance · Resources */}
                 <View className="flex-row items-stretch gap-5">
                   <View style={{ flex: 1 }}>
                     <DateInfoCard
@@ -152,51 +150,58 @@ export default function ClassDetails() {
             )}
           </ContentContainer>
         </ScrollView>
-
-        {selectedPdf && (
-          <PdfPreviewModal
-            visible={pdfModalVisible}
-            url={selectedPdf.url}
-            filename={selectedPdf.filename}
-            onClose={closePdfPreview}
-          />
-        )}
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Class Details" showBackButton fallbackRoute="/(tabs)/academics" />
-
-      {loading ? (
-        <View className="flex-1 justify-center">
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : !classData ? (
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-text">Class data not found</Text>
-        </View>
       ) : (
-        <ScrollView className="flex-1">
-          <View className="p-4">
-            <ClassInfoCard
-              subjectName={subject.name}
-              timeRange={timeRange}
-              classType={classType}
-              facultyName={classData.faculty || 'Unknown'}
-              location={location}
-            />
+        <>
+          <Header
+            title="Class Details"
+            showBackButton
+            fallbackRoute="/(tabs)/academics"
+          />
 
-            <DateInfoCard date={classData.date1 || ''} />
+          {loading ? (
+            <View className="flex-1 justify-center items-center">
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          ) : !classData ? (
+            <View className="flex-1 justify-center items-center">
+              <Text
+                style={{ color: colors.textSecondary }}
+                className="text-[15px] font-sans-md"
+              >
+                Class data not found
+              </Text>
+            </View>
+          ) : (
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+              <View className="p-4">
+                <ClassInfoCard
+                  subjectName={subject.name}
+                  timeRange={timeRange}
+                  classType={classType}
+                  facultyName={classData.faculty || 'Unknown'}
+                  location={location}
+                />
 
-            {!isFutureClass && statValue?.trim() && (
-              <AttendanceStatusCard status={statValue} />
-            )}
+                <View>
+                  <DateInfoCard date={classData.date1 || ''} />
 
-            <ResourcesCard resources={resources} onResourcePress={openPdfPreview} />
-          </View>
-        </ScrollView>
+                  {!isFutureClass && statValue?.trim() ? (
+                    <AttendanceStatusCard status={statValue} />
+                  ) : null}
+
+                  <View>
+                    {resources.length > 0 ? (
+                      <ResourcesCard
+                        resources={resources}
+                        onResourcePress={openPdfPreview}
+                      />
+                    ) : null}
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+        </>
       )}
 
       {selectedPdf && (

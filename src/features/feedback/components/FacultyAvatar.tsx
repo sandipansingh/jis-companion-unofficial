@@ -19,7 +19,7 @@ export function FacultyAvatar({ imageUrl, shortName, size = 48 }: FacultyAvatarP
         width: size,
         height: size,
         borderRadius,
-        backgroundColor: colors.primaryLight,
+        backgroundColor: colors.elevated,
         borderColor: colors.border,
       }}
       className="border overflow-hidden items-center justify-center"
@@ -33,7 +33,7 @@ export function FacultyAvatar({ imageUrl, shortName, size = 48 }: FacultyAvatarP
         <Text
           style={{
             fontSize: size > 60 ? 28 : 14,
-            color: colors.primary,
+            color: colors.textSecondary,
           }}
           className="font-sans-semi"
         >

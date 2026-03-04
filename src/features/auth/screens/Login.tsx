@@ -1,9 +1,7 @@
-import React from 'react';
 import {
   Image,
   KeyboardAvoidingView,
   Linking,
-  Platform,
   ScrollView,
   Text,
   View,
@@ -13,6 +11,7 @@ import { securityImage } from '@/src/constants/images';
 import { legal } from '@/src/constants/legal';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { device } from '@/src/hooks/useDevice';
 
 import { CreditsButton, DemoLoginButton, LoginForm, LoginLogo } from '../components';
 import { useLoginData } from '../hooks';
@@ -125,9 +124,9 @@ export default function Login() {
   return (
     <View className="flex-1 bg-base">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={device.isIOS ? 'padding' : 'height'}
         className="flex-1"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        keyboardVerticalOffset={device.isIOS ? 0 : 20}
       >
         <ScrollView
           contentContainerClassName="grow px-6 pb-10 justify-between"

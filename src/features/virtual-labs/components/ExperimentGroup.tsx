@@ -32,7 +32,6 @@ export function ExperimentGroup({
   const [expanded, setExpanded] = useState(false);
   const { colors } = useTheme();
 
-  // gap-4 = 16px; formula: 100%/cols - gap*(cols-1)/cols
   const GAP = 16;
   const cardWidth =
     columns === 3
@@ -41,7 +40,6 @@ export function ExperimentGroup({
 
   return (
     <View className="mb-4">
-      {/* Group header */}
       <TouchableOpacity
         onPress={() => setExpanded((prev) => !prev)}
         activeOpacity={0.7}
@@ -54,8 +52,11 @@ export function ExperimentGroup({
         }}
       >
         <View className="flex-row items-center gap-3 flex-1">
-          <View className="bg-cobalt-50 dark:bg-ink-800 border border-border rounded-xl px-3 py-1">
-            <Text className="text-sm text-cobalt-600 dark:text-cobalt-400 font-sans-semi">
+          <View
+            className="border border-border rounded-xl px-3 py-1"
+            style={{ backgroundColor: colors.ctaSoft }}
+          >
+            <Text className="text-sm font-sans-semi" style={{ color: colors.cta }}>
               {subjectCode}
             </Text>
           </View>
@@ -70,7 +71,6 @@ export function ExperimentGroup({
         )}
       </TouchableOpacity>
 
-      {/* Experiment cards */}
       {expanded && (
         <View
           className="border border-border p-4 bg-base dark:bg-base"

@@ -38,11 +38,15 @@ export function Header({
   if (isDesktopWeb) {
     return (
       <View className="flex-row items-center justify-between pt-7 pb-5 border-b border-border mb-7">
-        <Text className="text-[22px] font-sans-bold text-text tracking-[-0.3px] leading-7">
+        <Text
+          className="text-[22px] font-sans-bold text-text tracking-[-0.3px] leading-7 flex-1 mr-4"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
           {title}
         </Text>
 
-        <View className="flex-row items-center gap-3">
+        <View className="flex-row items-center gap-3 flex-shrink-0">
           {actionElement && <View>{actionElement}</View>}
           {showBackButton && (
             <TouchableOpacity
@@ -80,7 +84,11 @@ export function Header({
           >
             <ChevronLeft size={20} color={colors.text} />
           </TouchableOpacity>
-          <Text className="text-xl text-ink-900 dark:text-ink-100 flex-1 font-display">
+          <Text
+            className="text-xl text-ink-900 dark:text-ink-100 flex-1 font-display"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {title}
           </Text>
           {actionElement && <View>{actionElement}</View>}

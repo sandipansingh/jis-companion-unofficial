@@ -1,6 +1,12 @@
 import { router } from 'expo-router';
-import { FlaskConical, Library, MessageSquare, Users } from 'lucide-react-native';
-import { ScrollView, Text, View } from 'react-native';
+import {
+  FileText,
+  FlaskConical,
+  Library,
+  MessageSquare,
+  Users,
+} from 'lucide-react-native';
+import { ScrollView, View } from 'react-native';
 
 import { ContentContainer } from '@/src/components/layout';
 import { useTheme } from '@/src/contexts/ThemeContext';
@@ -51,7 +57,14 @@ export default function Home() {
       title: 'Connect',
       icon: Users,
       color: colors.violet,
-      description: 'View faculty contacts and staff directory.',
+      description: 'Connect with your peers and faculty.',
+    },
+    {
+      id: 'pyq-hub',
+      title: 'PYQ Hub',
+      icon: FileText,
+      color: colors.danger,
+      description: 'Access question papers from past exams organized by college.',
     },
   ];
 
@@ -75,6 +88,8 @@ export default function Home() {
       router.push('/connect');
     } else if (itemId === 'feedback') {
       router.push('/feedback');
+    } else if (itemId === 'pyq-hub') {
+      router.push('/pyq-hub');
     } else {
       showAlert({
         title: MENU_ITEMS.find((item) => item.id === itemId)?.title || 'Feature',
@@ -87,12 +102,6 @@ export default function Home() {
     const pct = attendanceData?.pcent ?? 0;
     const attended = attendanceData?.attd ?? 0;
     const total = attendanceData?.total_class ?? 0;
-    const missed = total - attended;
-    const statusColor =
-      pct >= 75 ? colors.success : pct >= 60 ? colors.warning : colors.danger;
-    const statusBg =
-      pct >= 75 ? colors.successBg : pct >= 60 ? colors.warningBg : colors.dangerBg;
-    const statusLabel = pct >= 75 ? 'On Track' : pct >= 60 ? 'At Risk' : 'Critical';
 
     return (
       <View className="flex-1 bg-base">
@@ -113,96 +122,24 @@ export default function Home() {
               loadingAttendance={loadingAttendance}
             />
 
-            <View className="flex-row gap-7 items-start">
-              <View className="flex-[3] gap-0">
-                {nextClass && (
-                  <NextClassCard
-                    className={
-                      nextClass.subject_name.split(' - ')[1]?.trim() ||
-                      nextClass.subject_name
-                    }
-                    faculty={nextClass.faculty}
-                    time={getFormattedTime(nextClass.Period_name).time}
-                    period={getFormattedTime(nextClass.Period_name).period}
-                    isFallback={(nextClass as any)._isFallback}
-                    onSeeAll={() => router.push('/academics')}
-                  />
-                )}
-                <QuickAccessActionCards
-                  items={MENU_ITEMS}
-                  onItemPress={handleMenuItemPress}
+            <View className="gap-0">
+              {nextClass && (
+                <NextClassCard
+                  className={
+                    nextClass.subject_name.split(' - ')[1]?.trim() ||
+                    nextClass.subject_name
+                  }
+                  faculty={nextClass.faculty}
+                  time={getFormattedTime(nextClass.Period_name).time}
+                  period={getFormattedTime(nextClass.Period_name).period}
+                  isFallback={(nextClass as any)._isFallback}
+                  onSeeAll={() => router.push('/academics')}
                 />
-              </View>
-
-              <View className="flex-[2] gap-4">
-                <View className="bg-surface rounded-[20px] p-6 border border-border">
-                  <View className="flex-row items-center gap-2 mb-5">
-                    <View
-                      className="rounded-full px-2.5 py-1"
-                      style={{ backgroundColor: statusBg }}
-                    >
-                      <Text
-                        className="text-[11px] font-semibold tracking-wide font-sans"
-                        style={{ color: statusColor }}
-                      >
-                        {statusLabel}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View className="mb-4">
-                    <Text
-                      className="font-display-bold leading-tight"
-                      style={{ fontSize: 48, color: statusColor }}
-                    >
-                      {pct}
-                      <Text className="text-xl font-sans text-ink-400">%</Text>
-                    </Text>
-                    <Text className="text-[13px] text-ink-500 mt-1 font-sans">
-                      Overall Attendance
-                    </Text>
-                  </View>
-
-                  <View className="h-1.5 bg-border rounded-full mb-5 overflow-hidden">
-                    <View
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${Math.min(pct, 100)}%`,
-                        backgroundColor: statusColor,
-                      }}
-                    />
-                  </View>
-
-                  <View className="flex-row justify-between">
-                    <View className="items-start">
-                      <Text className="text-xl font-bold text-text font-sans">
-                        {attended}
-                      </Text>
-                      <Text className="text-[11px] text-ink-500 mt-0.5 font-sans">
-                        Attended
-                      </Text>
-                    </View>
-                    <View className="w-px bg-border mx-2" />
-                    <View className="items-start">
-                      <Text className="text-xl font-bold text-text font-sans">
-                        {missed}
-                      </Text>
-                      <Text className="text-[11px] text-ink-500 mt-0.5 font-sans">
-                        Missed
-                      </Text>
-                    </View>
-                    <View className="w-px bg-border mx-2" />
-                    <View className="items-start">
-                      <Text className="text-xl font-bold text-text font-sans">
-                        {total}
-                      </Text>
-                      <Text className="text-[11px] text-ink-500 mt-0.5 font-sans">
-                        Total
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
+              )}
+              <QuickAccessActionCards
+                items={MENU_ITEMS}
+                onItemPress={handleMenuItemPress}
+              />
             </View>
           </ContentContainer>
         </ScrollView>

@@ -29,6 +29,7 @@ export const SocialInput = React.memo(
           placeholder={placeholder}
           autoCapitalize="none"
           keyboardType={platform === 'portfolio' ? 'url' : 'default'}
+          disableFocusStyle
         />
       </View>
     );

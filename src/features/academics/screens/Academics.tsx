@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { CalendarDays } from 'lucide-react-native';
 import { useState } from 'react';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Header } from '@/src/components';
 import { ContentContainer } from '@/src/components/layout';
@@ -15,6 +15,7 @@ import { useAcademicsData } from '@/src/features/academics/hooks';
 import { useAttendanceStore } from '@/src/features/academics/store/attendanceStore';
 import { createClassId } from '@/src/features/academics/utils/classId';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { device } from '@/src/hooks/useDevice';
 import { useSafeAreaStore } from '@/src/store/safeAreaStore';
 import { getWeekDates } from '@/src/utils/dateHelpers';
 
@@ -48,10 +49,10 @@ export default function Academics() {
   };
 
   const onDateChange = (_event: any, date?: Date) => {
-    if (Platform.OS === 'android') setShowDatePicker(false);
+    if (device.isAndroid) setShowDatePicker(false);
     if (date) {
       setTempDate(date);
-      if (Platform.OS === 'android') handleWeekChange(date);
+      if (device.isAndroid) handleWeekChange(date);
     }
   };
 
@@ -75,9 +76,9 @@ export default function Academics() {
     router.push(`/academics/class/${classId}`);
   };
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerClassName="px-8 pb-20"
@@ -85,7 +86,6 @@ export default function Academics() {
         >
           <ContentContainer maxWidth={1280}>
             <Header title="Academics" />
-
             <View className="flex-row items-start gap-6">
               <View className="w-[380px]" style={{ position: 'sticky' as any, top: 24 }}>
                 <AttendanceCalendar
@@ -135,49 +135,46 @@ export default function Academics() {
             </View>
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
+      ) : (
+        <>
+          <Header title="Academics" />
+          <ScrollView className="flex-1" showsVerticalScrollIndicator={true} bounces>
+            <View className="p-4">
+              <AttendanceCalendar
+                currentMonth={currentMonth}
+                weekDates={weekDates}
+                selectedDate={selectedDate}
+                loading={loading}
+                onDateSelect={handleDateSelect}
+                onTodayPress={goToToday}
+                onPreviousWeek={goToPreviousWeek}
+                onNextWeek={goToNextWeek}
+                onDatePress={setSelectedDate}
+                getAttendanceStatus={getAttendanceStatus}
+                getAttendanceWithFallback={getAttendanceWithFallback}
+              />
 
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Academics" />
+              <DatePickerModal
+                visible={showDatePicker}
+                date={tempDate}
+                onClose={() => setShowDatePicker(false)}
+                onChange={onDateChange}
+                onConfirm={confirmDateSelection}
+              />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={true} bounces>
-        <View className="p-4">
-          <AttendanceCalendar
-            currentMonth={currentMonth}
-            weekDates={weekDates}
-            selectedDate={selectedDate}
-            loading={loading}
-            onDateSelect={handleDateSelect}
-            onTodayPress={goToToday}
-            onPreviousWeek={goToPreviousWeek}
-            onNextWeek={goToNextWeek}
-            onDatePress={setSelectedDate}
-            getAttendanceStatus={getAttendanceStatus}
-            getAttendanceWithFallback={getAttendanceWithFallback}
-          />
+              <ClassRoutineSection
+                selectedDate={selectedDate}
+                routine={routine}
+                isFallbackData={isFallbackData}
+                getDisplayTime={getDisplayTime}
+                onClassPress={handleClassPress}
+              />
+            </View>
 
-          <DatePickerModal
-            visible={showDatePicker}
-            date={tempDate}
-            onClose={() => setShowDatePicker(false)}
-            onChange={onDateChange}
-            onConfirm={confirmDateSelection}
-          />
-
-          <ClassRoutineSection
-            selectedDate={selectedDate}
-            routine={routine}
-            isFallbackData={isFallbackData}
-            getDisplayTime={getDisplayTime}
-            onClassPress={handleClassPress}
-          />
-        </View>
-
-        <View style={{ height: bottomOffset + 100 }} />
-      </ScrollView>
+            <View style={{ height: bottomOffset + 100 }} />
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 }

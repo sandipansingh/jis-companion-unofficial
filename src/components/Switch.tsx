@@ -24,7 +24,7 @@ export function Switch({ value, onValueChange, disabled = false }: SwitchProps) 
 
   const backgroundColor = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [isDark ? colors.overlay : colors.border, colors.primary],
+    outputRange: [isDark ? colors.overlay : colors.border, colors.cta],
   });
 
   const translateX = animation.interpolate({

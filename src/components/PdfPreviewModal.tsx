@@ -1,5 +1,3 @@
-import { File, Paths } from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
 import { Download } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
 import {
@@ -7,7 +5,6 @@ import {
   Animated,
   Modal,
   PanResponder,
-  Platform,
   Text,
   TouchableOpacity,
   View,
@@ -15,7 +12,10 @@ import {
 import { WebView } from 'react-native-webview';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { useAlertStore } from '@/src/store/alertStore';
+import { device } from '@/src/hooks/useDevice';
+import { useFileDownload } from '@/src/hooks/useFileDownload';
+
+import { useAlertStore } from '../store/alertStore';
 
 interface PdfPreviewModalProps {
   visible: boolean;
@@ -31,15 +31,19 @@ export function PdfPreviewModal({
   onClose,
 }: PdfPreviewModalProps) {
   const { colors } = useTheme();
-  const [downloading, setDownloading] = useState(false);
   const [loading, setLoading] = useState(true);
   const translateY = useRef(new Animated.Value(0)).current;
   const { showAlert } = useAlertStore();
 
-  const pdfViewerUrl =
-    Platform.OS === 'android'
-      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
-      : url;
+  const { download, downloading } = useFileDownload({
+    downloadUrl: url,
+    filename,
+    mimeType: 'application/pdf',
+  });
+
+  const pdfViewerUrl = device.isAndroid
+    ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
+    : url;
 
   const handleClose = () => {
     onClose();
@@ -76,56 +80,8 @@ export function PdfPreviewModal({
     }),
   ).current;
 
-  const handleDownload = async () => {
-    try {
-      setDownloading(true);
-
-      const nameWithoutExt = filename.replace(/\.[^/.]+$/, '');
-
-      let finalFileName = `${nameWithoutExt}.pdf`;
-      let counter = 1;
-      const cacheDir = Paths.cache;
-
-      while (true) {
-        const file = new File(cacheDir, finalFileName);
-        const exists = await file.exists;
-        if (!exists) {
-          break;
-        }
-        counter++;
-        finalFileName = `${nameWithoutExt}-${counter}.pdf`;
-      }
-
-      const targetFile = new File(cacheDir, finalFileName);
-      await File.downloadFileAsync(url, targetFile);
-
-      const isAvailable = await Sharing.isAvailableAsync();
-
-      if (isAvailable) {
-        await Sharing.shareAsync(targetFile.uri, {
-          mimeType: 'application/pdf',
-          dialogTitle: 'Save PDF',
-          UTI: 'com.adobe.pdf',
-        });
-        showAlert({
-          title: 'Success',
-          message: 'File downloaded successfully!',
-        });
-      } else {
-        showAlert({
-          title: 'Downloaded',
-          message: `File saved to: ${targetFile.uri}`,
-        });
-      }
-    } catch (error) {
-      console.error('Download error:', error);
-      showAlert({
-        title: 'Error',
-        message: 'Failed to download file. Please try again.',
-      });
-    } finally {
-      setDownloading(false);
-    }
+  const handleDownload = () => {
+    download();
   };
 
   return (

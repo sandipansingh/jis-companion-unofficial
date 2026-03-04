@@ -1,10 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarDays } from 'lucide-react-native';
-import { Modal, Platform, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 
 import { Button } from '@/src/components';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { device } from '@/src/hooks/useDevice';
 
 interface DatePickerModalProps {
   visible: boolean;
@@ -41,7 +42,7 @@ function WebDateInput({
   onChange: (date: Date) => void;
   isDark: boolean;
 }) {
-  if (Platform.OS !== 'web') return null;
+  if (!device.isWeb) return null;
 
   return (
     <input
@@ -79,7 +80,7 @@ export function DatePickerModal({
   const { isDark, colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
 
-  if (Platform.OS === 'android') {
+  if (device.isAndroid) {
     return visible ? (
       <DateTimePicker
         value={date}
@@ -92,7 +93,7 @@ export function DatePickerModal({
   }
 
   // iOS and web use custom modals
-  if (Platform.OS === 'web' && isDesktopWeb) {
+  if (device.isWeb && isDesktopWeb) {
     return (
       <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
         <Pressable
@@ -101,7 +102,6 @@ export function DatePickerModal({
           style={{ backgroundColor: isDark ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.45)' }}
           accessibilityLabel="Close date picker"
         >
-          {/* Dialog card — stop propagation so clicking inside doesn't close */}
           <Pressable onPress={(e) => e.stopPropagation()} className="z-[1]">
             <View
               className="bg-surface rounded-2xl border border-border w-[340px] p-7"
@@ -112,7 +112,6 @@ export function DatePickerModal({
                 shadowRadius: 24,
               }}
             >
-              {/* Header */}
               <View className="flex-row items-center justify-between mb-5">
                 <View className="flex-row items-center gap-2.5">
                   <CalendarDays size={18} color={colors.primary} />
@@ -163,7 +162,6 @@ export function DatePickerModal({
             elevation: 8,
           }}
         >
-          {/* Handle bar */}
           <View
             className="w-10 h-1 rounded-full self-center mb-4"
             style={{ backgroundColor: isDark ? colors.textTertiary : colors.border }}
@@ -173,7 +171,7 @@ export function DatePickerModal({
             Select Date
           </Text>
 
-          {Platform.OS === 'web' ? (
+          {device.isWeb ? (
             // Mobile web: HTML date input
             <View className="mb-2">
               <WebDateInput

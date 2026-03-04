@@ -1,4 +1,6 @@
-import { Platform, useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
+
+import { useDevice } from './useDevice';
 
 /**
  * Tailwind-aligned breakpoints (matches tailwind.config.js `screens`).
@@ -47,7 +49,7 @@ export interface BreakpointInfo {
  */
 export function useBreakpoint(): BreakpointInfo {
   const { width, height } = useWindowDimensions();
-  const isWeb = Platform.OS === 'web';
+  const { isWeb } = useDevice();
 
   const isSm = width >= BREAKPOINTS.sm;
   const isMd = width >= BREAKPOINTS.md;

@@ -36,7 +36,10 @@ export function NextClassCard({
           )}
         </View>
         <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
-          <Text className="text-sm text-cobalt-500 dark:text-cobalt-400 font-sans-semi">
+          <Text
+            className="text-sm font-sans-semi"
+            style={{ color: colors.textSecondary }}
+          >
             See all →
           </Text>
         </TouchableOpacity>
@@ -52,11 +55,24 @@ export function NextClassCard({
           elevation: 3,
         }}
       >
-        <View className="bg-cobalt-500 items-center justify-center px-5 py-5">
-          <Text className="text-white text-2xl leading-none font-display-bold">
+        <View
+          className="items-center justify-center px-5 py-5"
+          style={{
+            backgroundColor: colors.elevated,
+            borderRightWidth: 1,
+            borderRightColor: colors.border,
+          }}
+        >
+          <Text
+            className="text-2xl leading-none font-display-bold"
+            style={{ color: colors.text }}
+          >
             {time}
           </Text>
-          <Text className="text-cobalt-200 text-xs tracking-widest mt-0.5 font-sans-md">
+          <Text
+            className="text-xs tracking-widest mt-0.5 font-sans-md"
+            style={{ color: colors.textSecondary }}
+          >
             {period}
           </Text>
         </View>

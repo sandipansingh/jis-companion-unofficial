@@ -1,15 +1,10 @@
 import { Lock } from 'lucide-react-native';
 import React, { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Modal, Text, TouchableOpacity, View } from 'react-native';
 
 import { Button, TextInput } from '@/src/components';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { device } from '@/src/hooks/useDevice';
 import { useAlertStore } from '@/src/store/alertStore';
 
 interface ChangePasswordModalProps {
@@ -33,7 +28,8 @@ export default function ChangePasswordModal({
     confirmPassword?: string;
   }>({});
   const { showAlert } = useAlertStore();
-  const isWeb = Platform.OS === 'web';
+  const { colors } = useTheme();
+  const isWeb = device.isWeb;
 
   const validatePasswords = (): boolean => {
     const newErrors: {
@@ -94,7 +90,7 @@ export default function ChangePasswordModal({
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={device.isIOS ? 'padding' : 'height'}
         className="flex-1"
       >
         <TouchableOpacity
@@ -128,6 +124,7 @@ export default function ChangePasswordModal({
                   </Text>
                   <TextInput
                     icon={Lock}
+                    iconColor={colors.cta}
                     placeholder="Enter current password"
                     value={currentPassword}
                     onChangeText={(text) => {
@@ -137,6 +134,7 @@ export default function ChangePasswordModal({
                     isPassword
                     autoCapitalize="none"
                     editable={!isLoading}
+                    disableFocusStyle
                   />
                   {errors.currentPassword && (
                     <Text className="text-xs text-danger mt-1 ml-1 font-sans">
@@ -152,6 +150,7 @@ export default function ChangePasswordModal({
                 </Text>
                 <TextInput
                   icon={Lock}
+                  iconColor={colors.cta}
                   placeholder="Enter new password"
                   value={newPassword}
                   onChangeText={(text) => {
@@ -162,6 +161,7 @@ export default function ChangePasswordModal({
                   showPasswordToggle={false}
                   autoCapitalize="none"
                   editable={!isLoading}
+                  disableFocusStyle
                 />
                 {errors.newPassword && (
                   <Text className="text-xs text-danger mt-1 ml-1 font-sans">
@@ -176,6 +176,7 @@ export default function ChangePasswordModal({
                 </Text>
                 <TextInput
                   icon={Lock}
+                  iconColor={colors.cta}
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChangeText={(text) => {
@@ -185,6 +186,7 @@ export default function ChangePasswordModal({
                   isPassword
                   autoCapitalize="none"
                   editable={!isLoading}
+                  disableFocusStyle
                 />
                 {errors.confirmPassword && (
                   <Text className="text-xs text-danger mt-1 ml-1 font-sans">

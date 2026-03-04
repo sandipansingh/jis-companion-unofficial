@@ -2,6 +2,7 @@ import { Calendar, Droplet, Lock, Mail, MapPin, Phone } from 'lucide-react-nativ
 import { View } from 'react-native';
 
 import { Button, InfoRow } from '@/src/components';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 interface PersonalTabContentProps {
   email?: string;
@@ -32,6 +33,7 @@ export function PersonalTabContent({
   onChangePassword,
   isDemoAccount = false,
 }: PersonalTabContentProps) {
+  const { colors } = useTheme();
   return (
     <View>
       <InfoRow label="EMAIL ADDRESS" value={email} icon={Mail} />
@@ -60,7 +62,7 @@ export function PersonalTabContent({
         title="Change Password"
         onPress={onChangePassword}
         disabled={isDemoAccount}
-        icon={<Lock size={16} color="white" />}
+        icon={<Lock size={16} color={colors.onCta} />}
         iconPosition="left"
         style={{ marginTop: 24, height: 50 }}
         textStyle={{ fontSize: 14 }}

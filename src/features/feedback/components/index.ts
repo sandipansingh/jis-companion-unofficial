@@ -1,6 +1,9 @@
 export { FacultyAvatar } from './FacultyAvatar';
 export { FacultyHeroCard } from './FacultyHeroCard';
 export { FacultyListItem } from './FacultyListItem';
+export { FacultyQuestionTableRow } from './FacultyQuestionTableRow';
+export { FacultyTableRow } from './FacultyTableRow';
+export { FeedbackProgressBar } from './FeedbackProgressBar';
 export { FeedbackQuestionCard } from './FeedbackQuestionCard';
 export { FeedbackStatusBadge } from './FeedbackStatusBadge';
 export { ProgressCard } from './ProgressCard';

@@ -83,6 +83,21 @@ module.exports = {
           light: '#DBEAFE',
           dark: '#2563EB',
         },
+        cta: {
+          50: '#E2E8F0',
+          100: '#CBD5E1',
+          200: '#94A3B8',
+          300: '#64748B',
+          400: '#475569',
+          500: '#334155',
+          contrast: '#FFFFFF',
+        },
+        action: {
+          DEFAULT: '#334155',
+          light: '#475569',
+          dark: '#1E293B',
+          contrast: '#FFFFFF',
+        },
       },
 
       fontFamily: {

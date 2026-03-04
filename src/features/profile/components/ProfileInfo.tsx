@@ -41,8 +41,11 @@ export function ProfileInfo({
           }}
         />
       ) : (
-        <View className="w-28 h-28 rounded-2xl mb-4 bg-cobalt-500 items-center justify-center border-2 border-border">
-          <Text className="text-4xl text-white font-display-bold">
+        <View
+          className="w-28 h-28 rounded-2xl mb-4 items-center justify-center border-2 border-border"
+          style={{ backgroundColor: colors.cta }}
+        >
+          <Text className="text-4xl font-display-bold" style={{ color: colors.onCta }}>
             {getInitials(name || 'Student')}
           </Text>
         </View>
@@ -52,20 +55,38 @@ export function ProfileInfo({
         {name || 'Student'}
       </Text>
 
-      <View className="flex-row items-center gap-2">
-        {studentId && (
-          <Text className="text-sm text-cobalt-600 dark:text-cobalt-400 font-sans-semi">
-            {studentId}
-          </Text>
+      <View
+        className={`flex-row items-center px-5 w-full ${!(studentId && semester) ? 'justify-center' : ''}`}
+      >
+        <View className={studentId && semester ? 'flex-1 items-end' : ''}>
+          {studentId && (
+            <View
+              className="rounded-full px-2.5 py-0.5 border"
+              style={{ backgroundColor: colors.ctaSoft, borderColor: colors.border }}
+            >
+              <Text className="text-[11px] font-sans-md" style={{ color: colors.cta }}>
+                {studentId}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {studentId && semester && (
+          <View className="w-1 h-1 rounded-full bg-ink-400 mx-2" />
         )}
-        {studentId && semester && <View className="w-1 h-1 rounded-full bg-ink-400" />}
-        {semester && (
-          <View className="bg-cobalt-50 dark:bg-cobalt-900/30 rounded-full px-2.5 py-0.5 border border-cobalt-100 dark:border-cobalt-800/50">
-            <Text className="text-[11px] text-cobalt-600 dark:text-cobalt-300 font-sans-md">
-              Semester {semester}
-            </Text>
-          </View>
-        )}
+
+        <View className={studentId && semester ? 'flex-1 items-start' : ''}>
+          {semester && (
+            <View
+              className="rounded-full px-2.5 py-0.5 border"
+              style={{ backgroundColor: colors.ctaSoft, borderColor: colors.border }}
+            >
+              <Text className="text-[11px] font-sans-md" style={{ color: colors.cta }}>
+                Semester {semester}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
 
       <RegistrationRollInfo registrationNo={registrationNo} rollNo={rollNo} />

@@ -70,10 +70,24 @@ export default function PrivacyScreen() {
       </LegalSection>
 
       <LegalSection title="No Custom Backend or Cloud Storage">
+        <LegalText>
+          The application generally operates without a custom backend. However, specific
+          features may utilize a proxy or custom service as follows:
+        </LegalText>
         <LegalText variant="bullet">• No app-managed user accounts</LegalText>
         <LegalText variant="bullet">• No developer-operated server database</LegalText>
         <LegalText variant="bullet">• No cloud storage of academic records</LegalText>
         <LegalText variant="bullet">• No advertisements</LegalText>
+        <LegalText variant="bullet">Exceptions:</LegalText>
+        <LegalText variant="bullet">
+          - Change Password: This feature proxies requests (Student ID, current password,
+          new password) through a custom backend to the official API. Credentials are
+          transferred securely and are never logged or stored.
+        </LegalText>
+        <LegalText variant="bullet">
+          - PYQ Hub: This feature retrieves resources from a custom backend. It does not
+          require or process any student credentials or personal data.
+        </LegalText>
       </LegalSection>
 
       <LegalSection title="Legal Disclosure">

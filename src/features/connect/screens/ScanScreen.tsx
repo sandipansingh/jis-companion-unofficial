@@ -5,12 +5,14 @@ import React, { useRef } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useTheme } from '@/src/contexts/ThemeContext';
 import { useAuthStore } from '@/src/features/auth/store/authStore';
 import { useConnectStore } from '@/src/features/connect/store/connectStore';
 import { decryptPayload } from '@/src/features/connect/utils/payload';
 import { useAlertStore } from '@/src/store/alertStore';
 
 export default function ScanScreen() {
+  const { colors } = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
   const insets = useSafeAreaInsets();
   const { studentId } = useAuthStore();
@@ -30,9 +32,12 @@ export default function ScanScreen() {
         </Text>
         <TouchableOpacity
           onPress={requestPermission}
-          className="bg-cobalt-500 px-6 py-3 rounded-xl"
+          className="px-6 py-3 rounded-xl"
+          style={{ backgroundColor: colors.cta }}
         >
-          <Text className="text-white font-sans-semi">Grant Permission</Text>
+          <Text className="font-sans-semi" style={{ color: colors.onCta }}>
+            Grant Permission
+          </Text>
         </TouchableOpacity>
       </View>
     );

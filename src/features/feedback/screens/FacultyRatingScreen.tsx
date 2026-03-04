@@ -11,66 +11,11 @@ import { useAlertStore } from '@/src/store/alertStore';
 import {
   FacultyAvatar,
   FacultyHeroCard,
+  FacultyQuestionTableRow,
   FeedbackQuestionCard,
-  StarRating,
 } from '../components';
 import { useFacultyRating } from '../hooks';
-import { FeedbackQuestion } from '../types';
 import { parseFacultyId } from '../utils/facultyId';
-
-interface DesktopQuestionRowProps {
-  question: FeedbackQuestion;
-  rating: number;
-  onRatingChange: (value: number) => void;
-  colors: ReturnType<typeof useTheme>['colors'];
-  isLast: boolean;
-}
-
-function DesktopQuestionRow({
-  question,
-  rating,
-  onRatingChange,
-  colors,
-  isLast,
-}: DesktopQuestionRowProps) {
-  return (
-    <>
-      <View className="flex-col px-4 py-[14px] gap-[10px]">
-        <View className="flex-row items-start justify-between gap-3">
-          <View className="flex-1">
-            <Text
-              style={{ color: colors.text }}
-              className="text-[13px] leading-[19px] mb-0.5 font-sans-md"
-            >
-              {question.head}
-            </Text>
-            {question.subhead ? (
-              <Text
-                style={{ color: colors.textSecondary }}
-                className="text-[11px] leading-4 font-sans"
-              >
-                {question.subhead}
-              </Text>
-            ) : null}
-          </View>
-          <Text
-            style={{
-              color: rating > 0 ? colors.primary : colors.textSecondary,
-              flexShrink: 0,
-            }}
-            className="text-[11px] mt-0.5 font-sans-md"
-          >
-            {rating > 0 ? `${rating} / 10` : '—'}
-          </Text>
-        </View>
-        <View>
-          <StarRating value={rating} onChange={onRatingChange} />
-        </View>
-      </View>
-      {!isLast && <View className="h-px bg-border mx-4" />}
-    </>
-  );
-}
 
 export default function FacultyRatingScreen() {
   const { showAlert } = useAlertStore();
@@ -122,9 +67,9 @@ export default function FacultyRatingScreen() {
   const answeredCount = feedbackQuestions.filter((q) => (ratings[q.id] ?? 0) > 0).length;
   const totalCount = feedbackQuestions.length;
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -135,7 +80,7 @@ export default function FacultyRatingScreen() {
 
             {loadingFaculty || !faculty ? (
               <View className="py-[100px] gap-3 items-center">
-                <ActivityIndicator size="large" color={colors.primary} />
+                <ActivityIndicator size="large" color={colors.textSecondary} />
                 <Text
                   style={{ color: colors.textSecondary }}
                   className="text-[13px] font-sans"
@@ -192,7 +137,6 @@ export default function FacultyRatingScreen() {
                       <Text
                         style={{
                           fontSize: 12,
-
                           color:
                             answeredCount === totalCount
                               ? colors.success
@@ -206,10 +150,9 @@ export default function FacultyRatingScreen() {
                   )}
                 </View>
 
-                {/* Questions */}
                 {loadingQuestions ? (
                   <View className="py-[60px] gap-3 items-center">
-                    <ActivityIndicator size="large" color={colors.primary} />
+                    <ActivityIndicator size="large" color={colors.textSecondary} />
                     <Text
                       style={{ color: colors.textSecondary }}
                       className="text-[13px] font-sans"
@@ -232,12 +175,11 @@ export default function FacultyRatingScreen() {
                         </Text>
                         <View className="bg-surface overflow-hidden rounded-[14px] border border-border mb-6">
                           {feedbackQuestions.map((question, i) => (
-                            <DesktopQuestionRow
+                            <FacultyQuestionTableRow
                               key={question.id}
                               question={question}
                               rating={ratings[question.id] ?? 0}
                               onRatingChange={(value) => updateRating(question.id, value)}
-                              colors={colors}
                               isLast={i === feedbackQuestions.length - 1}
                             />
                           ))}
@@ -270,66 +212,66 @@ export default function FacultyRatingScreen() {
             )}
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-base">
-      <Header
-        title={loadingFaculty || !faculty ? 'Loading...' : faculty.fac_name}
-        showBackButton
-      />
-
-      {loadingFaculty || !faculty ? (
-        <View className="flex-1 items-center justify-center gap-3">
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-sm text-ink-500 font-sans">
-            Loading faculty information...
-          </Text>
-        </View>
       ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        >
-          <FacultyHeroCard faculty={faculty} />
+        <>
+          <Header
+            title={loadingFaculty || !faculty ? 'Loading...' : faculty.fac_name}
+            showBackButton
+          />
 
-          {loadingQuestions ? (
-            <View className="items-center justify-center py-16 gap-3">
-              <ActivityIndicator size="large" color={colors.primary} />
-              <Text className="text-sm text-ink-500 font-sans">Loading questions...</Text>
+          {loadingFaculty || !faculty ? (
+            <View className="flex-1 items-center justify-center gap-3">
+              <ActivityIndicator size="large" color={colors.textSecondary} />
+              <Text className="text-sm text-ink-500 font-sans">
+                Loading faculty information...
+              </Text>
             </View>
           ) : (
-            <>
-              {feedbackQuestions.map((question) => (
-                <FeedbackQuestionCard
-                  key={question.id}
-                  question={question}
-                  rating={ratings[question.id] ?? 0}
-                  onRatingChange={(value) => updateRating(question.id, value)}
-                />
-              ))}
+            <ScrollView
+              className="flex-1"
+              contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+            >
+              <FacultyHeroCard faculty={faculty} />
 
-              <View className="pt-6 gap-3">
-                <Button
-                  title="Submit Feedback"
-                  onPress={handleSaveFeedback}
-                  disabled={submittingFeedback || skippingFeedback}
-                  loading={submittingFeedback}
-                />
+              {loadingQuestions ? (
+                <View className="items-center justify-center py-16 gap-3">
+                  <ActivityIndicator size="large" color={colors.textSecondary} />
+                  <Text className="text-sm text-ink-500 font-sans">
+                    Loading questions...
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  {feedbackQuestions.map((question) => (
+                    <FeedbackQuestionCard
+                      key={question.id}
+                      question={question}
+                      rating={ratings[question.id] ?? 0}
+                      onRatingChange={(value) => updateRating(question.id, value)}
+                    />
+                  ))}
 
-                <Button
-                  title="Skip Feedback"
-                  onPress={handleNotOpted}
-                  disabled={submittingFeedback || skippingFeedback}
-                  loading={skippingFeedback}
-                  variant="secondary"
-                />
-              </View>
-            </>
+                  <View className="pt-6 gap-3">
+                    <Button
+                      title="Submit Feedback"
+                      onPress={handleSaveFeedback}
+                      disabled={submittingFeedback || skippingFeedback}
+                      loading={submittingFeedback}
+                    />
+
+                    <Button
+                      title="Skip Feedback"
+                      onPress={handleNotOpted}
+                      disabled={submittingFeedback || skippingFeedback}
+                      loading={skippingFeedback}
+                      variant="secondary"
+                    />
+                  </View>
+                </>
+              )}
+            </ScrollView>
           )}
-        </ScrollView>
+        </>
       )}
     </View>
   );

@@ -13,12 +13,20 @@ interface DropdownOption {
 export function useCourseSelectionData() {
   const router = useRouter();
   const { showAlert } = useAlertStore();
-  const { courses, loading, error, fetchCourses, fetchExperiments, clearError } =
-    useVirtualLabsStore();
-
-  const [selectedCourse, setSelectedCourse] = useState<string>('');
-  const [selectedStream, setSelectedStream] = useState<string>('');
-  const [selectedSemester, setSelectedSemester] = useState<string>('');
+  const {
+    courses,
+    loading,
+    error,
+    fetchCourses,
+    fetchExperiments,
+    clearError,
+    selectionCourse: selectedCourse,
+    selectionStream: selectedStream,
+    selectionSemester: selectedSemester,
+    setSelectionCourse,
+    setSelectionStream,
+    setSelectionSemester,
+  } = useVirtualLabsStore();
 
   const [courseDropdownVisible, setCourseDropdownVisible] = useState(false);
   const [streamDropdownVisible, setStreamDropdownVisible] = useState(false);
@@ -80,20 +88,17 @@ export function useCourseSelectionData() {
       : [];
 
   const handleCourseSelect = (value: string) => {
-    setSelectedCourse(value);
-    setSelectedStream('');
-    setSelectedSemester('');
+    setSelectionCourse(value);
     setCourseDropdownVisible(false);
   };
 
   const handleStreamSelect = (value: string) => {
-    setSelectedStream(value);
-    setSelectedSemester('');
+    setSelectionStream(value);
     setStreamDropdownVisible(false);
   };
 
   const handleSemesterSelect = (value: string) => {
-    setSelectedSemester(value);
+    setSelectionSemester(value);
     setSemesterDropdownVisible(false);
   };
 

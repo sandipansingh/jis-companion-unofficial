@@ -30,9 +30,11 @@ export default function ExperimentsList() {
 
   const groups = useMemo(() => groupBySubjectCode(experiments), [experiments]);
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  return (
+    <View className="flex-1 bg-base">
+      {!isDesktopWeb && <Header title="Available Experiments" showBackButton />}
+
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -44,43 +46,33 @@ export default function ExperimentsList() {
               showBackButton
               fallbackRoute="/virtual-labs"
             />
-
             {loading ? (
               <LoadingState message="Loading experiments..." />
             ) : experiments.length === 0 ? (
               <EmptyState message="No experiments available" />
             ) : (
-              <View>
-                {groups.map(({ subjectCode, items }) => (
-                  <ExperimentGroup
-                    key={subjectCode}
-                    subjectCode={subjectCode}
-                    experiments={items}
-                    onExperimentPress={handleExperimentPress}
-                    columns={3}
-                    isDesktopWeb
-                  />
-                ))}
-              </View>
+              groups.map(({ subjectCode, items }) => (
+                <ExperimentGroup
+                  key={subjectCode}
+                  subjectCode={subjectCode}
+                  experiments={items}
+                  onExperimentPress={handleExperimentPress}
+                  columns={3}
+                  isDesktopWeb={true}
+                />
+              ))
             )}
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
-
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="Available Experiments" showBackButton />
-
-      {loading ? (
+      ) : loading ? (
         <LoadingState message="Loading experiments..." />
       ) : experiments.length === 0 ? (
         <EmptyState message="No experiments available" />
       ) : (
         <ScrollView
+          className="flex-1"
           contentContainerStyle={{ padding: 16, paddingBottom: bottomOffset + 20 }}
-          showsVerticalScrollIndicator
+          showsVerticalScrollIndicator={true}
         >
           {groups.map(({ subjectCode, items }) => (
             <ExperimentGroup
@@ -88,6 +80,7 @@ export default function ExperimentsList() {
               subjectCode={subjectCode}
               experiments={items}
               onExperimentPress={handleExperimentPress}
+              isDesktopWeb={false}
             />
           ))}
         </ScrollView>

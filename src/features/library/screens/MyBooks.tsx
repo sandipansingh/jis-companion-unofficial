@@ -24,9 +24,15 @@ export default function MyBooks() {
   const { isDesktopWeb } = useBreakpoint();
   const { books, loading, filterType, handleFilterChange } = useMyBooksData();
 
-  if (isDesktopWeb) {
-    return (
-      <View className="flex-1 bg-base">
+  const renderBookItem = ({ item }: { item: any }) => (
+    <View className="px-4">
+      <BookCard book={item} />
+    </View>
+  );
+
+  return (
+    <View className="flex-1 bg-base">
+      {isDesktopWeb ? (
         <ScrollView
           className="flex-1"
           contentContainerStyle={{ paddingHorizontal: 32, paddingBottom: 80 }}
@@ -34,7 +40,6 @@ export default function MyBooks() {
         >
           <ContentContainer maxWidth={1280}>
             <Header title="My Books" showBackButton fallbackRoute="/library" />
-
             <View className="flex-row gap-6 items-start">
               <View
                 className="w-[200px] bg-surface rounded-xl border border-border overflow-hidden"
@@ -111,46 +116,39 @@ export default function MyBooks() {
             </View>
           </ContentContainer>
         </ScrollView>
-      </View>
-    );
-  }
-
-  const renderBookItem = ({ item }: { item: any }) => (
-    <View className="px-4">
-      <BookCard book={item} />
-    </View>
-  );
-
-  return (
-    <View className="flex-1 bg-base">
-      <Header title="My Books" showBackButton />
-
-      <View className="px-4 pt-4 pb-2">
-        <LibraryTabs
-          activeTab={filterType}
-          onTabChange={(tab) => handleFilterChange(tab as any)}
-        />
-      </View>
-
-      {loading ? (
-        <LoadingState message="Loading your books..." />
-      ) : books.length === 0 ? (
-        <EmptyState
-          message={
-            filterType === '1'
-              ? "You haven't borrowed any books yet"
-              : 'No books pending return'
-          }
-          icon={BookOpen}
-        />
       ) : (
-        <FlashList
-          data={books}
-          renderItem={renderBookItem}
-          keyExtractor={(item: any, index: number) => `${item.reader_acc_id}-${index}`}
-          contentContainerStyle={{ paddingTop: 8, paddingBottom: bottomOffset + 20 }}
-          showsVerticalScrollIndicator={true}
-        />
+        <>
+          <Header title="My Books" showBackButton />
+          <View className="px-4 pt-4 pb-2">
+            <LibraryTabs
+              activeTab={filterType}
+              onTabChange={(tab) => handleFilterChange(tab as any)}
+            />
+          </View>
+
+          {loading ? (
+            <LoadingState message="Loading your books..." />
+          ) : books.length === 0 ? (
+            <EmptyState
+              message={
+                filterType === '1'
+                  ? "You haven't borrowed any books yet"
+                  : 'No books pending return'
+              }
+              icon={BookOpen}
+            />
+          ) : (
+            <FlashList
+              data={books}
+              renderItem={renderBookItem}
+              keyExtractor={(item: any, index: number) =>
+                `${item.reader_acc_id}-${index}`
+              }
+              contentContainerStyle={{ paddingTop: 8, paddingBottom: bottomOffset + 20 }}
+              showsVerticalScrollIndicator={true}
+            />
+          )}
+        </>
       )}
     </View>
   );

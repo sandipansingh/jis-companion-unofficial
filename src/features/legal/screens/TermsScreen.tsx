@@ -36,6 +36,10 @@ export default function TermsScreen() {
           The app does not create, modify, or control institutional records, academic
           outcomes, fees, attendance status, or official decisions.
         </LegalText>
+        <LegalText>
+          Limited custom services (such as PYQ Hub and password change proxy) are provided
+          "as is" and do not store your personal credentials permanently.
+        </LegalText>
       </LegalSection>
 
       <LegalSection title="User Responsibilities">

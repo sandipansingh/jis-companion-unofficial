@@ -1,7 +1,8 @@
 import { LucideIcon } from 'lucide-react-native';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { device } from '@/src/hooks/useDevice';
 
 export interface MenuItem {
   id: string;
@@ -51,9 +52,9 @@ export function QuickAccessGrid({ items, onItemPress }: QuickAccessGridProps) {
                 borderColor: toRgba(item.color, isDark ? 0.42 : 0.22),
                 shadowColor: item.color,
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: Platform.OS === 'android' ? 0 : 0.14,
+                shadowOpacity: device.isAndroid ? 0 : 0.14,
                 shadowRadius: 8,
-                elevation: Platform.OS === 'android' ? 0 : 3,
+                elevation: device.isAndroid ? 0 : 3,
               }}
             >
               <item.icon size={24} color={item.color} strokeWidth={1.8} />

@@ -34,6 +34,7 @@ export function LoginForm({
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="next"
+        disableFocusStyle
       />
 
       <TextInput
@@ -46,6 +47,7 @@ export function LoginForm({
         autoCorrect={false}
         returnKeyType="done"
         onSubmitEditing={onSubmit}
+        disableFocusStyle
       />
 
       <View className="mt-2">

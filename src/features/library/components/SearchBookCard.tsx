@@ -31,8 +31,11 @@ export function SearchBookCard({
       }}
     >
       <View className="flex-row gap-3.5 mb-3">
-        <View className="w-12 h-12 rounded-xl bg-cobalt-50 dark:bg-elevated border border-border items-center justify-center">
-          <Book size={22} color={colors.primary} />
+        <View
+          className="w-12 h-12 rounded-xl border border-border items-center justify-center"
+          style={{ backgroundColor: colors.ctaSoft }}
+        >
+          <Book size={22} color={colors.cta} />
         </View>
         <View className="flex-1">
           <Text
@@ -91,11 +94,12 @@ export function SearchBookCard({
 
       <TouchableOpacity
         className={`flex-row items-center justify-center gap-2 py-3 rounded-xl ${
-          isAvailable && !isDemoUser ? 'bg-cobalt-500' : 'bg-ink-200'
+          isAvailable && !isDemoUser ? '' : 'bg-ink-200'
         }`}
         style={{
+          backgroundColor: isAvailable && !isDemoUser ? colors.cta : undefined,
           opacity: isAvailable && !isDemoUser ? 1 : 0.6,
-          shadowColor: isAvailable ? colors.primary : 'transparent',
+          shadowColor: isAvailable ? colors.cta : 'transparent',
           shadowOffset: { width: 0, height: 3 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -107,7 +111,7 @@ export function SearchBookCard({
       >
         <BookmarkPlus
           size={16}
-          color={isAvailable && !isDemoUser ? '#fff' : colors.textTertiary}
+          color={isAvailable && !isDemoUser ? colors.onCta : colors.textTertiary}
         />
         <Text
           className={`text-sm ${isAvailable && !isDemoUser ? 'text-white' : 'text-ink-500'} font-sans-semi`}
