@@ -7,13 +7,14 @@ import {
   Shield,
   Sun,
 } from 'lucide-react-native';
-import { Linking, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { Linking, ScrollView, TouchableOpacity } from 'react-native';
 
 import { Header, Switch, Text, View } from '@/src/components';
 import { ContentContainer } from '@/src/components/layout';
 import { legal } from '@/src/constants/legal';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 import { SettingsRow, SettingsSection } from '../components';
 import { useSettingsStore } from '../store/settingsStore';
@@ -21,6 +22,7 @@ import { useSettingsStore } from '../store/settingsStore';
 export default function SettingsScreen() {
   const { isDark, toggleTheme, colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isIOS } = useDevice();
   const feesViewMode = useSettingsStore((s) => s.feesViewMode);
   const setFeesViewMode = useSettingsStore((s) => s.setFeesViewMode);
   const isSimplifiedFees = feesViewMode === 'simplified';
@@ -214,7 +216,7 @@ export default function SettingsScreen() {
                   <Text className="text-xs font-semibold text-ink-600 dark:text-ink-300 mb-2 font-sans">
                     How to add to home screen
                   </Text>
-                  {Platform.OS === 'ios' ? (
+                  {isIOS ? (
                     <Text className="text-xs text-ink-500 dark:text-ink-400 leading-5 font-sans">
                       {'1. Open the link in '}
                       {

@@ -1,8 +1,9 @@
 import { BadgeCheck, CreditCard, TrendingDown, TrendingUp } from 'lucide-react-native';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 import { FeeLedgerEntry } from '../types';
 
@@ -28,11 +29,12 @@ function StatTile({
   icon,
   isDesktop,
 }: StatTileProps) {
+  const { isWeb } = useDevice();
   return (
     <View
       className={`${isDesktop ? 'flex-1' : 'flex-1 min-w-[140px]'} bg-surface rounded-2xl border border-border p-4 gap-2`}
       style={
-        Platform.OS !== 'web'
+        !isWeb
           ? {
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },

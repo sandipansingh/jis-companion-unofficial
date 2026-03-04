@@ -1,19 +1,21 @@
-import { Image, Platform, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { securityImage } from '@/src/constants/images';
+import { useDevice } from '@/src/hooks/useDevice';
 
 export function LoginLogo() {
+  const { isWeb } = useDevice();
   return (
     <View
       className="items-center"
       style={{
-        marginTop: Platform.select({ web: 32, default: 72 }),
-        marginBottom: Platform.select({ web: 40, default: 56 }),
+        marginTop: isWeb ? 32 : 72,
+        marginBottom: isWeb ? 40 : 56,
       }}
     >
       <Image
         source={securityImage}
-        className="w-[120px] h-[120px]"
+        style={isWeb ? { width: 72, height: 72 } : { width: 120, height: 120 }}
         resizeMode="contain"
         accessible={false}
       />

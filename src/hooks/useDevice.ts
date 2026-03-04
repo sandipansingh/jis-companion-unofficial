@@ -1,17 +1,12 @@
-import { Platform } from 'react-native';
+import type { DeviceInfo } from '@/src/utils/device';
+import { device } from '@/src/utils/device';
 
-export interface DeviceInfo {
-  isAndroid: boolean;
-  isIOS: boolean;
-  isWeb: boolean;
-}
+export type { DeviceInfo };
 
-export const device: DeviceInfo = {
-  isAndroid: Platform.OS === 'android',
-  isIOS: Platform.OS === 'ios',
-  isWeb: Platform.OS === 'web',
-};
-
+/**
+ * Hook for accessing device platform info inside React components.
+ * For module-level (non-component) code, import `device` from `@/src/utils/device`.
+ */
 export function useDevice(): DeviceInfo {
   return device;
 }

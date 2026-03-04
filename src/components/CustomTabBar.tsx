@@ -1,13 +1,7 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useState } from 'react';
-import {
-  LayoutChangeEvent,
-  Platform,
-  Pressable,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { LayoutChangeEvent, Pressable, useWindowDimensions, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -21,6 +15,7 @@ import {
 } from '@/src/constants/tabColors';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { BREAKPOINTS } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 export default function CustomTabBar({
   state,
@@ -28,9 +23,7 @@ export default function CustomTabBar({
   navigation,
 }: BottomTabBarProps) {
   const { isDark } = useTheme();
-  const isAndroid = Platform.OS === 'android';
-  const isIOS = Platform.OS === 'ios';
-  const isWeb = Platform.OS === 'web';
+  const { isAndroid, isIOS, isWeb } = useDevice();
   const { width } = useWindowDimensions();
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });

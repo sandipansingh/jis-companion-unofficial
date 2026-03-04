@@ -3,8 +3,8 @@ import { File, Paths } from 'expo-file-system';
 import * as LegacyFileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { useState } from 'react';
-import { Platform } from 'react-native';
 
+import { useDevice } from '@/src/hooks/useDevice';
 import { useAlertStore } from '@/src/store/alertStore';
 
 const SAF_URI_KEY = 'app_saf_downloads_uri';
@@ -76,11 +76,12 @@ export function useFileDownload({
 }: UseFileDownloadParams) {
   const [downloading, setDownloading] = useState(false);
   const { showAlert } = useAlertStore();
+  const device = useDevice();
 
   const meta = MIME_META[mimeType] ?? DEFAULT_META;
 
   const download = async () => {
-    if (Platform.OS === 'web') {
+    if (device.isWeb) {
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = filename;
@@ -114,7 +115,7 @@ export function useFileDownload({
       cacheFileUri = targetFile.uri;
       await File.downloadFileAsync(downloadUrl, targetFile);
 
-      if (Platform.OS === 'android') {
+      if (device.isAndroid) {
         const dirUri = await getSafDownloadsUri();
         if (!dirUri) {
           showAlert({

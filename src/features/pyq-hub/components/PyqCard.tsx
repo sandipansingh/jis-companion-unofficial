@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
 import { BookOpen, Calendar, ChevronRight, Download } from 'lucide-react-native';
-import { Platform, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 import { useFileDownload } from '@/src/hooks/useFileDownload';
 
 import { usePyqStore } from '../store/pyqStore';
@@ -23,6 +24,7 @@ const EXAM_TYPE_COLORS: Record<string, string> = {
 export function PyqCard({ item }: PyqCardProps) {
   const { colors, isDark } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isWeb } = useDevice();
   const router = useRouter();
   const setSelectedPyq = usePyqStore((state) => state.setSelectedPyq);
 
@@ -37,7 +39,7 @@ export function PyqCard({ item }: PyqCardProps) {
   });
 
   const handlePress = () => {
-    if (Platform.OS === 'web') {
+    if (isWeb) {
       window.open(item.viewUrl, '_blank', 'noopener,noreferrer');
       return;
     }

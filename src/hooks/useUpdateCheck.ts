@@ -1,8 +1,8 @@
 import Constants from 'expo-constants';
 import { useCallback, useEffect, useState } from 'react';
-import { Platform } from 'react-native';
 
 import { AppInfo, getAppInfo } from '@/src/api/appInfo';
+import { device } from '@/src/utils/device';
 import { getItemAsync, setItemAsync } from '@/src/utils/secureStore';
 import { getUpdateType, UpdateType } from '@/src/utils/versionHelpers';
 
@@ -30,34 +30,26 @@ export function useUpdateCheck(): UpdateCheckResult {
     try {
       setIsChecking(true);
 
-      const lastCheck = await getItemAsync(UPDATE_CHECK_KEY);
       const now = Date.now();
+      const lastCheck = await getItemAsync(UPDATE_CHECK_KEY);
 
       if (lastCheck) {
         const timeSinceLastCheck = now - parseInt(lastCheck, 10);
         if (timeSinceLastCheck < CHECK_INTERVAL) {
-          const dismissedVersion = await getItemAsync(UPDATE_DISMISSED_KEY);
-          if (dismissedVersion) {
-            const dismissedUpdateType = getUpdateType(currentVersion, dismissedVersion);
-            if (dismissedUpdateType !== 'major') {
-              setIsChecking(false);
-              return;
-            }
-          }
+          setIsChecking(false);
+          return;
         }
       }
 
       const latestAppInfo = await getAppInfo();
-      const latestVersion = latestAppInfo.version;
-
       await setItemAsync(UPDATE_CHECK_KEY, now.toString());
 
-      const updateTypeResult = getUpdateType(currentVersion, latestVersion);
+      const updateTypeResult = getUpdateType(currentVersion, latestAppInfo.version);
 
       if (updateTypeResult !== 'none') {
         const dismissedVersion = await getItemAsync(UPDATE_DISMISSED_KEY);
 
-        if (updateTypeResult === 'major' || dismissedVersion !== latestVersion) {
+        if (updateTypeResult === 'major' || dismissedVersion !== latestAppInfo.version) {
           setUpdateAvailable(true);
           setUpdateType(updateTypeResult);
           setAppInfo(latestAppInfo);
@@ -71,7 +63,7 @@ export function useUpdateCheck(): UpdateCheckResult {
   }, [currentVersion]);
 
   useEffect(() => {
-    if (Platform.OS !== 'android') {
+    if (!device.isAndroid) {
       return;
     }
     checkForUpdate();

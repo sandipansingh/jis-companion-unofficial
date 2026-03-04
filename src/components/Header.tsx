@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { ReactNode } from 'react';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useTheme } from '../contexts/ThemeContext';
 import { useBreakpoint } from '../hooks/useBreakpoint';
+import { useDevice } from '../hooks/useDevice';
 
 interface HeaderProps {
   title: string;
@@ -26,6 +27,7 @@ export function Header({
   const router = useRouter();
   const { colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isWeb } = useDevice();
 
   const handleBack = () => {
     if (router.canGoBack()) {
@@ -72,7 +74,7 @@ export function Header({
     <View
       className="bg-surface dark:bg-surface pb-3.5 px-5"
       style={{
-        paddingTop: Platform.select({ web: 20, default: 56 }),
+        paddingTop: isWeb ? 20 : 56,
       }}
     >
       {showBackButton ? (

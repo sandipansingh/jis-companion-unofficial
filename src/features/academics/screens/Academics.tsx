@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { CalendarDays } from 'lucide-react-native';
 import { useState } from 'react';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Header } from '@/src/components';
 import { ContentContainer } from '@/src/components/layout';
@@ -15,6 +15,7 @@ import { useAcademicsData } from '@/src/features/academics/hooks';
 import { useAttendanceStore } from '@/src/features/academics/store/attendanceStore';
 import { createClassId } from '@/src/features/academics/utils/classId';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 import { useSafeAreaStore } from '@/src/store/safeAreaStore';
 import { getWeekDates } from '@/src/utils/dateHelpers';
 
@@ -22,6 +23,7 @@ export default function Academics() {
   const { bottomOffset } = useSafeAreaStore();
   const { colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isAndroid } = useDevice();
   const router = useRouter();
   const { setSelectedClass } = useAttendanceStore();
   const {
@@ -48,10 +50,10 @@ export default function Academics() {
   };
 
   const onDateChange = (_event: any, date?: Date) => {
-    if (Platform.OS === 'android') setShowDatePicker(false);
+    if (isAndroid) setShowDatePicker(false);
     if (date) {
       setTempDate(date);
-      if (Platform.OS === 'android') handleWeekChange(date);
+      if (isAndroid) handleWeekChange(date);
     }
   };
 

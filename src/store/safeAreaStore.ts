@@ -1,5 +1,6 @@
-import { Platform } from 'react-native';
 import { create } from 'zustand';
+
+import { device } from '@/src/utils/device';
 
 interface SafeAreaStore {
   bottomInset: number;
@@ -23,7 +24,7 @@ export const useSafeAreaStore = create<SafeAreaStore>((set) => ({
   bottomOffset: 16,
   setInsets: (insets) =>
     set(() => {
-      if (Platform.OS === 'ios') {
+      if (device.isIOS) {
         return {
           bottomInset: 0,
           topInset: 0,

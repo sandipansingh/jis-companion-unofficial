@@ -1,10 +1,11 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalendarDays } from 'lucide-react-native';
-import { Modal, Platform, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
 
 import { Button } from '@/src/components';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 interface DatePickerModalProps {
   visible: boolean;
@@ -41,7 +42,8 @@ function WebDateInput({
   onChange: (date: Date) => void;
   isDark: boolean;
 }) {
-  if (Platform.OS !== 'web') return null;
+  const { isWeb } = useDevice();
+  if (!isWeb) return null;
 
   return (
     <input
@@ -78,8 +80,9 @@ export function DatePickerModal({
 }: DatePickerModalProps) {
   const { isDark, colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isAndroid, isWeb } = useDevice();
 
-  if (Platform.OS === 'android') {
+  if (isAndroid) {
     return visible ? (
       <DateTimePicker
         value={date}
@@ -92,7 +95,7 @@ export function DatePickerModal({
   }
 
   // iOS and web use custom modals
-  if (Platform.OS === 'web' && isDesktopWeb) {
+  if (isWeb && isDesktopWeb) {
     return (
       <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
         <Pressable
@@ -170,7 +173,7 @@ export function DatePickerModal({
             Select Date
           </Text>
 
-          {Platform.OS === 'web' ? (
+          {isWeb ? (
             // Mobile web: HTML date input
             <View className="mb-2">
               <WebDateInput

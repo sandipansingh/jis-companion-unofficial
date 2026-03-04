@@ -2,10 +2,11 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Settings } from 'lucide-react-native';
-import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 interface WelcomeCardProps {
   userName: string;
@@ -30,6 +31,7 @@ export function WelcomeCard({
 }: WelcomeCardProps) {
   const { isDark, colors } = useTheme();
   const { isDesktopWeb } = useBreakpoint();
+  const { isWeb } = useDevice();
   const router = useRouter();
 
   const firstName = userName.split(' ')[0] || 'Student';
@@ -236,7 +238,7 @@ export function WelcomeCard({
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{
-        paddingTop: Platform.select({ web: 24, default: 64 }),
+        paddingTop: isWeb ? 24 : 64,
         paddingBottom: 28,
         paddingHorizontal: 24,
         borderBottomLeftRadius: 32,

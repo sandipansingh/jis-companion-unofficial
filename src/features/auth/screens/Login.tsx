@@ -2,7 +2,6 @@ import {
   Image,
   KeyboardAvoidingView,
   Linking,
-  Platform,
   ScrollView,
   Text,
   View,
@@ -12,6 +11,7 @@ import { securityImage } from '@/src/constants/images';
 import { legal } from '@/src/constants/legal';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useBreakpoint } from '@/src/hooks/useBreakpoint';
+import { useDevice } from '@/src/hooks/useDevice';
 
 import { CreditsButton, DemoLoginButton, LoginForm, LoginLogo } from '../components';
 import { useLoginData } from '../hooks';
@@ -30,6 +30,7 @@ export default function Login() {
 
   const { isDesktopWeb } = useBreakpoint();
   const { isDark } = useTheme();
+  const { isIOS } = useDevice();
 
   if (isDesktopWeb) {
     const leftGradient = isDark
@@ -124,9 +125,9 @@ export default function Login() {
   return (
     <View className="flex-1 bg-base">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={isIOS ? 'padding' : 'height'}
         className="flex-1"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+        keyboardVerticalOffset={isIOS ? 0 : 20}
       >
         <ScrollView
           contentContainerClassName="grow px-6 pb-10 justify-between"
