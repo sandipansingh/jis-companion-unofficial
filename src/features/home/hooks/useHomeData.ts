@@ -27,7 +27,7 @@ export function useHomeData() {
     if (!isLoggedIn || !studentId || !loginData) return;
 
     try {
-      if (!attendanceData) setLoadingAttendance(true);
+      setLoadingAttendance(true);
 
       const { syncAttendancePercentage } = await import('@/src/services/sync');
       const result = await syncAttendancePercentage(
@@ -42,7 +42,7 @@ export function useHomeData() {
     } finally {
       setLoadingAttendance(false);
     }
-  }, [isLoggedIn, studentId, loginData, attendanceData]);
+  }, [isLoggedIn, studentId, loginData]);
 
   const loadMonthlyAttendance = useCallback(async () => {
     if (!isLoggedIn || !studentId || !loginData) return;
