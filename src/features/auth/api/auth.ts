@@ -10,7 +10,7 @@ import {
 import { getOrCreateInstallId } from '@/src/utils/installId';
 import * as SecureStore from '@/src/utils/secureStore';
 
-import { LoginParams, LoginResponse, UserProfileData } from '../types';
+import { isValidLogin, LoginParams, LoginResponse, UserProfileData } from '../types';
 
 /**
  * Authenticate a student against the official API.
@@ -61,7 +61,7 @@ export async function login({
       {} as LoginResponse,
     );
 
-    if (parsedData.is_valid === 2) {
+    if (isValidLogin(parsedData.is_valid)) {
       await SecureStore.setItemAsync('student_id', studentId);
       await SecureStore.setItemAsync('student_password', password);
     }

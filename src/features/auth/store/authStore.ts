@@ -9,7 +9,7 @@ import {
 } from '@/src/services/sync';
 
 import { changePassword as apiChangePassword, getStoredCredentials } from '../api/auth';
-import { LoginResponse, UserProfileData } from '../types';
+import { isValidLogin, LoginResponse, UserProfileData } from '../types';
 
 interface AttendancePercentageCache {
   total_class: number;
@@ -163,7 +163,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const result = await syncLoginData(studentId, password);
 
-      if (!result.loginData || result.loginData.is_valid !== 2) {
+      if (!result.loginData || !isValidLogin(result.loginData.is_valid)) {
         return false;
       }
 

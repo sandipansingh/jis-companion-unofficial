@@ -1,3 +1,8 @@
+/** Returns true for all known valid login states (2 = valid, 9 = valid alternate) */
+export function isValidLogin(is_valid: number): boolean {
+  return is_valid === 1 || is_valid === 2 || is_valid === 9;
+}
+
 export interface LoginResponse {
   is_valid: number;
   VesionNo: string;

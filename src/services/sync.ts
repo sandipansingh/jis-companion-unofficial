@@ -9,12 +9,12 @@ import {
   SubjectWiseAttendance,
 } from '@/src/features/academics/types';
 import {
-  login as apiLogin,
   clearUserData as clearSecureStoreData,
   fetchUserProfile,
   getStoredCredentials,
+  login as apiLogin,
 } from '@/src/features/auth/api/auth';
-import { LoginResponse, UserProfileData } from '@/src/features/auth/types';
+import { isValidLogin, LoginResponse, UserProfileData } from '@/src/features/auth/types';
 import { fetchStudentFeeLedger } from '@/src/features/fees/api/fees';
 import { FeeLedgerEntry } from '@/src/features/fees/types';
 import { fetchLibraryBooks } from '@/src/features/library/api/library';
@@ -83,7 +83,7 @@ export async function syncLoginData(
       const credentials = await getStoredCredentials();
       const isDemoLogin = credentials?.isDemoAccount || false;
 
-      if (freshLoginData.is_valid !== 2) {
+      if (!isValidLogin(freshLoginData.is_valid)) {
         return {
           loginData: freshLoginData,
           userData: null,
@@ -228,8 +228,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         password: credentials.password,
       });
 
-      if (loginData.is_valid !== 2) {
-        await clearSecureStoreData();
+      if (!isValidLogin(loginData.is_valid)) {
         return {
           isAuthenticated: false,
           isOnline: true,
@@ -481,7 +480,7 @@ export async function backgroundSyncUserData(
   try {
     const loginData = await apiLogin({ studentId, password });
 
-    if (loginData.is_valid !== 2) {
+    if (!isValidLogin(loginData.is_valid)) {
       return false;
     }
 
