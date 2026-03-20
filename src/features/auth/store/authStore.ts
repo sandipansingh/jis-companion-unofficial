@@ -163,7 +163,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       const result = await syncLoginData(studentId, password);
 
-      if (!result.loginData || result.loginData.is_valid !== 1) {
+      if (!result.loginData || result.loginData.is_valid !== 2) {
         return false;
       }
 

@@ -61,7 +61,7 @@ export async function login({
       {} as LoginResponse,
     );
 
-    if (parsedData.is_valid === 1) {
+    if (parsedData.is_valid === 2) {
       await SecureStore.setItemAsync('student_id', studentId);
       await SecureStore.setItemAsync('student_password', password);
     }

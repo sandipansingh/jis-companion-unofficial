@@ -9,10 +9,10 @@ import {
   SubjectWiseAttendance,
 } from '@/src/features/academics/types';
 import {
+  login as apiLogin,
   clearUserData as clearSecureStoreData,
   fetchUserProfile,
   getStoredCredentials,
-  login as apiLogin,
 } from '@/src/features/auth/api/auth';
 import { LoginResponse, UserProfileData } from '@/src/features/auth/types';
 import { fetchStudentFeeLedger } from '@/src/features/fees/api/fees';
@@ -83,7 +83,7 @@ export async function syncLoginData(
       const credentials = await getStoredCredentials();
       const isDemoLogin = credentials?.isDemoAccount || false;
 
-      if (freshLoginData.is_valid !== 1) {
+      if (freshLoginData.is_valid !== 2) {
         return {
           loginData: freshLoginData,
           userData: null,
@@ -228,7 +228,7 @@ export async function checkAuthWithOfflineSupport(): Promise<{
         password: credentials.password,
       });
 
-      if (loginData.is_valid !== 1) {
+      if (loginData.is_valid !== 2) {
         await clearSecureStoreData();
         return {
           isAuthenticated: false,
@@ -481,7 +481,7 @@ export async function backgroundSyncUserData(
   try {
     const loginData = await apiLogin({ studentId, password });
 
-    if (loginData.is_valid !== 1) {
+    if (loginData.is_valid !== 2) {
       return false;
     }
 

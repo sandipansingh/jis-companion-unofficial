@@ -37,7 +37,7 @@ export function getDemoLoginData(): LoginResponse {
   const semesterDates = getCurrentSemesterDates();
 
   return {
-    is_valid: 1,
+    is_valid: 2,
     VesionNo: '1.0.0',
     IosVesionPost: '1.0.0',
     IosVesionNo: '1.0.0',
