@@ -2,6 +2,7 @@ export interface LoginResponse {
   is_valid: number;
   VesionNo: string;
   IosVesionNo: string;
+  IosVesionPost: string;
   std_id: number;
   batch_id: number;
   student_name: string;

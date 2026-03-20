@@ -1,6 +1,8 @@
 import apiClient, { StandardApiResponse } from '@/src/api/client';
 import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { getVersionId } from '@/src/utils/appInfo';
 import { getDemoFeeData } from '@/src/utils/demo';
+import { getOrCreateInstallId } from '@/src/utils/installId';
 
 import { FeeLedgerEntry } from '../types';
 
@@ -26,12 +28,17 @@ export async function fetchStudentFeeLedger(
       return [];
     }
 
+    const [installId, versionId] = await Promise.all([
+      getOrCreateInstallId(),
+      Promise.resolve(getVersionId()),
+    ]);
+
     const branchIdStr = branchId?.toString();
 
     const body = {
-      parameters: ['@p_branch_id', '@p_student_code'],
-      values: [branchIdStr, studentId],
-      function: 'Proc_App_Disp_Student_Ledger_Summ',
+      parameters: ['@p_branch_id', '@p_student_code', '@p_vId', '@p_iId'],
+      values: [branchIdStr, studentId, versionId, installId],
+      function: 'Proc_App_Disp_Student_Ledger_Summ_New',
       branch_id: branchIdStr,
     };
 

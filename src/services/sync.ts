@@ -75,7 +75,10 @@ export async function syncLoginData(
 
   if (isOnline) {
     try {
-      const freshLoginData = await apiLogin({ studentId, password });
+      const freshLoginData = await apiLogin({
+        studentId,
+        password,
+      });
 
       const credentials = await getStoredCredentials();
       const isDemoLogin = credentials?.isDemoAccount || false;

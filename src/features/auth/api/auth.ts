@@ -1,30 +1,16 @@
-import * as Crypto from 'expo-crypto';
-import * as Device from 'expo-device';
-import { ulid } from 'ulid';
-
 import apiClient, { StandardApiResponse, unofficialApiClient } from '@/src/api/client';
 import { handleApiError, parseApiResponse } from '@/src/utils/apiHelpers';
+import { getVersionId } from '@/src/utils/appInfo';
 import {
   DEMO_CREDENTIALS,
   DEMO_USER_PROFILE,
   getDemoLoginData,
   isDemoAccount,
 } from '@/src/utils/demo';
+import { getOrCreateInstallId } from '@/src/utils/installId';
 import * as SecureStore from '@/src/utils/secureStore';
 
 import { LoginParams, LoginResponse, UserProfileData } from '../types';
-
-// ulid on Android workaround
-if (typeof global.crypto !== 'object') {
-  global.crypto = {} as any;
-}
-if (typeof global.crypto.getRandomValues !== 'function') {
-  global.crypto.getRandomValues = ((array: any) => {
-    const randomBytes = Crypto.getRandomBytes(array.length);
-    array.set(randomBytes);
-    return array;
-  }) as any;
-}
 
 /**
  * Authenticate a student against the official API.
@@ -52,26 +38,15 @@ export async function login({
 
     await SecureStore.deleteItemAsync('is_demo_account');
 
-    const brandName = Device.brand || 'unknown';
-    const deviceId = Device.modelId || 'unknown';
-
-    let uniqueId = await SecureStore.getItemAsync('device_unique_id');
-    if (!uniqueId) {
-      uniqueId = ulid();
-      await SecureStore.setItemAsync('device_unique_id', uniqueId);
-    }
+    const [installId, versionId] = await Promise.all([
+      getOrCreateInstallId(),
+      Promise.resolve(getVersionId()),
+    ]);
 
     const body = {
-      parameters: [
-        '@p_user_id',
-        '@p_pass_word',
-        '@p_brand_name',
-        '@p_token',
-        '@p_deviceId',
-        '@p_uniqueId',
-      ],
-      values: [studentId, password, brandName, '', deviceId, uniqueId],
-      function: 'Proc_App_Student_Login_Academic',
+      parameters: ['@p_user_id', '@p_pass_word', '@p_vId', '@p_iId'],
+      values: [studentId, password, versionId, installId],
+      function: 'Proc_Student_Login_Academic_App_New',
       branch_id: '0',
     };
 
@@ -155,10 +130,15 @@ export async function fetchUserProfile(
       return DEMO_USER_PROFILE;
     }
 
+    const [installId, versionId] = await Promise.all([
+      getOrCreateInstallId(),
+      Promise.resolve(getVersionId()),
+    ]);
+
     const body = {
-      parameters: ['@p_branch_id', '@p_StudentId', '@p_is_jeson'],
-      values: [branchId, stdId, '1'],
-      function: 'Proc_Get_Student_Registration_Data',
+      parameters: ['@p_branch_id', '@p_StudentId', '@p_vId', '@p_iId', '@p_is_jeson'],
+      values: [branchId, stdId, versionId, installId, '1'],
+      function: 'Proc_Get_Student_Registration_Data_New',
       branch_id: branchId,
     };
 
@@ -224,6 +204,7 @@ export async function clearUserData(): Promise<void> {
       SecureStore.deleteItemAsync('student_id'),
       SecureStore.deleteItemAsync('student_password'),
       SecureStore.deleteItemAsync('is_demo_account'),
+      SecureStore.deleteItemAsync('install_id'),
     ]);
   } catch (error) {
     console.error('Error clearing user data:', error);

@@ -39,6 +39,7 @@ export function getDemoLoginData(): LoginResponse {
   return {
     is_valid: 1,
     VesionNo: '1.0.0',
+    IosVesionPost: '1.0.0',
     IosVesionNo: '1.0.0',
     std_id: DEMO_STUDENT.id,
     batch_id: DEMO_COURSE.batchId,

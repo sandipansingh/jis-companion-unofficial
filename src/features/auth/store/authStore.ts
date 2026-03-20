@@ -192,6 +192,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { studentId } = get();
     const nextAuthVersion = get().authVersion + 1;
 
+    if (studentId) {
+      try {
+        await cleanupUserData(studentId);
+      } catch (error) {
+        console.error('Error clearing auth state:', error);
+      }
+    }
+
     set({
       isLoggedIn: false,
       studentId: null,
