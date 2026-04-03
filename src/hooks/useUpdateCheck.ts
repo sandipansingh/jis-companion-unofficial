@@ -8,7 +8,6 @@ import { getUpdateType, UpdateType } from '@/src/utils/versionHelpers';
 
 const UPDATE_CHECK_KEY = 'last_update_check';
 const UPDATE_DISMISSED_KEY = 'update_dismissed_version';
-const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
 interface UpdateCheckResult {
   updateAvailable: boolean;
@@ -30,19 +29,8 @@ export function useUpdateCheck(): UpdateCheckResult {
     try {
       setIsChecking(true);
 
-      const now = Date.now();
-      const lastCheck = await getItemAsync(UPDATE_CHECK_KEY);
-
-      if (lastCheck) {
-        const timeSinceLastCheck = now - parseInt(lastCheck, 10);
-        if (timeSinceLastCheck < CHECK_INTERVAL) {
-          setIsChecking(false);
-          return;
-        }
-      }
-
       const latestAppInfo = await getAppInfo();
-      await setItemAsync(UPDATE_CHECK_KEY, now.toString());
+      await setItemAsync(UPDATE_CHECK_KEY, Date.now().toString());
 
       const updateTypeResult = getUpdateType(currentVersion, latestAppInfo.version);
 

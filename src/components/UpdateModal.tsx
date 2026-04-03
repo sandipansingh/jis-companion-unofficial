@@ -53,7 +53,7 @@ export function UpdateModal({
         return {
           Icon: Rocket,
           iconColor: colors.primary,
-          title: 'Critical Update',
+          title: 'Update Required',
         };
       case 'minor':
         return {
@@ -74,7 +74,7 @@ export function UpdateModal({
   const getMessage = () => {
     switch (updateType) {
       case 'major':
-        return "Ideally, we wouldn't force this, but this update includes critical changes required for the app to function properly.";
+        return 'This app is no longer supported. Please update to continue using it.';
       case 'minor':
         return "We've added some cool new features! Update now to verify them out.";
       case 'patch':
